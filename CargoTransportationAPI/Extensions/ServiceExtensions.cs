@@ -1,17 +1,13 @@
-﻿using Contracts;
+﻿using CargoTransportationAPI.Formatters;
+using Contracts;
 using Entities;
-using Entities.DataTransferObjects;
-using Entities.Models;
 using LoggerService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Extensions
 {
@@ -20,15 +16,15 @@ namespace CargoTransportationAPI.Extensions
         public static void ConfigureCors(this IServiceCollection services)
             => services.AddCors(options =>
             {
-                 options.AddPolicy("CorsPolicy", builder =>
-                     builder.AllowAnyOrigin()
-                     .AllowAnyMethod()
-                     .AllowAnyHeader());
+                options.AddPolicy("CorsPolicy", builder =>
+                    builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
             });
 
         public static void ConfigureIISIntegration(this IServiceCollection services)
             => services.Configure<IISOptions>(options =>
-            { 
+            {
             });
 
         public static void ConfigureLoggerService(this IServiceCollection services)
@@ -40,6 +36,15 @@ namespace CargoTransportationAPI.Extensions
             x.MigrationsAssembly("CargoTransportationAPI")));
 
         public static void ConfigureRepositoryManager(this IServiceCollection services)
-            => services.AddScoped<IRepositoryManager, RepositoryManager>();   
+            => services.AddScoped<IRepositoryManager, RepositoryManager>();
+
+        public static void ConfigureFormatters(this IMvcBuilder builder)
+            => builder
+            .AddXmlDataContractSerializerFormatters()
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            })
+            .AddMvcOptions(config => config.OutputFormatters.Add(new CsvOutputFormatter()));
     }
 }

@@ -1,11 +1,8 @@
 ﻿using Entities.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Entities.DataTransferObjects
 {
-    public class CargoDto
+    public class CargoDto : IModelFormatter
     {
         public int Id { get; set; }
 
@@ -20,5 +17,24 @@ namespace Entities.DataTransferObjects
         public double Weight { get; set; }
 
         public Dimensions Dimensions { get; set; }
+
+        public string FormatToCsv()
+        {
+            var separator = ",\"";
+
+            return string.Join               
+            (
+                separator, 
+                Id, 
+                Title, 
+                Category, 
+                DepartureDate, 
+                ArrivalDate, 
+                Weight, 
+                Dimensions.Height, 
+                Dimensions.Length, 
+                Dimensions.Width
+            );
+        }
     }
 }

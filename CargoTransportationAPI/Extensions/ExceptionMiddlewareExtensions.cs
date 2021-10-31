@@ -21,7 +21,7 @@ namespace CargoTransportationAPI.Extensions
             ));
         }
 
-public static void ContextConfigure(this HttpContext context, ILoggerManager logger)
+        public static void ContextConfigure(this HttpContext context, ILoggerManager logger)
         {
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             context.Response.ContentType = "application/json";

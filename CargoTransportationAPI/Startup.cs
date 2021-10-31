@@ -39,14 +39,18 @@ namespace CargoTransportationAPI
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             services.AddAutoMapper(typeof(Startup));
-
             services.ConfigureCors();
             services.ConfigureIISIntegration();
             services.ConfigureLoggerService();
             services.ConfigureSqlContext(configuration);
             services.ConfigureRepositoryManager();
+
+            services.AddControllers(config =>
+            {
+                config.RespectBrowserAcceptHeader = true;
+                config.ReturnHttpNotAcceptable = true;
+            }).ConfigureFormatters();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
