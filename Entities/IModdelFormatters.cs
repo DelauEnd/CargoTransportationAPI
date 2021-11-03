@@ -2,6 +2,6 @@
 {
     public interface IModelFormatter
     {
-        public string FormatToCsv();
+        string FormatToCsv();
     }
 }

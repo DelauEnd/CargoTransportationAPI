@@ -23,6 +23,6 @@ namespace Entities.Models
         [Required(ErrorMessage = "Driver info - required fields")]
         public Person Driver { get; set; }
 
-        public Route Route { get; set; }
+        public List<Route> Route { get; set; }
     }
 }

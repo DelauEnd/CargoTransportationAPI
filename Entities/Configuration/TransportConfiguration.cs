@@ -11,7 +11,14 @@ namespace Entities.Configuration
     {
         public void Configure(EntityTypeBuilder<Transport> builder)
         {
+            ConfigureModel(builder);
             AddInitialData(builder);
+        }
+
+        private void ConfigureModel(EntityTypeBuilder<Transport> builder)
+        {
+            builder.HasIndex(transport
+                => transport.RegistrationNumber).IsUnique(true);
         }
 
         private void AddInitialData(EntityTypeBuilder<Transport> builder)
@@ -28,7 +35,7 @@ namespace Entities.Configuration
 
             builder.OwnsOne(Transport => Transport.Driver).HasData
             (
-                new //По возможности избавиться от анонимного типа
+                new
                 {
                     TransportId = 1,
                     Name = "Sasha",

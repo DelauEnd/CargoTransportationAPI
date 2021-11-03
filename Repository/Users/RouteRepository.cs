@@ -25,5 +25,8 @@ namespace Repository.Users
             => FindAll(trackChanges)
             .Include(Route => Route.Transport)
             .ToList();
+
+        public void CreateRoute(Route route)
+            => Create(route);
     }
 }

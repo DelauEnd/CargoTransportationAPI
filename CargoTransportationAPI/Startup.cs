@@ -1,16 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using CargoTransportationAPI.Extensions;
 using Contracts;
-using Entities.ErrorModel;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,13 +31,13 @@ namespace CargoTransportationAPI
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(Startup));
             services.ConfigureCors();
             services.ConfigureIISIntegration();
             services.ConfigureLoggerService();
             services.ConfigureSqlContext(configuration);
             services.ConfigureRepositoryManager();
 
+            services.AddAutoMapper(typeof(Startup));
             services.AddControllers(config =>
             {
                 config.RespectBrowserAcceptHeader = true;

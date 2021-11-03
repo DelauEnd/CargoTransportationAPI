@@ -14,12 +14,19 @@ namespace Repository.Users
         {
         }
 
+        public void CreateTransport(Transport transport)
+            => Create(transport);
+
         public IEnumerable<Transport> GetAllTransport(bool TrackChanges)
             => FindAll(TrackChanges)
             .ToList();
 
-        public Transport GetTransportById(int Id, bool TrackChanges)
-            => FindByCondition(Transport => Transport.Id == Id, TrackChanges)
+        public Transport GetTransportById(int id, bool TrackChanges)
+            => FindByCondition(Transport => Transport.Id == id, TrackChanges)
+            .SingleOrDefault();
+
+        public Transport GetTransportByRegistrationNumber(string number, bool TrackChanges)
+        => FindByCondition(Transport => Transport.RegistrationNumber == number, TrackChanges)
             .SingleOrDefault();
     }
 }

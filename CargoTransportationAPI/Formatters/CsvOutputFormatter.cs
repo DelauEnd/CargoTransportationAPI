@@ -23,20 +23,21 @@ namespace CargoTransportationAPI.Formatters
         protected override void BuildResponseMessage(StringBuilder responseMessage, OutputFormatterWriteContext context)
         {
             if (context.Object is IModelFormatter)
-                AppendOne(responseMessage, (IModelFormatter)context.Object);
+                Append(responseMessage, (IModelFormatter)context.Object);
             else if (context.Object is IEnumerable<IModelFormatter>)
-                AppendMany(responseMessage, (IEnumerable<IModelFormatter>)context.Object);               
+                Append(responseMessage, (IEnumerable<IModelFormatter>)context.Object);               
         }
 
-        private void AppendOne(StringBuilder responseMessage, IModelFormatter model)
+        private void Append(StringBuilder responseMessage, IModelFormatter model)
         {
             responseMessage.Append(model.FormatToCsv());
         }
 
-        private void AppendMany(StringBuilder responseMessage, IEnumerable<IModelFormatter> models)
+        private void Append(StringBuilder responseMessage, IEnumerable<IModelFormatter> models)
         {
             foreach (var model in models)
-                responseMessage.Append(model.FormatToCsv());
+                responseMessage.Append(model.FormatToCsv()).Append(",\"");
+            responseMessage.Remove(responseMessage.Length - 2, 2);
         }
     }
 }

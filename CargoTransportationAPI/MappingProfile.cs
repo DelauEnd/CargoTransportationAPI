@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
+using CargoTransportationAPI.Controllers;
+using Contracts;
+using Entities;
 using Entities.DataTransferObjects;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 
 namespace CargoTransportationAPI
 {
@@ -25,6 +30,7 @@ namespace CargoTransportationAPI
         private void CreateTransportMaps()
         {
             CreateMap<Transport, TransportDto>();
+            CreateMap<TransportForCreation, Transport>();
         }
 
         private void CreateRouteMaps()

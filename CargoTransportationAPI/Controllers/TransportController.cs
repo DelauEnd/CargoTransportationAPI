@@ -35,22 +35,55 @@ namespace CargoTransportationAPI.Controllers
             return Ok(transportDto);
         }
 
-        [HttpGet("{Id}")]
+        [HttpGet("{Id}", Name = "GetTransportById")]
         public IActionResult GetTransportById(int Id)
         {
             var transport = repository.Transports.GetTransportById(Id, false);
             if (transport == null)
-            {
-                logger.LogInfo($"There is no Transport with Id {Id}");
-                return NotFound();
-            }
-            else
-            {
-                var transportDto = mapper.Map<TransportDto>(transport);
-                return Ok(transportDto);
-            }
+                return NotFound(logInfo: true);
+            
+            var transportDto = mapper.Map<TransportDto>(transport);
+            return Ok(transportDto);
         }
 
+        private IActionResult NotFound(bool logInfo)
+        {
+            var message = $"The desired object was not found";
+            if (logInfo)
+                logger.LogInfo(message);
+            return NotFound();
+        }
 
+        [HttpPost]
+        public IActionResult AddTransport([FromBody]TransportForCreation transport)
+        {
+            if (transport == null)
+                return SendedIsNull(logError: true);
+
+            var addableTransport = mapper.Map<Transport>(transport);
+            AddTransport(addableTransport);
+
+            var transportToReturn = mapper.Map<TransportDto>(addableTransport);
+            return TransportAdded(transportToReturn);
+        }
+
+        private IActionResult SendedIsNull(bool logError)
+        {
+            var message = $"Sended object is null";
+            if (logError)
+                logger.LogError(message);
+            return BadRequest(message);
+        }
+
+        private void AddTransport(Transport transport)
+        {
+            repository.Transports.CreateTransport(transport);
+            repository.Save();
+        }
+
+        private IActionResult TransportAdded(TransportDto transport)
+        {
+            return CreatedAtRoute("GetTransportByRegistrationNumber", new { id = transport.RegistrationNumber }, transport);
+        }
     }
 }
