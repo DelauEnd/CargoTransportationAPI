@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Entities.Enums
 {
-    public enum Statuses
+    public enum EStatuses
     {
         PROCESSING,
         IN_PROGRESS,

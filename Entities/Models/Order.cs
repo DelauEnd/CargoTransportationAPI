@@ -15,7 +15,7 @@ namespace Entities.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Status - required field")]
-        public Statuses Status { get; set; }
+        public EStatuses Status { get; set; }
 
         [Required(ErrorMessage = "SenderId - required field")]
         public int SenderId { get; set; }

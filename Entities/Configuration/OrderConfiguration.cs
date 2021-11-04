@@ -34,7 +34,7 @@ namespace Entities.Configuration
                     Id = 1,
                     DestinationId = 1,
                     SenderId = 1,
-                    Status = Enums.Statuses.PROCESSING,
+                    Status = Enums.EStatuses.PROCESSING,
                 }
             );
         }

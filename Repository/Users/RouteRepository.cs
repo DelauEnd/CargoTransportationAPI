@@ -15,15 +15,15 @@ namespace Repository.Users
 
         }
 
-        public Route GetRouteById(int Id, bool TrackChanges)
-            => FindByCondition(Route => Route.Id == Id, TrackChanges)
-            .Include(Route => Route.Cargoes).ThenInclude(Cargo => Cargo.Category)
-            .Include(Route => Route.Transport)
+        public Route GetRouteById(int id, bool trackChanges)
+            => FindByCondition(route => route.Id == id, trackChanges)
+            .Include(route => route.Cargoes).ThenInclude(cargo => cargo.Category)
+            .Include(route => route.Transport)
             .SingleOrDefault();
 
         public IEnumerable<Route> GetAllRoutes(bool trackChanges)
             => FindAll(trackChanges)
-            .Include(Route => Route.Transport)
+            .Include(route => route.Transport)
             .ToList();
 
         public void CreateRoute(Route route)

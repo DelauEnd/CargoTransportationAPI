@@ -8,9 +8,9 @@ namespace Contracts
 {
     public interface ITransportRepository
     {
-        IEnumerable<Transport> GetAllTransport(bool TrackChanges);
-        Transport GetTransportById(int id, bool TrackChanges);
-        Transport GetTransportByRegistrationNumber(string number, bool TrackChanges);
+        IEnumerable<Transport> GetAllTransport(bool trackChanges);
+        Transport GetTransportById(int id, bool trackChanges);
+        Transport GetTransportByRegistrationNumber(string number, bool trackChanges);
         void CreateTransport(Transport transport);
     }
 }

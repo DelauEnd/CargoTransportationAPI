@@ -61,7 +61,7 @@ namespace CargoTransportationAPI.Controllers
                 return SendedIsNull(logError: true);
 
             var addableTransport = mapper.Map<Transport>(transport);
-            AddTransport(addableTransport);
+            CreateTransport(addableTransport);
 
             var transportToReturn = mapper.Map<TransportDto>(addableTransport);
             return TransportAdded(transportToReturn);
@@ -75,7 +75,7 @@ namespace CargoTransportationAPI.Controllers
             return BadRequest(message);
         }
 
-        private void AddTransport(Transport transport)
+        private void CreateTransport(Transport transport)
         {
             repository.Transports.CreateTransport(transport);
             repository.Save();
@@ -83,7 +83,7 @@ namespace CargoTransportationAPI.Controllers
 
         private IActionResult TransportAdded(TransportDto transport)
         {
-            return CreatedAtRoute("GetTransportByRegistrationNumber", new { id = transport.RegistrationNumber }, transport);
+            return CreatedAtRoute("GetTransportById", new { id = transport.Id }, transport);
         }
     }
 }

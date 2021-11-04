@@ -17,16 +17,16 @@ namespace Repository.Users
         public void CreateTransport(Transport transport)
             => Create(transport);
 
-        public IEnumerable<Transport> GetAllTransport(bool TrackChanges)
-            => FindAll(TrackChanges)
+        public IEnumerable<Transport> GetAllTransport(bool trackChanges)
+            => FindAll(trackChanges)
             .ToList();
 
-        public Transport GetTransportById(int id, bool TrackChanges)
-            => FindByCondition(Transport => Transport.Id == id, TrackChanges)
+        public Transport GetTransportById(int id, bool trackChanges)
+            => FindByCondition(transport => transport.Id == id, trackChanges)
             .SingleOrDefault();
 
-        public Transport GetTransportByRegistrationNumber(string number, bool TrackChanges)
-        => FindByCondition(Transport => Transport.RegistrationNumber == number, TrackChanges)
+        public Transport GetTransportByRegistrationNumber(string number, bool trackChanges)
+        => FindByCondition(transport => transport.RegistrationNumber == number, trackChanges)
             .SingleOrDefault();
     }
 }

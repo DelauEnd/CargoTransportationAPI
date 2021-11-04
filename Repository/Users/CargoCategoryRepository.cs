@@ -3,6 +3,7 @@ using Entities;
 using Entities.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Repository.Users
@@ -14,5 +15,10 @@ namespace Repository.Users
         {
 
         }
+
+        public CargoCategory GetCategoryByCargoId(int id, bool trackChanges)
+            => FindByCondition(category => 
+            category.Cargoes.Where(cargo => cargo.Id == id).Any(), trackChanges)
+            .SingleOrDefault();
     }
 }

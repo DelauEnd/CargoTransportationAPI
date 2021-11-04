@@ -3,6 +3,7 @@ using CargoTransportationAPI.Controllers;
 using Contracts;
 using Entities;
 using Entities.DataTransferObjects;
+using Entities.Enums;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,16 +16,38 @@ namespace CargoTransportationAPI
         public MappingProfile()
         {
             CreateTransportMaps();
-            CreateOrderMap();
+            CreateCargoMap();
             CreateRouteMaps();
+            CreateOrderMaps();
         }
 
-        private void CreateOrderMap()
+        private void CreateOrderMaps()
+        {
+            CreateMap<Order, OrderDto>()
+                .ForMember(orderDto => orderDto.Sender, option => 
+                option.MapFrom(order => order.Sender.Address))
+                .ForMember(orderDto => orderDto.Destination, option => 
+                option.MapFrom(order => order.Destination.Address));
+
+            CreateMap<Order, OrderWithCargoesDto>()
+                .ForMember(orderDto => orderDto.Sender, option =>
+                option.MapFrom(order => order.Sender.Address))
+                .ForMember(orderDto => orderDto.Destination, option =>
+                option.MapFrom(order => order.Destination.Address));
+
+            CreateMap<OrderForCreation, Order>()
+                .ForMember(order => order.Status, option =>
+                option.MapFrom(orderForCreation => EStatuses.PROCESSING));
+        }
+
+        private void CreateCargoMap()
         {
             CreateMap<Cargo, CargoDto>()
                 .ForMember(cargoDto => cargoDto.Category, option =>
                 option.MapFrom(cargo =>
                 cargo.Category.Title));
+
+            CreateMap<CargoForCreation, Cargo>();
         }
 
         private void CreateTransportMaps()
