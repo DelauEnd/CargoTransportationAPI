@@ -23,9 +23,26 @@ namespace Repository.Users
             Create(cargo);
         }
 
+        public Cargo GetCargoById(int id, bool trackChanges)
+            => FindByCondition(cargo => cargo.Id == id, trackChanges)
+            .Include(cargo => cargo.Category)
+            .SingleOrDefault();
+
         public IEnumerable<Cargo> GetCargoesByOrderId(int id, bool trackChanges)
             => FindByCondition(cargo => cargo.OrderId == id, trackChanges)
             .Include(cargo => cargo.Category)
             .ToList();
+
+        public IEnumerable<Cargo> GetCargoesByRouteId(int id, bool trackChanges)
+            => FindByCondition(cargo => cargo.RouteId == id, trackChanges)
+            .Include(cargo => cargo.Category)
+            .ToList();
+
+        public void MarkTheCargoToRoute(int cargoId, int routeId)
+        {
+            var route = FindByCondition(cargo => cargo.Id == cargoId, false).FirstOrDefault();
+            route.RouteId = routeId;
+            Update(route);
+        }
     }
 }

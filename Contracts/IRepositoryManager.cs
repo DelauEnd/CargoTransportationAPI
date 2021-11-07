@@ -13,5 +13,6 @@ namespace Contracts
         IRouteRepository Routes { get; }
         ITransportRepository Transports { get; }
         void Save();
+        void ClearTrackers();
     }
 }

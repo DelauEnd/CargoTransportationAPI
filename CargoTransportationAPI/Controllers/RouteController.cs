@@ -33,13 +33,13 @@ namespace CargoTransportationAPI.Controllers
             return Ok(routeDto);
         }
 
-        [HttpGet("{Id}", Name = "GetRouteWithCargoesById")]
-        public IActionResult GetRouteWithCargoesById(int Id)
+        [HttpGet("{id}", Name = "GetRouteById")]
+        public IActionResult GetRouteById(int id)
         {
-            var route = repository.Routes.GetRouteById(Id, false);
+            var route = repository.Routes.GetRouteById(id, false);
             if (route == null)
                 return NotFound(logInfo: true);
-            var routeDto = mapper.Map<RouteWithCargoesDto>(route);
+            var routeDto = mapper.Map<RouteDto>(route);
 
             return Ok(routeDto);
         }
@@ -76,7 +76,7 @@ namespace CargoTransportationAPI.Controllers
 
         private Route RouteForCreationToRoute(RouteForCreation routeForCreation)
         {
-            var transport = repository.Transports.GetTransportByRegistrationNumber(routeForCreation.TransportRegistrationNumber,false);
+            var transport = repository.Transports.GetTransportByRegistrationNumber(routeForCreation.TransportRegistrationNumber, false);
             Route route = new Route
             {
                 TransportId = transport.Id,
@@ -99,7 +99,55 @@ namespace CargoTransportationAPI.Controllers
 
         private IActionResult RouteAdded(RouteDto route)
         {
-            return CreatedAtRoute("GetRouteWithCargoesById", new { id = route.Id }, route); ;
+            return CreatedAtRoute("GetRouteById", new { id = route.Id }, route); ;
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteRouteById(int id)
+        {
+            var route = repository.Routes.GetRouteById(id, true);
+            if (route == null)
+                return NotFound(logInfo: true);
+
+            DeleteRoute(route);
+
+            return NoContent();
+        }
+
+        private void DeleteRoute(Route route)
+        {
+            repository.Routes.DeleteRoute(route);
+            repository.Save();
+        }
+
+        [HttpGet("{id}/Cargoes")]
+        public IActionResult GetCargoesByRouteId(int id)
+        {
+            var cargoes = repository.Cargoes.GetCargoesByRouteId(id, false);
+
+            var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
+
+            return Ok(cargoesDto);
+        }
+
+        [HttpPut("{routeId}/Cargoes/MarkCargo")]
+        public IActionResult MarkCargoToRoute(int routeId, int cargoId)
+        {
+            if (repository.Routes.GetRouteById(routeId, false) == null)
+                return NotFound(false);
+
+            if (repository.Cargoes.GetCargoById(cargoId, false) == null)
+                return BadRequest();
+
+            MarkTheCargoToRoute(routeId, cargoId);
+
+            return Ok();
+        }
+
+        private void MarkTheCargoToRoute(int routeId, int cargoId)
+        {
+            repository.Cargoes.MarkTheCargoToRoute(cargoId, routeId);
+            repository.Save();
         }
     }
 }

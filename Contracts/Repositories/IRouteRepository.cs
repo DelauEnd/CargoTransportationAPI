@@ -10,5 +10,6 @@ namespace Contracts
         Route GetRouteById(int Id, bool trackChanges);
         IEnumerable<Route> GetAllRoutes(bool trackChanges);
         void CreateRoute(Route route);
+        void DeleteRoute(Route route);
     }
 }

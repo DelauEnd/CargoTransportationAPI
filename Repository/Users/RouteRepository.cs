@@ -4,6 +4,7 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Repository.Users
 {
@@ -28,5 +29,8 @@ namespace Repository.Users
 
         public void CreateRoute(Route route)
             => Create(route);
+
+        public void DeleteRoute(Route route)
+            => Delete(route);
     }
 }

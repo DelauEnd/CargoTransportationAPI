@@ -77,6 +77,11 @@ namespace Repository
             }
         }
 
-        public void Save() => repositoryContext.SaveChanges();
+        public void ClearTrackers()
+            => repositoryContext.ChangeTracker.Clear();
+
+        public void Save() 
+            => repositoryContext.SaveChanges();
+
     }
 }
