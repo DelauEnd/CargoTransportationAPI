@@ -17,7 +17,7 @@ namespace CargoTransportationAPI.Extensions
         {
             app.UseExceptionHandler(appError => appError.Run
             (
-                async context => context.ContextConfigure(logger)
+                context => Task.Run(() => context.ContextConfigure(logger))
             ));
         }
 

@@ -12,5 +12,8 @@ namespace Contracts
         void CreateCargoForOrder(Cargo cargo, int OrderId);
         void MarkTheCargoToRoute(int cargoId, int routeId);
         Cargo GetCargoById(int cargoId, bool trackChanges);
+        void DeleteCargo(Cargo cargo);
+        void UnmarkTheCargoFromRoute(int id);
+        IEnumerable<Cargo> GetAllCargoes(bool trackChanges);
     }
 }

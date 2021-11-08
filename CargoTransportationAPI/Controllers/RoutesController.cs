@@ -10,13 +10,13 @@ namespace CargoTransportationAPI.Controllers
 {
     [Route("api/Routes")]
     [ApiController]
-    public class RouteController : ControllerBase
+    public class RoutesController : ControllerBase
     {
         private readonly IRepositoryManager repository;
         private readonly ILoggerManager logger;
         private readonly IMapper mapper;
 
-        public RouteController(IRepositoryManager repositoryManager, ILoggerManager loggerManager, IMapper mapper)
+        public RoutesController(IRepositoryManager repositoryManager, ILoggerManager loggerManager, IMapper mapper)
         {
             this.repository = repositoryManager;
             this.logger = loggerManager;

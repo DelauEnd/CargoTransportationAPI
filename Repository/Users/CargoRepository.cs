@@ -23,6 +23,14 @@ namespace Repository.Users
             Create(cargo);
         }
 
+        public void DeleteCargo(Cargo cargo)
+        {
+            Delete(cargo);
+        }
+
+        public IEnumerable<Cargo> GetAllCargoes(bool trackChanges)
+         => FindAll(trackChanges).Include(cargo => cargo.Category).ToList();
+
         public Cargo GetCargoById(int id, bool trackChanges)
             => FindByCondition(cargo => cargo.Id == id, trackChanges)
             .Include(cargo => cargo.Category)
@@ -42,6 +50,13 @@ namespace Repository.Users
         {
             var route = FindByCondition(cargo => cargo.Id == cargoId, false).FirstOrDefault();
             route.RouteId = routeId;
+            Update(route);
+        }
+
+        public void UnmarkTheCargoFromRoute(int id)
+        {
+            var route = FindByCondition(cargo => cargo.Id == id, false).FirstOrDefault();
+            route.RouteId = null;
             Update(route);
         }
     }

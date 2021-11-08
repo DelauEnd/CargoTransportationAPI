@@ -141,6 +141,5 @@ namespace CargoTransportationAPI.Controllers
             }
             return cargoes;
         }
-     
     }
 }
