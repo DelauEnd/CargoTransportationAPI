@@ -3,6 +3,7 @@ using CargoTransportationAPI.Controllers;
 using Contracts;
 using Entities;
 using Entities.DataTransferObjects;
+using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Enums;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
@@ -16,9 +17,25 @@ namespace CargoTransportationAPI
         public MappingProfile()
         {
             CreateTransportMaps();
-            CreateCargoMap();
+            CreateCargoMaps();
             CreateRouteMaps();
             CreateOrderMaps();
+            CreateCustomerMaps();
+            CreateCargoCategoryMaps();
+        }
+
+        private void CreateCustomerMaps()
+        {
+            CreateMap<Customer, CustomerDto>();
+
+            CreateMap<CustomerForCreation, Customer>();
+        }
+
+        private void CreateCargoCategoryMaps()
+        {
+            CreateMap<CargoCategory, CargoCategoryDto>();
+
+            CreateMap<CategoryForCreation, CargoCategory>();
         }
 
         private void CreateOrderMaps()
@@ -40,12 +57,14 @@ namespace CargoTransportationAPI
                 option.MapFrom(orderForCreation => EStatuses.PROCESSING));
         }
 
-        private void CreateCargoMap()
+        private void CreateCargoMaps()
         {
             CreateMap<Cargo, CargoDto>()
                 .ForMember(cargoDto => cargoDto.Category, option =>
                 option.MapFrom(cargo =>
                 cargo.Category.Title));
+
+            CreateMap<CargoForUpdate, Cargo>();
 
             CreateMap<CargoForCreation, Cargo>();
         }

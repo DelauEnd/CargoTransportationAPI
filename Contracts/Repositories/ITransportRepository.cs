@@ -12,5 +12,6 @@ namespace Contracts
         Transport GetTransportById(int id, bool trackChanges);
         Transport GetTransportByRegistrationNumber(string number, bool trackChanges);
         void CreateTransport(Transport transport);
+        void DeleteTransport(Transport transport);
     }
 }

@@ -14,6 +14,21 @@ namespace Repository.Users
 
         }
 
+        public void CreateCustomer(Customer customer)
+            => Create(customer);
+
+        public void DeleteCustomer(Customer customer)
+            => Delete(customer);
+
+        public IEnumerable<Customer> GetAllCustomers(bool trackChangess)
+            => FindAll(trackChangess)
+            .ToList();
+
+        public Customer GetCustomerById(int id, bool trackChanges)
+            => FindByCondition(destination =>
+            destination.Id == id, trackChanges)
+            .SingleOrDefault();
+
         public Customer GetDestinationByOrderId(int id, bool trackChanges)
             => FindByCondition(destination => 
             destination.OrderDestination.Where(order => order.Id == id).Any() , trackChanges)

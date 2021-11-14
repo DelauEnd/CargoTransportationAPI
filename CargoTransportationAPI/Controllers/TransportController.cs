@@ -25,10 +25,28 @@ namespace CargoTransportationAPI.Controllers
             this.mapper = mapper;
         }
 
+        [HttpDelete("{id}")]
+        public IActionResult DeleteTransportById(int id)
+        {
+            var transport = repository.Transport.GetTransportById(id, true);
+            if (transport == null)
+                return NotFound(logInfo: true);
+
+            DeleteTransport(transport);
+
+            return NoContent();
+        }
+
+        private void DeleteTransport(Transport route)
+        {
+            repository.Transport.DeleteTransport(route);
+            repository.Save();
+        }
+
         [HttpGet]
         public IActionResult GetAllTransport()
         {
-            var transpor = repository.Transports.GetAllTransport(false);
+            var transpor = repository.Transport.GetAllTransport(false);
 
             var transportDto = mapper.Map<IEnumerable<TransportDto>>(transpor);
 
@@ -38,7 +56,7 @@ namespace CargoTransportationAPI.Controllers
         [HttpGet("{Id}", Name = "GetTransportById")]
         public IActionResult GetTransportById(int Id)
         {
-            var transport = repository.Transports.GetTransportById(Id, false);
+            var transport = repository.Transport.GetTransportById(Id, false);
             if (transport == null)
                 return NotFound(logInfo: true);
             
@@ -77,7 +95,7 @@ namespace CargoTransportationAPI.Controllers
 
         private void CreateTransport(Transport transport)
         {
-            repository.Transports.CreateTransport(transport);
+            repository.Transport.CreateTransport(transport);
             repository.Save();
         }
 

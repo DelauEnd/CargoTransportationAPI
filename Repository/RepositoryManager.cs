@@ -67,7 +67,7 @@ namespace Repository
             }
         }
 
-        public ITransportRepository Transports
+        public ITransportRepository Transport
         {
             get
             {

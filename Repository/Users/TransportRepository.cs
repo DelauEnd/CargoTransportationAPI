@@ -17,6 +17,9 @@ namespace Repository.Users
         public void CreateTransport(Transport transport)
             => Create(transport);
 
+        public void DeleteTransport(Transport transport)
+            => Delete(transport);
+
         public IEnumerable<Transport> GetAllTransport(bool trackChanges)
             => FindAll(trackChanges)
             .ToList();

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
+using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,17 @@ namespace CargoTransportationAPI.Controllers
             return Ok(cargoesDto);
         }
 
+        [HttpGet("{Id}")]
+        public IActionResult GetCargoById(int id)
+        {
+            var cargo = repository.Cargoes.GetCargoById(id, false);
+            if (cargo == null)
+                return NotFound(logInfo: true);
+
+            var cargoDto = mapper.Map<CargoDto>(cargo);
+            return Ok(cargoDto);
+        }
+
         [HttpDelete("{id}")]
         public IActionResult DeleteCargoById(int id)
         {
@@ -60,23 +72,6 @@ namespace CargoTransportationAPI.Controllers
         private void DeleteCargo(Cargo cargo)
         {
             repository.Cargoes.DeleteCargo(cargo);
-            repository.Save();
-        }
-
-        [HttpPut("UnmarkCargo")]
-        public IActionResult UnmarkCargoFromRoute(int cargoId)
-        {
-            if (repository.Cargoes.GetCargoById(cargoId, false) == null)
-                return NotFound(true);
-
-            UnmarkTheCargoFromRoute(cargoId);
-
-            return Ok();
-        }
-
-        private void UnmarkTheCargoFromRoute(int id)
-        {
-            repository.Cargoes.UnmarkTheCargoFromRoute(id);
             repository.Save();
         }
     }

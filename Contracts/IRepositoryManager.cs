@@ -11,7 +11,7 @@ namespace Contracts
         ICustomerRepository Customers { get; }
         IOrderRepository Orders { get; }
         IRouteRepository Routes { get; }
-        ITransportRepository Transports { get; }
+        ITransportRepository Transport { get; }
         void Save();
         void ClearTrackers();
     }

@@ -18,6 +18,9 @@ namespace Repository.Users
         public void CreateOrder(Order order)
             => Create(order);
 
+        public void DeleteOrder(Order order)
+            => Delete(order);
+
         public IEnumerable<Order> GetAllOrders(bool trackChanges)
             => FindAll(trackChanges)
             .Include(route => route.Destination).Include(route => route.Sender)

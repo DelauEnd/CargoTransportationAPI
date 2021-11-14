@@ -10,5 +10,6 @@ namespace Contracts
         Order GetOrderById(int Id, bool trackChanges);
         IEnumerable<Order> GetAllOrders(bool trackChanges);
         void CreateOrder(Order order);
+        void DeleteOrder(Order order);
     }
 }

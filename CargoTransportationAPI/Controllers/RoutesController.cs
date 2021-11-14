@@ -76,7 +76,7 @@ namespace CargoTransportationAPI.Controllers
 
         private Route RouteForCreationToRoute(RouteForCreation routeForCreation)
         {
-            var transport = repository.Transports.GetTransportByRegistrationNumber(routeForCreation.TransportRegistrationNumber, false);
+            var transport = repository.Transport.GetTransportByRegistrationNumber(routeForCreation.TransportRegistrationNumber, false);
             Route route = new Route
             {
                 TransportId = transport.Id,
@@ -92,7 +92,7 @@ namespace CargoTransportationAPI.Controllers
 
         private RouteDto GetRouteToReturn(Route addableRoute)
         {
-            var transport = repository.Transports.GetTransportById(addableRoute.TransportId, false);
+            var transport = repository.Transport.GetTransportById(addableRoute.TransportId, false);
             addableRoute.Transport = transport;
             return mapper.Map<RouteDto>(addableRoute);
         }
@@ -130,7 +130,7 @@ namespace CargoTransportationAPI.Controllers
             return Ok(cargoesDto);
         }
 
-        [HttpPut("{routeId}/Cargoes/MarkCargo")]
+        [HttpPost("{routeId}/Cargoes/MarkCargo")]
         public IActionResult MarkCargoToRoute(int routeId, int cargoId)
         {
             if (repository.Routes.GetRouteById(routeId, false) == null)

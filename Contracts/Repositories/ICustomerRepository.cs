@@ -9,5 +9,9 @@ namespace Contracts
     {
         Customer GetSenderByOrderId(int id, bool trackChanges);
         Customer GetDestinationByOrderId(int id, bool trackChanges);
+        IEnumerable<Customer> GetAllCustomers(bool trackChangess);
+        Customer GetCustomerById(int id, bool trackChanges);
+        void CreateCustomer(Customer customer);
+        void DeleteCustomer(Customer customer);
     }
 }

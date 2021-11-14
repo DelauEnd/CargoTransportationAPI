@@ -26,6 +26,24 @@ namespace CargoTransportationAPI.Controllers
             this.mapper = mapper;
         }
 
+        [HttpDelete("{id}")]
+        public IActionResult DeleteOrderById(int id)
+        {
+            var order = repository.Orders.GetOrderById(id, true);
+            if (order == null)
+                return NotFound(logInfo: true);
+
+            DeleteOrder(order);
+
+            return NoContent();
+        }
+
+        private void DeleteOrder(Order order)
+        {
+            repository.Orders.DeleteOrder(order);
+            repository.Save();
+        }
+
         [HttpGet]
         public IActionResult GetAllOrders()
         {
@@ -37,9 +55,9 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{Id}", Name = "GetOrderById")]
-        public IActionResult GetOrderById(int Id)
+        public IActionResult GetOrderById(int id)
         {
-            var order = repository.Orders.GetOrderById(Id, false);
+            var order = repository.Orders.GetOrderById(id, false);
             if (order == null)
                 return NotFound(logInfo: true);
 
@@ -104,6 +122,17 @@ namespace CargoTransportationAPI.Controllers
         private IActionResult OrderAdded(OrderWithCargoesDto order)
         {
             return CreatedAtRoute("GetOrderById", new { id = order.Id }, order);
+        }
+
+        [HttpGet("{id}/Cargoes")]
+        public IActionResult GetCargoesByRouteId([FromRoute]int id)
+        {
+            var cargoes = repository.Cargoes.GetCargoesByOrderId(id, false);
+            if (cargoes == null)
+                return NotFound(logInfo: true);
+
+            var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
+            return Ok(cargoesDto);
         }
 
         [HttpPost("{id}/Cargoes")]
