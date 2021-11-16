@@ -55,6 +55,9 @@ namespace CargoTransportationAPI.Controllers
             if (order == null)
                 return SendedIsNull(logError: true, nameof(order));
 
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(true, nameof(order));
+
             var addableOrder = mapper.Map<Order>(order);
             CreateOrder(addableOrder);
 
@@ -78,6 +81,9 @@ namespace CargoTransportationAPI.Controllers
         {
             if (cargoes == null)
                 return SendedIsNull(logError: true, nameof(cargoes));
+
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(true, nameof(cargoes));
 
             var addableCargoes = mapper.Map<IEnumerable<Cargo>>(cargoes);
             CreateCargoes(addableCargoes, id);
@@ -117,8 +123,27 @@ namespace CargoTransportationAPI.Controllers
         private void PatchOrder(JsonPatchDocument<OrderForUpdate> patchDoc, Order order)
         {
             var orderToPatch = mapper.Map<OrderForUpdate>(order);
-            patchDoc.ApplyTo(orderToPatch);
+            patchDoc.ApplyTo(orderToPatch, ModelState);          
+
+            TryToValidate(orderToPatch);
+
             mapper.Map(orderToPatch, order);
+        }
+
+        private void TryToValidate(OrderForUpdate orderToPatch)
+        {
+            TryValidateModel(orderToPatch);
+            if (!ModelState.IsValid)
+                throw new Exception("InvalidModelState");
+        }
+
+        private IActionResult UnprocessableEntity(bool logInfo, string objName)
+        {
+            var message = $"Object({objName}) has incorrect state";
+            if (logInfo)
+                logger.LogInfo(message);
+
+            return UnprocessableEntity(ModelState);
         }
 
         private IActionResult NotFound(bool logInfo, string objName)

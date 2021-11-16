@@ -3,6 +3,7 @@ using Contracts;
 using Entities;
 using LoggerService;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,11 +41,17 @@ namespace CargoTransportationAPI.Extensions
 
         public static void ConfigureFormatters(this IMvcBuilder builder)
             => builder
-            .AddXmlDataContractSerializerFormatters()
             .AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             })
+            .AddXmlDataContractSerializerFormatters()
             .AddMvcOptions(config => config.OutputFormatters.Add(new CsvOutputFormatter()));
+        public static void ConfigureApiBehaviorOptions(this IServiceCollection services)
+            => services
+            .Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
     }
 }

@@ -55,6 +55,9 @@ namespace CargoTransportationAPI.Controllers
             if (customer == null)
                 return SendedIsNull(logError: true, nameof(customer));
 
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(true, nameof(customer));
+
             var addableCustomer = mapper.Map<Customer>(customer);
             CreateCustomer(addableCustomer);
 
@@ -93,8 +96,27 @@ namespace CargoTransportationAPI.Controllers
         private void PatchCustomer(JsonPatchDocument<CustomerForUpdate> patchDoc, Customer customer)
         {
             var customerToPatch = mapper.Map<CustomerForUpdate>(customer);
-            patchDoc.ApplyTo(customerToPatch);
+            patchDoc.ApplyTo(customerToPatch, ModelState);
+
+            TryToValidate(customerToPatch);
+
             mapper.Map(customerToPatch, customer);
+        }
+
+        private void TryToValidate(CustomerForUpdate orderToPatch)
+        {
+            TryValidateModel(orderToPatch);
+            if (!ModelState.IsValid)
+                throw new Exception("InvalidModelState");
+        }
+
+        private IActionResult UnprocessableEntity(bool logInfo, string objName)
+        {
+            var message = $"Object({objName}) has incorrect state";
+            if (logInfo)
+                logger.LogInfo(message);
+
+            return UnprocessableEntity(ModelState);
         }
 
         private IActionResult NotFound(bool logInfo, string objName)

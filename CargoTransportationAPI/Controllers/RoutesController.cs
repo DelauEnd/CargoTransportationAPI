@@ -51,6 +51,9 @@ namespace CargoTransportationAPI.Controllers
             if (route == null)
                 return SendedIsNull(logError: true, nameof(route));
 
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(true, nameof(route));
+
             Route addableRoute = RouteForCreationToRoute(route);
             CreateRoute(addableRoute);
 
@@ -76,20 +79,18 @@ namespace CargoTransportationAPI.Controllers
             if (route == null)
                 return SendedIsNull(true, nameof(route));
 
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(true, nameof(route));
+
             var routeToUpdate = repository.Routes.GetRouteById(id, true);
             if (routeToUpdate == null)
                 return NotFound(true, nameof(routeToUpdate));
+
 
             UpdateRoute(route, routeToUpdate);
             repository.Save();
 
             return NoContent();
-        }
-
-        private void UpdateRoute(RouteForUpdate route, Route routeToUpdate)
-        {
-            var transport = repository.Transport.GetTransportByRegistrationNumber(route.TransportRegistrationNumber, false);         
-            routeToUpdate.TransportId = transport.Id;
         }
 
         [HttpGet("{id}/Cargoes")]
@@ -125,6 +126,15 @@ namespace CargoTransportationAPI.Controllers
             return NotFound();
         }
 
+        private IActionResult UnprocessableEntity(bool logInfo, string objName)
+        {
+            var message = $"Object({objName}) has incorrect state";
+            if (logInfo)
+                logger.LogInfo(message);
+
+            return UnprocessableEntity(ModelState);
+        }
+
         private IActionResult SendedIsNull(bool logError, string objName)
         {
             var message = $"Sended {objName} is null";
@@ -133,15 +143,33 @@ namespace CargoTransportationAPI.Controllers
             return BadRequest(message);
         }
 
+        private void UpdateRoute(RouteForUpdate route, Route routeToUpdate)
+        {
+            var transport = GetTransportByRegNumber(route.TransportRegistrationNumber);
+
+            routeToUpdate.TransportId = transport.Id;
+        }
+
         private Route RouteForCreationToRoute(RouteForCreation routeForCreation)
         {
-            var transport = repository.Transport.GetTransportByRegistrationNumber(routeForCreation.TransportRegistrationNumber, false);
+            var transport = GetTransportByRegNumber(routeForCreation.TransportRegistrationNumber);
+
             Route route = new Route
             {
                 TransportId = transport.Id,
             };
             return route;
         }
+
+        private Transport GetTransportByRegNumber(string number)
+        {
+            var transport = repository.Transport.GetTransportByRegistrationNumber(number, false);
+            if (transport == null)
+                throw new Exception($"Transport with registration number {number} not exist");
+            return transport;
+        }
+
+        
 
         private void CreateRoute(Route route)
         {

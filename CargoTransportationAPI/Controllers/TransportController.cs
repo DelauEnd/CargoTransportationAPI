@@ -54,6 +54,9 @@ namespace CargoTransportationAPI.Controllers
             if (transport == null)
                 return SendedIsNull(logError: true, nameof(transport));
 
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(true, nameof(transport));
+
             var addableTransport = mapper.Map<Transport>(transport);
             CreateTransport(addableTransport);
 
@@ -83,6 +86,7 @@ namespace CargoTransportationAPI.Controllers
             if (transport == null)
                 return NotFound(true, nameof(transport));
 
+
             PatchTransport(patchDoc, transport);
             repository.Save();
 
@@ -92,8 +96,18 @@ namespace CargoTransportationAPI.Controllers
         private void PatchTransport(JsonPatchDocument<TransportForUpdate> patchDoc, Transport transport)
         {
             var orderToPatch = mapper.Map<TransportForUpdate>(transport);
-            patchDoc.ApplyTo(orderToPatch);
+            patchDoc.ApplyTo(orderToPatch, ModelState);
+
+            TryToValidate(orderToPatch);
+
             mapper.Map(orderToPatch, transport);
+        }
+
+        private void TryToValidate(TransportForUpdate transportToPatch)
+        {
+            TryValidateModel(transportToPatch);
+            if (!ModelState.IsValid)
+                throw new Exception("InvalidModelState");
         }
 
         private IActionResult NotFound(bool logInfo, string objName)
@@ -102,6 +116,15 @@ namespace CargoTransportationAPI.Controllers
             if (logInfo)
                 logger.LogInfo(message);
             return NotFound();
+        }
+
+        private IActionResult UnprocessableEntity(bool logInfo, string objName)
+        {
+            var message = $"Object({objName}) has incorrect state";
+            if (logInfo)
+                logger.LogInfo(message);
+
+            return UnprocessableEntity(ModelState);
         }
 
         private void DeleteTransport(Transport route)

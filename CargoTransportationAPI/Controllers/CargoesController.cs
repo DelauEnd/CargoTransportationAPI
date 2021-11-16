@@ -81,8 +81,18 @@ namespace CargoTransportationAPI.Controllers
         private void PatchCargo(JsonPatchDocument<CargoForUpdate> patchDoc, Cargo cargo)
         {
             var cargoToPatch = mapper.Map<CargoForUpdate>(cargo);
-            patchDoc.ApplyTo(cargoToPatch);
+            patchDoc.ApplyTo(cargoToPatch, ModelState);
+
+            TryToValidate(cargoToPatch);
+
             mapper.Map(cargoToPatch, cargo);
+        }
+
+        private void TryToValidate(CargoForUpdate cargoToPatch)
+        {
+            TryValidateModel(cargoToPatch);
+            if (!ModelState.IsValid)
+                throw new Exception("InvalidModelState");
         }
 
         private IActionResult SendedIsNull(bool logError, string objName)

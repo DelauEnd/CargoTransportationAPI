@@ -44,6 +44,9 @@ namespace CargoTransportationAPI.Controllers
             if (category == null)
                 return SendedIsNull(logError: true, nameof(category));
 
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(true, nameof(category));
+
             CargoCategory addableCategory = mapper.Map<CargoCategory>(category);
             CreateCategory(addableCategory);
 
@@ -70,6 +73,9 @@ namespace CargoTransportationAPI.Controllers
             if (category == null)
                 return SendedIsNull(true, nameof(category));
 
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(true, nameof(category));
+
             var categoryToUpdate = repository.CargoCategories.GetCategoryById(id, true);
             if (categoryToUpdate == null)
                 return NotFound(true, nameof(categoryToUpdate));
@@ -88,6 +94,15 @@ namespace CargoTransportationAPI.Controllers
             return BadRequest(message);
         }
 
+        private IActionResult UnprocessableEntity(bool logInfo, string objName)
+        {
+            var message = $"Object({objName}) has incorrect state";
+            if (logInfo)
+                logger.LogInfo(message);
+
+            return UnprocessableEntity(ModelState);
+        }
+
         private void CreateCategory(CargoCategory category)
         {
             repository.CargoCategories.CreateCategory(category);
@@ -97,9 +112,9 @@ namespace CargoTransportationAPI.Controllers
         private IActionResult NotFound(bool logInfo, string objName)
         {
             var message = $"The desired object({objName}) was not found";
-            if (logInfo)
+            if (logInfo) 
                 logger.LogInfo(message);
-
+             
             return NotFound();
         }
 

@@ -36,6 +36,7 @@ namespace CargoTransportationAPI
             services.ConfigureLoggerService();
             services.ConfigureSqlContext(configuration);
             services.ConfigureRepositoryManager();
+            services.ConfigureApiBehaviorOptions();
 
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers(config =>
