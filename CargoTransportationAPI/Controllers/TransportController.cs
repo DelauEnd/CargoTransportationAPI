@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Controllers
 {
@@ -17,9 +18,9 @@ namespace CargoTransportationAPI.Controllers
     public class TransportController : ExtendedControllerBase
     {
         [HttpGet]
-        public IActionResult GetAllTransport()
+        public async Task<IActionResult> GetAllTransport()
         {
-            var transpor = repository.Transport.GetAllTransport(false);
+            var transpor = await repository.Transport.GetAllTransportAsync(false);
 
             var transportDto = mapper.Map<IEnumerable<TransportDto>>(transpor);
 
@@ -27,9 +28,9 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{Id}", Name = "GetTransportById")]
-        public IActionResult GetTransportById(int Id)
+        public async Task<IActionResult> GetTransportById(int Id)
         {
-            var transport = repository.Transport.GetTransportById(Id, false);
+            var transport = await repository.Transport.GetTransportByIdAsync(Id, false);
             if (transport == null)
                 return NotFound(logInfo: true, nameof(transport));
             
@@ -38,7 +39,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddTransport([FromBody]TransportForCreation transport)
+        public async Task<IActionResult> AddTransportAsync([FromBody]TransportForCreation transport)
         {
             if (transport == null)
                 return SendedIsNull(logError: true, nameof(transport));
@@ -47,37 +48,37 @@ namespace CargoTransportationAPI.Controllers
                 return UnprocessableEntity(true, nameof(transport));
 
             var addableTransport = mapper.Map<Transport>(transport);
-            CreateTransport(addableTransport);
+            await CreateTransportAsync(addableTransport);
 
             var transportToReturn = mapper.Map<TransportDto>(addableTransport);
             return TransportAdded(transportToReturn);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteTransportById(int id)
+        public async Task<IActionResult> DeleteTransportById(int id)
         {
-            var transport = repository.Transport.GetTransportById(id, true);
+            var transport = await repository.Transport.GetTransportByIdAsync(id, true);
             if (transport == null)
                 return NotFound(logInfo: true, nameof(transport));
 
-            DeleteTransport(transport);
+            await DeleteTransportAsync(transport);
 
             return NoContent();
         }
 
         [HttpPatch("{id}")]
-        public IActionResult PartiallyUpdateTransportById(int id, [FromBody]JsonPatchDocument<TransportForUpdate> patchDoc)
+        public async Task<IActionResult> PartiallyUpdateTransportById(int id, [FromBody]JsonPatchDocument<TransportForUpdate> patchDoc)
         {
             if (patchDoc == null)
                 return SendedIsNull(true, nameof(patchDoc));
 
-            var transport = repository.Transport.GetTransportById(id, true);
+            var transport = await repository.Transport.GetTransportByIdAsync(id, true);
             if (transport == null)
                 return NotFound(true, nameof(transport));
 
 
             PatchTransport(patchDoc, transport);
-            repository.Save();
+            await repository.SaveAsync();
 
             return NoContent();
         }
@@ -99,16 +100,16 @@ namespace CargoTransportationAPI.Controllers
                 throw new Exception("InvalidModelState");
         }
 
-        private void DeleteTransport(Transport route)
+        private async Task DeleteTransportAsync(Transport route)
         {
             repository.Transport.DeleteTransport(route);
-            repository.Save();
+            await repository.SaveAsync();
         }
 
-        private void CreateTransport(Transport transport)
+        private async Task CreateTransportAsync(Transport transport)
         {
             repository.Transport.CreateTransport(transport);
-            repository.Save();
+            await repository.SaveAsync();
         }
 
         private IActionResult TransportAdded(TransportDto transport)

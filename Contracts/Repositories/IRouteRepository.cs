@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Contracts
 {
     public interface IRouteRepository
     {
-        Route GetRouteById(int Id, bool trackChanges);
-        IEnumerable<Route> GetAllRoutes(bool trackChanges);
+        Task<Route> GetRouteByIdAsync(int Id, bool trackChanges);
+        Task<IEnumerable<Route>> GetAllRoutesAsync(bool trackChanges);
         void CreateRoute(Route route);
         void DeleteRoute(Route route);
     }

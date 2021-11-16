@@ -18,9 +18,9 @@ namespace CargoTransportationAPI.Controllers
     public class CargoCategoriesController : ExtendedControllerBase
     {
         [HttpGet]
-        public IActionResult GetAllCategories()
+        public async Task<IActionResult> GetAllCategories()
         {
-            var categories = repository.CargoCategories.GetAllCategories(false);
+            var categories = await repository.CargoCategories.GetAllCategoriesAsync(false);
 
             var categoriesDto = mapper.Map<IEnumerable<CargoCategoryDto>>(categories);
 
@@ -28,7 +28,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCategory([FromBody]CategoryForCreation category)
+        public async Task<IActionResult> AddCategory([FromBody]CategoryForCreation category)
         {
             if (category == null)
                 return SendedIsNull(logError: true, nameof(category));
@@ -37,7 +37,7 @@ namespace CargoTransportationAPI.Controllers
                 return UnprocessableEntity(true, nameof(category));
 
             CargoCategory addableCategory = mapper.Map<CargoCategory>(category);
-            CreateCategory(addableCategory);
+            await CreateCategoryAsync(addableCategory);
 
             var categoryToReturn = mapper.Map<CargoCategoryDto>(addableCategory);
 
@@ -45,19 +45,19 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteCategoryById(int id)
+        public async Task<IActionResult> DeleteCategoryById(int id)
         {
-            var category = repository.CargoCategories.GetCategoryById(id, true);
+            var category = await repository.CargoCategories.GetCategoryByIdAsync(id, true);
             if (category == null)
                 return NotFound(logInfo: true, nameof(category));
 
-            DeleteCategory(category);
+            await DeleteCategoryAsync(category);
 
             return NoContent();
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateCargoCategoryById(int id, CargoCategoryForUpdate category)
+        public async Task<IActionResult> UpdateCargoCategoryById(int id, CargoCategoryForUpdate category)
         {
             if (category == null)
                 return SendedIsNull(true, nameof(category));
@@ -65,26 +65,26 @@ namespace CargoTransportationAPI.Controllers
             if (!ModelState.IsValid)
                 return UnprocessableEntity(true, nameof(category));
 
-            var categoryToUpdate = repository.CargoCategories.GetCategoryById(id, true);
+            var categoryToUpdate = await repository.CargoCategories.GetCategoryByIdAsync(id, true);
             if (categoryToUpdate == null)
                 return NotFound(true, nameof(categoryToUpdate));
 
             mapper.Map(category, categoryToUpdate);
-            repository.Save();
+            await repository.SaveAsync();
 
             return NoContent();
         }
 
-        private void CreateCategory(CargoCategory category)
+        private async Task CreateCategoryAsync(CargoCategory category)
         {
             repository.CargoCategories.CreateCategory(category);
-            repository.Save();
+            await repository.SaveAsync();
         }
 
-        private void DeleteCategory(CargoCategory category)
+        private async Task DeleteCategoryAsync(CargoCategory category)
         {
             repository.CargoCategories.DeleteCategory(category);
-            repository.Save();
+            await repository.SaveAsync();
         }
     }
 }

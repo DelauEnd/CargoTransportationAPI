@@ -1,19 +1,17 @@
 ﻿using Entities.Models;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace Contracts
 {
     public interface ICargoRepository
     {
-        IEnumerable<Cargo> GetCargoesByOrderId(int id, bool trackChanges);
-        IEnumerable<Cargo> GetCargoesByRouteId(int id, bool trackChanges);
+        Task<IEnumerable<Cargo>> GetCargoesByOrderIdAsync(int id, bool trackChanges);
+        Task<IEnumerable<Cargo>> GetCargoesByRouteIdAsync(int id, bool trackChanges);
         void CreateCargoForOrder(Cargo cargo, int OrderId);
-        void MarkTheCargoToRoute(int cargoId, int routeId);
-        Cargo GetCargoById(int cargoId, bool trackChanges);
+        Task MarkTheCargoToRouteAsync(int cargoId, int routeId);
+        Task<Cargo> GetCargoByIdAsync(int cargoId, bool trackChanges);
         void DeleteCargo(Cargo cargo);
-        void UnmarkTheCargoFromRoute(int id);
-        IEnumerable<Cargo> GetAllCargoes(bool trackChanges);
+        Task<IEnumerable<Cargo>> GetAllCargoesAsync(bool trackChanges);
     }
 }

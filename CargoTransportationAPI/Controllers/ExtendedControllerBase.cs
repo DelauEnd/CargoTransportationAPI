@@ -5,8 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CargoTransportationAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class ExtendedControllerBase : ControllerBase
     {
         private IRepositoryManager _repository;

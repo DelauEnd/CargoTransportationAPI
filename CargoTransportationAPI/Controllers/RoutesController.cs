@@ -6,6 +6,7 @@ using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Controllers
 {
@@ -14,9 +15,9 @@ namespace CargoTransportationAPI.Controllers
     public class RoutesController : ExtendedControllerBase
     {
         [HttpGet]
-        public IActionResult GetAllRoutes()
+        public async Task<IActionResult> GetAllRoutes()
         {
-            var route = repository.Routes.GetAllRoutes(false);
+            var route = await repository.Routes.GetAllRoutesAsync(false);
 
             var routeDto = mapper.Map<IEnumerable<RouteDto>>(route);
 
@@ -24,9 +25,9 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{id}", Name = "GetRouteById")]
-        public IActionResult GetRouteById(int id)
+        public async Task<IActionResult> GetRouteById(int id)
         {
-            var route = repository.Routes.GetRouteById(id, false);
+            var route = await repository.Routes.GetRouteByIdAsync(id, false);
             if (route == null)
                 return NotFound(logInfo: true, nameof(route));
             var routeDto = mapper.Map<RouteDto>(route);
@@ -35,7 +36,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddRoute([FromBody]RouteForCreation route)
+        public async Task<IActionResult> AddRoute([FromBody]RouteForCreation route)
         {
             if (route == null)
                 return SendedIsNull(logError: true, nameof(route));
@@ -44,26 +45,26 @@ namespace CargoTransportationAPI.Controllers
                 return UnprocessableEntity(true, nameof(route));
 
             Route addableRoute = RouteForCreationToRoute(route);
-            CreateRoute(addableRoute);
+            await CreateRouteAsync(addableRoute);
 
-            var routeToReturn = GetRouteToReturn(addableRoute);
+            var routeToReturn = await GetRouteToReturnAsync(addableRoute);
             return RouteAdded(routeToReturn);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteRouteById(int id)
+        public async Task<IActionResult> DeleteRouteById(int id)
         {
-            var route = repository.Routes.GetRouteById(id, true);
+            var route = await repository.Routes.GetRouteByIdAsync(id, true);
             if (route == null)
                 return NotFound(logInfo: true, nameof(route));
 
-            DeleteRoute(route);
+            await DeleteRouteAsync(route);
 
             return NoContent();
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateRouteById(int id, RouteForUpdate route)
+        public async Task<IActionResult> UpdateRouteById(int id, RouteForUpdate route)
         {
             if (route == null)
                 return SendedIsNull(true, nameof(route));
@@ -71,21 +72,21 @@ namespace CargoTransportationAPI.Controllers
             if (!ModelState.IsValid)
                 return UnprocessableEntity(true, nameof(route));
 
-            var routeToUpdate = repository.Routes.GetRouteById(id, true);
+            var routeToUpdate = await repository.Routes.GetRouteByIdAsync(id, true);
             if (routeToUpdate == null)
                 return NotFound(true, nameof(routeToUpdate));
 
 
             UpdateRoute(route, routeToUpdate);
-            repository.Save();
+            await repository.SaveAsync();
 
             return NoContent();
         }
 
         [HttpGet("{id}/Cargoes")]
-        public IActionResult GetCargoesByRouteId(int id)
+        public async Task<IActionResult> GetCargoesByRouteId(int id)
         {
-            var cargoes = repository.Cargoes.GetCargoesByRouteId(id, false);
+            var cargoes = await repository.Cargoes.GetCargoesByRouteIdAsync(id, false);
 
             var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
 
@@ -93,29 +94,29 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpPost("{routeId}/Cargoes/MarkCargo")]
-        public IActionResult MarkCargoToRoute(int routeId, int cargoId)
+        public async Task<IActionResult> MarkCargoToRouteAsync(int routeId, int cargoId)
         {
-            if (repository.Routes.GetRouteById(routeId, false) == null)
+            if (await repository.Routes.GetRouteByIdAsync(routeId, false) == null)
                 return NotFound(false);
 
-            if (repository.Cargoes.GetCargoById(cargoId, false) == null)
+            if (await repository.Cargoes.GetCargoByIdAsync(cargoId, false) == null)
                 return BadRequest();
 
-            MarkTheCargoToRoute(routeId, cargoId);
+            await MarkTheCargoToRouteAsync(routeId, cargoId);
 
             return Ok();
         }
     
         private void UpdateRoute(RouteForUpdate route, Route routeToUpdate)
         {
-            var transport = GetTransportByRegNumber(route.TransportRegistrationNumber);
+            var transport = GetTransportByRegNumberAsync(route.TransportRegistrationNumber);
 
             routeToUpdate.TransportId = transport.Id;
         }
 
         private Route RouteForCreationToRoute(RouteForCreation routeForCreation)
         {
-            var transport = GetTransportByRegNumber(routeForCreation.TransportRegistrationNumber);
+            var transport = GetTransportByRegNumberAsync(routeForCreation.TransportRegistrationNumber);
 
             Route route = new Route
             {
@@ -124,9 +125,9 @@ namespace CargoTransportationAPI.Controllers
             return route;
         }
 
-        private Transport GetTransportByRegNumber(string number)
+        private async Task<Transport> GetTransportByRegNumberAsync(string number)
         {
-            var transport = repository.Transport.GetTransportByRegistrationNumber(number, false);
+            var transport = await repository.Transport.GetTransportByRegistrationNumberAsync(number, false);
             if (transport == null)
                 throw new Exception($"Transport with registration number {number} not exist");
             return transport;
@@ -134,15 +135,15 @@ namespace CargoTransportationAPI.Controllers
 
         
 
-        private void CreateRoute(Route route)
+        private async Task CreateRouteAsync(Route route)
         {
             repository.Routes.CreateRoute(route);
-            repository.Save();
+            await repository.SaveAsync();
         }
 
-        private RouteDto GetRouteToReturn(Route addableRoute)
+        private async Task<RouteDto> GetRouteToReturnAsync(Route addableRoute)
         {
-            var transport = repository.Transport.GetTransportById(addableRoute.TransportId, false);
+            var transport = await repository.Transport.GetTransportByIdAsync(addableRoute.TransportId, false);
             addableRoute.Transport = transport;
             return mapper.Map<RouteDto>(addableRoute);
         }
@@ -152,16 +153,16 @@ namespace CargoTransportationAPI.Controllers
             return CreatedAtRoute("GetRouteById", new { id = route.Id }, route); ;
         }
 
-        private void DeleteRoute(Route route)
+        private async Task DeleteRouteAsync(Route route)
         {
             repository.Routes.DeleteRoute(route);
-            repository.Save();
+            await repository.SaveAsync();
         }
 
-        private void MarkTheCargoToRoute(int routeId, int cargoId)
+        private async Task MarkTheCargoToRouteAsync(int routeId, int cargoId)
         {
-            repository.Cargoes.MarkTheCargoToRoute(cargoId, routeId);
-            repository.Save();
+            await repository.Cargoes.MarkTheCargoToRouteAsync(cargoId, routeId);
+            await repository.SaveAsync();
         }
     }
 }

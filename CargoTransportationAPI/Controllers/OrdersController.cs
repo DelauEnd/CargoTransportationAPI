@@ -18,9 +18,9 @@ namespace CargoTransportationAPI.Controllers
     public class OrdersController : ExtendedControllerBase
     {
         [HttpGet]
-        public IActionResult GetAllOrders()
+        public async Task<IActionResult> GetAllOrders()
         {
-            var orders = repository.Orders.GetAllOrders(false);
+            var orders = await repository.Orders.GetAllOrdersAsync(false);
 
             var ordersDto = mapper.Map<IEnumerable<OrderDto>>(orders);
 
@@ -28,9 +28,9 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{Id}", Name = "GetOrderById")]
-        public IActionResult GetOrderById(int id)
+        public async Task<IActionResult> GetOrderById(int id)
         {
-            var order = repository.Orders.GetOrderById(id, false);
+            var order = await repository.Orders.GetOrderByIdAsync(id, false);
             if (order == null)
                 return NotFound(logInfo: true, nameof(order));
 
@@ -39,7 +39,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddOrder([FromBody] OrderForCreation order)
+        public async Task<IActionResult> AddOrder([FromBody] OrderForCreation order)
         {
             if (order == null)
                 return SendedIsNull(logError: true, nameof(order));
@@ -48,16 +48,16 @@ namespace CargoTransportationAPI.Controllers
                 return UnprocessableEntity(true, nameof(order));
 
             var addableOrder = mapper.Map<Order>(order);
-            CreateOrder(addableOrder);
+            await CreateOrderAsync(addableOrder);
 
-            var orderToReturn = GetOrderToReturn(addableOrder);
+            var orderToReturn = await GetOrderToReturnAsync(addableOrder);
             return OrderAdded(orderToReturn);
         }
 
         [HttpGet("{id}/Cargoes")]
-        public IActionResult GetCargoesByRouteId([FromRoute]int id)
+        public async Task<IActionResult> GetCargoesByRouteId([FromRoute]int id)
         {
-            var cargoes = repository.Cargoes.GetCargoesByOrderId(id, false);
+            var cargoes = await repository.Cargoes.GetCargoesByOrderIdAsync(id, false);
             if (cargoes == null)
                 return NotFound(logInfo: true, nameof(cargoes));
 
@@ -66,7 +66,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpPost("{id}/Cargoes")]
-        public IActionResult AddCargoes([FromBody] IEnumerable<CargoForCreation> cargoes, [FromRoute]int id)
+        public async Task<IActionResult> AddCargoesAsync([FromBody] IEnumerable<CargoForCreation> cargoes, [FromRoute]int id)
         {
             if (cargoes == null)
                 return SendedIsNull(logError: true, nameof(cargoes));
@@ -75,36 +75,36 @@ namespace CargoTransportationAPI.Controllers
                 return UnprocessableEntity(true, nameof(cargoes));
 
             var addableCargoes = mapper.Map<IEnumerable<Cargo>>(cargoes);
-            CreateCargoes(addableCargoes, id);
+            await CreateCargoesAsync(addableCargoes, id);
 
-            var orderToReturn = GetCargoesToReturn(addableCargoes);
+            var orderToReturn = await GetCargoesToReturnAsync(addableCargoes);
             return Ok(orderToReturn);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteOrderById(int id)
+        public async Task<IActionResult> DeleteOrderById(int id)
         {
-            var order = repository.Orders.GetOrderById(id, true);
+            var order = await repository.Orders.GetOrderByIdAsync(id, true);
             if (order == null)
                 return NotFound(logInfo: true, nameof(order));
 
-            DeleteOrder(order);
+            await DeleteOrderAsync(order);
 
             return NoContent();
         }
 
         [HttpPatch("{id}")]
-        public IActionResult PartiallyUpdateOrderById(int id, [FromBody]JsonPatchDocument<OrderForUpdate> patchDoc)
+        public async Task<IActionResult> PartiallyUpdateOrderById(int id, [FromBody]JsonPatchDocument<OrderForUpdate> patchDoc)
         {
             if (patchDoc == null)
                 return SendedIsNull(true, nameof(patchDoc));
 
-            var order = repository.Orders.GetOrderById(id, true);
+            var order = await repository.Orders.GetOrderByIdAsync(id, true);
             if (order == null)
                 return NotFound(true, nameof(order));
 
             PatchOrder(patchDoc, order);
-            repository.Save();
+            await repository.SaveAsync();
 
             return NoContent();
         }
@@ -126,29 +126,29 @@ namespace CargoTransportationAPI.Controllers
                 throw new Exception("InvalidModelState");
         }
 
-        private void DeleteOrder(Order order)
+        private async Task DeleteOrderAsync(Order order)
         {
             repository.Orders.DeleteOrder(order);
-            repository.Save();
+            await repository.SaveAsync();
         }
 
-        private void CreateOrder(Order order)
+        private async Task CreateOrderAsync(Order order)
         {
             repository.Orders.CreateOrder(order);
-            repository.Save();
+            await repository.SaveAsync();
         }
 
-        private OrderWithCargoesDto GetOrderToReturn(Order addableOrder)
+        private async Task<OrderWithCargoesDto> GetOrderToReturnAsync(Order addableOrder)
         {
-            var order = IncludeData(addableOrder);
+            var order = await IncludeDataAsync(addableOrder);
             return mapper.Map<OrderWithCargoesDto>(order);
         }
 
-        private Order IncludeData(Order order)
+        private async Task<Order> IncludeDataAsync(Order order)
         {
-            var sender = repository.Customers.GetSenderByOrderId(order.Id, false);
-            var destination = repository.Customers.GetDestinationByOrderId(order.Id, false);
-            var cargoes = repository.Cargoes.GetCargoesByOrderId(order.Id, false);
+            var sender = await repository.Customers.GetSenderByOrderIdAsync(order.Id, false);
+            var destination = await repository.Customers.GetDestinationByOrderIdAsync(order.Id, false);
+            var cargoes = await repository.Cargoes.GetCargoesByOrderIdAsync(order.Id, false);
 
             order.Cargoes = cargoes.ToList();
             order.Destination = destination;
@@ -162,24 +162,24 @@ namespace CargoTransportationAPI.Controllers
             return CreatedAtRoute("GetOrderById", new { id = order.Id }, order);
         }
 
-        private void CreateCargoes(IEnumerable<Cargo> cargoes, int id)
+        private async Task CreateCargoesAsync(IEnumerable<Cargo> cargoes, int id)
         {
             foreach (var cargo in cargoes)
                 repository.Cargoes.CreateCargoForOrder(cargo, id);
-            repository.Save();
+            await repository.SaveAsync();
         }
 
-        private object GetCargoesToReturn(IEnumerable<Cargo> addableCargoes)
+        private async Task<object> GetCargoesToReturnAsync(IEnumerable<Cargo> addableCargoes)
         {
-            var cargoes = IncludeData(addableCargoes);
+            var cargoes = await IncludeDataAsync(addableCargoes);
             return mapper.Map<IEnumerable<CargoDto>>(cargoes);
         }
 
-        private IEnumerable<Cargo> IncludeData(IEnumerable<Cargo> cargoes)
+        private async Task<IEnumerable<Cargo>> IncludeDataAsync(IEnumerable<Cargo> cargoes)
         {
             foreach (var cargo in cargoes)
             {
-                var cargoCategory = repository.CargoCategories.GetCategoryByCargoId(cargo.Id, false);
+                var cargoCategory = await repository.CargoCategories.GetCategoryByCargoIdAsync(cargo.Id, false);
                 cargo.Category = cargoCategory;
             }
             return cargoes;

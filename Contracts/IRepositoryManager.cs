@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Contracts
 {
@@ -12,7 +13,7 @@ namespace Contracts
         IOrderRepository Orders { get; }
         IRouteRepository Routes { get; }
         ITransportRepository Transport { get; }
-        void Save();
+        Task SaveAsync();
         void ClearTrackers();
     }
 }

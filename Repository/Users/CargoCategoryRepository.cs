@@ -1,10 +1,12 @@
 ﻿using Contracts;
 using Entities;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Repository.Users
 {
@@ -22,18 +24,18 @@ namespace Repository.Users
         public void DeleteCategory(CargoCategory category)
             => Delete(category);
 
-        public IEnumerable<CargoCategory> GetAllCategories(bool trackChanges)
-            => FindAll(trackChanges)
-            .ToList();
+        public async Task<IEnumerable<CargoCategory>> GetAllCategoriesAsync(bool trackChanges)
+            => await FindAll(trackChanges)
+            .ToListAsync();
 
-        public CargoCategory GetCategoryByCargoId(int id, bool trackChanges)
-            => FindByCondition(category => 
-            category.Cargoes.Where(cargo => cargo.Id == id).Any(), trackChanges)
-            .SingleOrDefault();
+        public async Task<CargoCategory> GetCategoryByCargoIdAsync(int id, bool trackChanges)
+            => await FindByCondition(category =>
+             category.Cargoes.Where(cargo => cargo.Id == id).Any(), trackChanges)
+            .SingleOrDefaultAsync();
 
-        public CargoCategory GetCategoryById(int id, bool trackChanges)
-            => FindByCondition(category =>
+        public async Task<CargoCategory> GetCategoryByIdAsync(int id, bool trackChanges)
+            => await FindByCondition(category =>
             category.Id == id, trackChanges)
-            .SingleOrDefault();
+            .SingleOrDefaultAsync();
     }
 }

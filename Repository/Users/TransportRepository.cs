@@ -2,8 +2,10 @@
 using Entities;
 using Entities.DataTransferObjects;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Repository.Users
 {
@@ -20,16 +22,16 @@ namespace Repository.Users
         public void DeleteTransport(Transport transport)
             => Delete(transport);
 
-        public IEnumerable<Transport> GetAllTransport(bool trackChanges)
-            => FindAll(trackChanges)
-            .ToList();
+        public async Task<IEnumerable<Transport>> GetAllTransportAsync(bool trackChanges)
+            => await FindAll(trackChanges)
+            .ToListAsync();
 
-        public Transport GetTransportById(int id, bool trackChanges)
-            => FindByCondition(transport => transport.Id == id, trackChanges)
-            .SingleOrDefault();
+        public async Task<Transport> GetTransportByIdAsync(int id, bool trackChanges)
+            => await FindByCondition(transport => transport.Id == id, trackChanges)
+            .SingleOrDefaultAsync();
 
-        public Transport GetTransportByRegistrationNumber(string number, bool trackChanges)
-        => FindByCondition(transport => transport.RegistrationNumber == number, trackChanges)
-            .SingleOrDefault();
+        public async Task<Transport> GetTransportByRegistrationNumberAsync(string number, bool trackChanges)
+            => await FindByCondition(transport => transport.RegistrationNumber == number, trackChanges)
+            .SingleOrDefaultAsync();
     }
 }

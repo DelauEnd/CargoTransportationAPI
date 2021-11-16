@@ -16,16 +16,16 @@ namespace Repository.Users
 
         }
 
-        public Route GetRouteById(int id, bool trackChanges)
-            => FindByCondition(route => route.Id == id, trackChanges)
+        public async Task<Route> GetRouteByIdAsync(int id, bool trackChanges)
+            => await FindByCondition(route => route.Id == id, trackChanges)
             .Include(route => route.Cargoes).ThenInclude(cargo => cargo.Category)
             .Include(route => route.Transport)
-            .SingleOrDefault();
+            .SingleOrDefaultAsync();
 
-        public IEnumerable<Route> GetAllRoutes(bool trackChanges)
-            => FindAll(trackChanges)
+        public async Task<IEnumerable<Route>> GetAllRoutesAsync(bool trackChanges)
+            => await FindAll(trackChanges)
             .Include(route => route.Transport)
-            .ToList();
+            .ToListAsync();
 
         public void CreateRoute(Route route)
             => Create(route);

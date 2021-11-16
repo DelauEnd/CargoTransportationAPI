@@ -18,9 +18,9 @@ namespace CargoTransportationAPI.Controllers
     public class CustomersController : ExtendedControllerBase
     {
         [HttpGet]
-        public IActionResult GetAllCustomers()
+        public async Task<IActionResult> GetAllCustomers()
         {
-            var customers = repository.Customers.GetAllCustomers(false);
+            var customers = await repository.Customers.GetAllCustomersAsync(false);
 
             var customersDto = mapper.Map<IEnumerable<CustomerDto>>(customers);
 
@@ -28,9 +28,9 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{Id}", Name = "GetCustomerById")]
-        public IActionResult GetCustomerById(int Id)
+        public async Task<IActionResult> GetCustomerById(int Id)
         {
-            var customer = repository.Customers.GetCustomerById(Id, false);
+            var customer = await repository.Customers.GetCustomerByIdAsync(Id, false);
             if (customer == null)
                 return NotFound(logInfo: true, nameof(customer));
 
@@ -39,7 +39,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddTransport([FromBody]CustomerForCreation customer)
+        public async Task<IActionResult> AddTransport([FromBody]CustomerForCreation customer)
         {
             if (customer == null)
                 return SendedIsNull(logError: true, nameof(customer));
@@ -48,36 +48,36 @@ namespace CargoTransportationAPI.Controllers
                 return UnprocessableEntity(true, nameof(customer));
 
             var addableCustomer = mapper.Map<Customer>(customer);
-            CreateCustomer(addableCustomer);
+            await CreateCustomerAsync(addableCustomer);
 
             var customerToReturn = mapper.Map<CustomerDto>(addableCustomer);
             return CustomerAdded(customerToReturn);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteCustomerById(int id)
+        public async Task<IActionResult> DeleteCustomerById(int id)
         {
-            var customer = repository.Customers.GetCustomerById(id, true);
+            var customer = await repository.Customers.GetCustomerByIdAsync(id, true);
             if (customer == null)
                 return NotFound(logInfo: true, nameof(customer));
 
-            DeleteCustomer(customer);
+            await DeleteCustomerAsync(customer);
 
             return NoContent();
         }
 
         [HttpPatch("{id}")]
-        public IActionResult PartiallyUpdateCustomerById(int id, [FromBody]JsonPatchDocument<CustomerForUpdate> patchDoc)
+        public async Task<IActionResult> PartiallyUpdateCustomerById(int id, [FromBody]JsonPatchDocument<CustomerForUpdate> patchDoc)
         {
             if (patchDoc == null)
                 return SendedIsNull(true, nameof(patchDoc));
 
-            var customer = repository.Customers.GetCustomerById(id, true);
+            var customer = await repository.Customers.GetCustomerByIdAsync(id, true);
             if (customer == null)
                 return NotFound(true, nameof(customer));
 
             PatchCustomer(patchDoc, customer);
-            repository.Save();
+            await repository.SaveAsync();
 
             return NoContent();
         }
@@ -99,10 +99,10 @@ namespace CargoTransportationAPI.Controllers
                 throw new Exception("InvalidModelState");
         }
 
-        private void CreateCustomer(Customer customer)
+        private async Task CreateCustomerAsync(Customer customer)
         {
             repository.Customers.CreateCustomer(customer);
-            repository.Save();
+            await repository.SaveAsync();
         }
 
         private IActionResult CustomerAdded(CustomerDto customer)
@@ -110,10 +110,10 @@ namespace CargoTransportationAPI.Controllers
             return CreatedAtRoute("GetCustomerById", new { id = customer.Id }, customer);
         }
 
-        private void DeleteCustomer(Customer customer)
+        private async Task DeleteCustomerAsync(Customer customer)
         {
             repository.Customers.DeleteCustomer(customer);
-            repository.Save();
+            await repository.SaveAsync();
         }
     }
 }
