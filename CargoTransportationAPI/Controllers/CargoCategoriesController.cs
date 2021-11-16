@@ -15,19 +15,8 @@ namespace CargoTransportationAPI.Controllers
 {
     [Route("api/Cargoes/Categories")]
     [ApiController]
-    public class CargoCategoriesController : ControllerBase
+    public class CargoCategoriesController : ExtendedControllerBase
     {
-        private readonly IRepositoryManager repository;
-        private readonly ILoggerManager logger;
-        private readonly IMapper mapper;
-
-        public CargoCategoriesController(IRepositoryManager repositoryManager, ILoggerManager loggerManager, IMapper mapper)
-        {
-            this.repository = repositoryManager;
-            this.logger = loggerManager;
-            this.mapper = mapper;
-        }
-
         [HttpGet]
         public IActionResult GetAllCategories()
         {
@@ -86,36 +75,10 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
-        private IActionResult SendedIsNull(bool logError, string objName)
-        {
-            var message = $"Sended {objName} is null";
-            if (logError)
-                logger.LogError(message);
-            return BadRequest(message);
-        }
-
-        private IActionResult UnprocessableEntity(bool logInfo, string objName)
-        {
-            var message = $"Object({objName}) has incorrect state";
-            if (logInfo)
-                logger.LogInfo(message);
-
-            return UnprocessableEntity(ModelState);
-        }
-
         private void CreateCategory(CargoCategory category)
         {
             repository.CargoCategories.CreateCategory(category);
             repository.Save();
-        }
-
-        private IActionResult NotFound(bool logInfo, string objName)
-        {
-            var message = $"The desired object({objName}) was not found";
-            if (logInfo) 
-                logger.LogInfo(message);
-             
-            return NotFound();
         }
 
         private void DeleteCategory(CargoCategory category)

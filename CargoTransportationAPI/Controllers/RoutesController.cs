@@ -11,19 +11,8 @@ namespace CargoTransportationAPI.Controllers
 {
     [Route("api/Routes")]
     [ApiController]
-    public class RoutesController : ControllerBase
+    public class RoutesController : ExtendedControllerBase
     {
-        private readonly IRepositoryManager repository;
-        private readonly ILoggerManager logger;
-        private readonly IMapper mapper;
-
-        public RoutesController(IRepositoryManager repositoryManager, ILoggerManager loggerManager, IMapper mapper)
-        {
-            this.repository = repositoryManager;
-            this.logger = loggerManager;
-            this.mapper = mapper;
-        }
-
         [HttpGet]
         public IActionResult GetAllRoutes()
         {
@@ -116,33 +105,7 @@ namespace CargoTransportationAPI.Controllers
 
             return Ok();
         }
-
-        private IActionResult NotFound(bool logInfo, string objName)
-        {
-            var message = $"The desired object({objName}) was not found";
-            if (logInfo)
-                logger.LogInfo(message);
-
-            return NotFound();
-        }
-
-        private IActionResult UnprocessableEntity(bool logInfo, string objName)
-        {
-            var message = $"Object({objName}) has incorrect state";
-            if (logInfo)
-                logger.LogInfo(message);
-
-            return UnprocessableEntity(ModelState);
-        }
-
-        private IActionResult SendedIsNull(bool logError, string objName)
-        {
-            var message = $"Sended {objName} is null";
-            if (logError)
-                logger.LogError(message);
-            return BadRequest(message);
-        }
-
+    
         private void UpdateRoute(RouteForUpdate route, Route routeToUpdate)
         {
             var transport = GetTransportByRegNumber(route.TransportRegistrationNumber);
