@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
+using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -38,26 +39,17 @@ namespace CargoTransportationAPI.Controllers
         {
             var route = repository.Routes.GetRouteById(id, false);
             if (route == null)
-                return NotFound(logInfo: true);
+                return NotFound(logInfo: true, nameof(route));
             var routeDto = mapper.Map<RouteDto>(route);
 
             return Ok(routeDto);
-        }
-
-        private IActionResult NotFound(bool logInfo)
-        {
-            var message = $"The desired object was not found";
-            if (logInfo)
-                logger.LogInfo(message);
-
-            return NotFound();
         }
 
         [HttpPost]
         public IActionResult AddRoute([FromBody]RouteForCreation route)
         {
             if (route == null)
-                return SendedIsNull(logError: true);
+                return SendedIsNull(logError: true, nameof(route));
 
             Route addableRoute = RouteForCreationToRoute(route);
             CreateRoute(addableRoute);
@@ -66,9 +58,76 @@ namespace CargoTransportationAPI.Controllers
             return RouteAdded(routeToReturn);
         }
 
-        private IActionResult SendedIsNull(bool logError)
+        [HttpDelete("{id}")]
+        public IActionResult DeleteRouteById(int id)
         {
-            var message = $"Sended object is null";
+            var route = repository.Routes.GetRouteById(id, true);
+            if (route == null)
+                return NotFound(logInfo: true, nameof(route));
+
+            DeleteRoute(route);
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateRouteById(int id, RouteForUpdate route)
+        {
+            if (route == null)
+                return SendedIsNull(true, nameof(route));
+
+            var routeToUpdate = repository.Routes.GetRouteById(id, true);
+            if (routeToUpdate == null)
+                return NotFound(true, nameof(routeToUpdate));
+
+            UpdateRoute(route, routeToUpdate);
+            repository.Save();
+
+            return NoContent();
+        }
+
+        private void UpdateRoute(RouteForUpdate route, Route routeToUpdate)
+        {
+            var transport = repository.Transport.GetTransportByRegistrationNumber(route.TransportRegistrationNumber, false);         
+            routeToUpdate.TransportId = transport.Id;
+        }
+
+        [HttpGet("{id}/Cargoes")]
+        public IActionResult GetCargoesByRouteId(int id)
+        {
+            var cargoes = repository.Cargoes.GetCargoesByRouteId(id, false);
+
+            var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
+
+            return Ok(cargoesDto);
+        }
+
+        [HttpPost("{routeId}/Cargoes/MarkCargo")]
+        public IActionResult MarkCargoToRoute(int routeId, int cargoId)
+        {
+            if (repository.Routes.GetRouteById(routeId, false) == null)
+                return NotFound(false);
+
+            if (repository.Cargoes.GetCargoById(cargoId, false) == null)
+                return BadRequest();
+
+            MarkTheCargoToRoute(routeId, cargoId);
+
+            return Ok();
+        }
+
+        private IActionResult NotFound(bool logInfo, string objName)
+        {
+            var message = $"The desired object({objName}) was not found";
+            if (logInfo)
+                logger.LogInfo(message);
+
+            return NotFound();
+        }
+
+        private IActionResult SendedIsNull(bool logError, string objName)
+        {
+            var message = $"Sended {objName} is null";
             if (logError)
                 logger.LogError(message);
             return BadRequest(message);
@@ -102,46 +161,10 @@ namespace CargoTransportationAPI.Controllers
             return CreatedAtRoute("GetRouteById", new { id = route.Id }, route); ;
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteRouteById(int id)
-        {
-            var route = repository.Routes.GetRouteById(id, true);
-            if (route == null)
-                return NotFound(logInfo: true);
-
-            DeleteRoute(route);
-
-            return NoContent();
-        }
-
         private void DeleteRoute(Route route)
         {
             repository.Routes.DeleteRoute(route);
             repository.Save();
-        }
-
-        [HttpGet("{id}/Cargoes")]
-        public IActionResult GetCargoesByRouteId(int id)
-        {
-            var cargoes = repository.Cargoes.GetCargoesByRouteId(id, false);
-
-            var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
-
-            return Ok(cargoesDto);
-        }
-
-        [HttpPost("{routeId}/Cargoes/MarkCargo")]
-        public IActionResult MarkCargoToRoute(int routeId, int cargoId)
-        {
-            if (repository.Routes.GetRouteById(routeId, false) == null)
-                return NotFound(false);
-
-            if (repository.Cargoes.GetCargoById(cargoId, false) == null)
-                return BadRequest();
-
-            MarkTheCargoToRoute(routeId, cargoId);
-
-            return Ok();
         }
 
         private void MarkTheCargoToRoute(int routeId, int cargoId)

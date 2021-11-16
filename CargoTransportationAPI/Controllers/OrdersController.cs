@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
+using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CargoTransportationAPI.Controllers
@@ -26,24 +28,6 @@ namespace CargoTransportationAPI.Controllers
             this.mapper = mapper;
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteOrderById(int id)
-        {
-            var order = repository.Orders.GetOrderById(id, true);
-            if (order == null)
-                return NotFound(logInfo: true);
-
-            DeleteOrder(order);
-
-            return NoContent();
-        }
-
-        private void DeleteOrder(Order order)
-        {
-            repository.Orders.DeleteOrder(order);
-            repository.Save();
-        }
-
         [HttpGet]
         public IActionResult GetAllOrders()
         {
@@ -59,25 +43,17 @@ namespace CargoTransportationAPI.Controllers
         {
             var order = repository.Orders.GetOrderById(id, false);
             if (order == null)
-                return NotFound(logInfo: true);
+                return NotFound(logInfo: true, nameof(order));
 
             var orderDto = mapper.Map<OrderWithCargoesDto>(order);
             return Ok(orderDto);
-        }
-
-        private IActionResult NotFound(bool logInfo)
-        {
-            var message = $"The desired object was not found";
-            if (logInfo)
-                logger.LogInfo(message);
-            return NotFound();
         }
 
         [HttpPost]
         public IActionResult AddOrder([FromBody] OrderForCreation order)
         {
             if (order == null)
-                return SendedIsNull(logError: true);
+                return SendedIsNull(logError: true, nameof(order));
 
             var addableOrder = mapper.Map<Order>(order);
             CreateOrder(addableOrder);
@@ -86,9 +62,82 @@ namespace CargoTransportationAPI.Controllers
             return OrderAdded(orderToReturn);
         }
 
-        private IActionResult SendedIsNull(bool logError)
+        [HttpGet("{id}/Cargoes")]
+        public IActionResult GetCargoesByRouteId([FromRoute]int id)
         {
-            var message = $"Sended object is null";
+            var cargoes = repository.Cargoes.GetCargoesByOrderId(id, false);
+            if (cargoes == null)
+                return NotFound(logInfo: true, nameof(cargoes));
+
+            var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
+            return Ok(cargoesDto);
+        }
+
+        [HttpPost("{id}/Cargoes")]
+        public IActionResult AddCargoes([FromBody] IEnumerable<CargoForCreation> cargoes, [FromRoute]int id)
+        {
+            if (cargoes == null)
+                return SendedIsNull(logError: true, nameof(cargoes));
+
+            var addableCargoes = mapper.Map<IEnumerable<Cargo>>(cargoes);
+            CreateCargoes(addableCargoes, id);
+
+            var orderToReturn = GetCargoesToReturn(addableCargoes);
+            return Ok(orderToReturn);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteOrderById(int id)
+        {
+            var order = repository.Orders.GetOrderById(id, true);
+            if (order == null)
+                return NotFound(logInfo: true, nameof(order));
+
+            DeleteOrder(order);
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public IActionResult PartiallyUpdateOrderById(int id, [FromBody]JsonPatchDocument<OrderForUpdate> patchDoc)
+        {
+            if (patchDoc == null)
+                return SendedIsNull(true, nameof(patchDoc));
+
+            var order = repository.Orders.GetOrderById(id, true);
+            if (order == null)
+                return NotFound(true, nameof(order));
+
+            PatchOrder(patchDoc, order);
+            repository.Save();
+
+            return NoContent();
+        }
+
+        private void PatchOrder(JsonPatchDocument<OrderForUpdate> patchDoc, Order order)
+        {
+            var orderToPatch = mapper.Map<OrderForUpdate>(order);
+            patchDoc.ApplyTo(orderToPatch);
+            mapper.Map(orderToPatch, order);
+        }
+
+        private IActionResult NotFound(bool logInfo, string objName)
+        {
+            var message = $"The desired object({objName}) was not found";
+            if (logInfo)
+                logger.LogInfo(message);
+            return NotFound();
+        }
+
+        private void DeleteOrder(Order order)
+        {
+            repository.Orders.DeleteOrder(order);
+            repository.Save();
+        }
+
+        private IActionResult SendedIsNull(bool logError, string objName)
+        {
+            var message = $"Sended {objName} is null";
             if (logError)
                 logger.LogError(message);
             return BadRequest(message);
@@ -122,30 +171,6 @@ namespace CargoTransportationAPI.Controllers
         private IActionResult OrderAdded(OrderWithCargoesDto order)
         {
             return CreatedAtRoute("GetOrderById", new { id = order.Id }, order);
-        }
-
-        [HttpGet("{id}/Cargoes")]
-        public IActionResult GetCargoesByRouteId([FromRoute]int id)
-        {
-            var cargoes = repository.Cargoes.GetCargoesByOrderId(id, false);
-            if (cargoes == null)
-                return NotFound(logInfo: true);
-
-            var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
-            return Ok(cargoesDto);
-        }
-
-        [HttpPost("{id}/Cargoes")]
-        public IActionResult AddCargoes([FromBody] IEnumerable<CargoForCreation> cargoes, [FromRoute]int id)
-        {
-            if (cargoes == null)
-                return SendedIsNull(logError: true);
-
-            var addableCargoes = mapper.Map<IEnumerable<Cargo>>(cargoes);
-            CreateCargoes(addableCargoes, id);
-
-            var orderToReturn = GetCargoesToReturn(addableCargoes);
-            return Ok(orderToReturn);
         }
 
         private void CreateCargoes(IEnumerable<Cargo> cargoes, int id)

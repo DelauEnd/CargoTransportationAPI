@@ -2,7 +2,9 @@
 using CargoTransportationAPI.Extensions;
 using Contracts;
 using Entities.DataTransferObjects;
+using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -25,24 +27,6 @@ namespace CargoTransportationAPI.Controllers
             this.mapper = mapper;
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteTransportById(int id)
-        {
-            var transport = repository.Transport.GetTransportById(id, true);
-            if (transport == null)
-                return NotFound(logInfo: true);
-
-            DeleteTransport(transport);
-
-            return NoContent();
-        }
-
-        private void DeleteTransport(Transport route)
-        {
-            repository.Transport.DeleteTransport(route);
-            repository.Save();
-        }
-
         [HttpGet]
         public IActionResult GetAllTransport()
         {
@@ -58,25 +42,17 @@ namespace CargoTransportationAPI.Controllers
         {
             var transport = repository.Transport.GetTransportById(Id, false);
             if (transport == null)
-                return NotFound(logInfo: true);
+                return NotFound(logInfo: true, nameof(transport));
             
             var transportDto = mapper.Map<TransportDto>(transport);
             return Ok(transportDto);
-        }
-
-        private IActionResult NotFound(bool logInfo)
-        {
-            var message = $"The desired object was not found";
-            if (logInfo)
-                logger.LogInfo(message);
-            return NotFound();
         }
 
         [HttpPost]
         public IActionResult AddTransport([FromBody]TransportForCreation transport)
         {
             if (transport == null)
-                return SendedIsNull(logError: true);
+                return SendedIsNull(logError: true, nameof(transport));
 
             var addableTransport = mapper.Map<Transport>(transport);
             CreateTransport(addableTransport);
@@ -85,9 +61,58 @@ namespace CargoTransportationAPI.Controllers
             return TransportAdded(transportToReturn);
         }
 
-        private IActionResult SendedIsNull(bool logError)
+        [HttpDelete("{id}")]
+        public IActionResult DeleteTransportById(int id)
         {
-            var message = $"Sended object is null";
+            var transport = repository.Transport.GetTransportById(id, true);
+            if (transport == null)
+                return NotFound(logInfo: true, nameof(transport));
+
+            DeleteTransport(transport);
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public IActionResult PartiallyUpdateTransportById(int id, [FromBody]JsonPatchDocument<TransportForUpdate> patchDoc)
+        {
+            if (patchDoc == null)
+                return SendedIsNull(true, nameof(patchDoc));
+
+            var transport = repository.Transport.GetTransportById(id, true);
+            if (transport == null)
+                return NotFound(true, nameof(transport));
+
+            PatchTransport(patchDoc, transport);
+            repository.Save();
+
+            return NoContent();
+        }
+
+        private void PatchTransport(JsonPatchDocument<TransportForUpdate> patchDoc, Transport transport)
+        {
+            var orderToPatch = mapper.Map<TransportForUpdate>(transport);
+            patchDoc.ApplyTo(orderToPatch);
+            mapper.Map(orderToPatch, transport);
+        }
+
+        private IActionResult NotFound(bool logInfo, string objName)
+        {
+            var message = $"The desired object({objName}) was not found";
+            if (logInfo)
+                logger.LogInfo(message);
+            return NotFound();
+        }
+
+        private void DeleteTransport(Transport route)
+        {
+            repository.Transport.DeleteTransport(route);
+            repository.Save();
+        }
+
+        private IActionResult SendedIsNull(bool logError, string objName)
+        {
+            var message = $"Sended {objName} is null";
             if (logError)
                 logger.LogError(message);
             return BadRequest(message);
