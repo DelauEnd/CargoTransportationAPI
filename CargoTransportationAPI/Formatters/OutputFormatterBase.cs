@@ -13,6 +13,7 @@ namespace CargoTransportationAPI.Formatters
     public abstract class OutputFormatterBase : TextOutputFormatter
     {
         protected List<Type> SupportedTypes { get; set; }
+        protected abstract string MediaType { get; set; }
 
         public OutputFormatterBase()
         {
@@ -21,6 +22,7 @@ namespace CargoTransportationAPI.Formatters
 
         protected virtual void ConfigureFormatter()
         {
+            SupportedMediaTypes.Add(MediaType);
             SupportedEncodings.Add(Encoding.UTF8);
             SupportedEncodings.Add(Encoding.Unicode);
             InitSupportedTypes();

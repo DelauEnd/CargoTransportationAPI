@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Entities.DataTransferObjects.ObjectsForUpdate
 {
-    public class RouteForUpdate
+    public class RouteForUpdateDto
     {
         public string TransportRegistrationNumber { get; set; }
     }

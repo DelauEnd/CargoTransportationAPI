@@ -17,19 +17,19 @@ namespace CargoTransportationAPI.Extensions
         {
             app.UseExceptionHandler(appError => appError.Run
             (
-                context => Task.Run(() => context.ContextConfigure(logger))
+                async context => await context.ContextConfigureAsync(logger)
             ));
         }
 
-        public static void ContextConfigure(this HttpContext context, ILoggerManager logger)
+        public static async Task ContextConfigureAsync(this HttpContext context, ILoggerManager logger)
         {
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             context.Response.ContentType = "application/json";
 
-            context.HandleException(logger);
+            await context.HandleException(logger);
         }
 
-        public static async void HandleException(this HttpContext context, ILoggerManager logger)
+        public static async Task HandleException(this HttpContext context, ILoggerManager logger)
         {
             var contextFeauture = context.Features.Get<IExceptionHandlerFeature>();
             if (contextFeauture != null)

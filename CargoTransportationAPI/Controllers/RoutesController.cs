@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CargoTransportationAPI.ActionFilters;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
@@ -24,26 +25,21 @@ namespace CargoTransportationAPI.Controllers
             return Ok(routeDto);
         }
 
-        [HttpGet("{id}", Name = "GetRouteById")]
-        public async Task<IActionResult> GetRouteById(int id)
+        [HttpGet("{routeId}", Name = "GetRouteById")]
+        [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
+        public IActionResult GetRouteById(int routeId)
         {
-            var route = await repository.Routes.GetRouteByIdAsync(id, false);
-            if (route == null)
-                return NotFound(logInfo: true, nameof(route));
+            var route = HttpContext.Items["route"] as Route;
+
             var routeDto = mapper.Map<RouteDto>(route);
 
             return Ok(routeDto);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddRoute([FromBody]RouteForCreation route)
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> AddRoute([FromBody]RouteForCreationDto route)
         {
-            if (route == null)
-                return SendedIsNull(logError: true, nameof(route));
-
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(true, nameof(route));
-
             Route addableRoute = RouteForCreationToRoute(route);
             await CreateRouteAsync(addableRoute);
 
@@ -51,30 +47,23 @@ namespace CargoTransportationAPI.Controllers
             return RouteAdded(routeToReturn);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRouteById(int id)
+        [HttpDelete("{routeId}")]
+        [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
+        public async Task<IActionResult> DeleteRouteById(int routeId)
         {
-            var route = await repository.Routes.GetRouteByIdAsync(id, true);
-            if (route == null)
-                return NotFound(logInfo: true, nameof(route));
+            var route = HttpContext.Items["route"] as Route;
 
             await DeleteRouteAsync(route);
 
             return NoContent();
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRouteById(int id, RouteForUpdate route)
+        [HttpPut("{routeId}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
+        public async Task<IActionResult> UpdateRouteById(int routeId, RouteForUpdateDto route)
         {
-            if (route == null)
-                return SendedIsNull(true, nameof(route));
-
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(true, nameof(route));
-
-            var routeToUpdate = await repository.Routes.GetRouteByIdAsync(id, true);
-            if (routeToUpdate == null)
-                return NotFound(true, nameof(routeToUpdate));
+            var routeToUpdate = HttpContext.Items["route"] as Route;
 
 
             UpdateRoute(route, routeToUpdate);
@@ -83,10 +72,13 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("{id}/Cargoes")]
-        public async Task<IActionResult> GetCargoesByRouteId(int id)
+        [HttpGet("{routeId}/Cargoes")]
+        [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
+        public async Task<IActionResult> GetCargoesByRouteId(int routeId)
         {
-            var cargoes = await repository.Cargoes.GetCargoesByRouteIdAsync(id, false);
+            var route = HttpContext.Items["route"] as Route;
+
+            var cargoes = await repository.Cargoes.GetCargoesByRouteIdAsync(route.Id, false);
 
             var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
 
@@ -94,27 +86,27 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpPost("{routeId}/Cargoes/MarkCargo")]
+        [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
+        [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
         public async Task<IActionResult> MarkCargoToRouteAsync(int routeId, int cargoId)
         {
-            if (await repository.Routes.GetRouteByIdAsync(routeId, false) == null)
-                return NotFound(false);
+            var route = HttpContext.Items["route"] as Route;
 
-            if (await repository.Cargoes.GetCargoByIdAsync(cargoId, false) == null)
-                return BadRequest();
+            var cargo = HttpContext.Items["cargo"] as Cargo;
 
-            await MarkTheCargoToRouteAsync(routeId, cargoId);
+            await MarkTheCargoToRouteAsync(route.Id, cargo.Id);
 
             return Ok();
         }
     
-        private void UpdateRoute(RouteForUpdate route, Route routeToUpdate)
+        private void UpdateRoute(RouteForUpdateDto route, Route routeToUpdate)
         {
             var transport = GetTransportByRegNumberAsync(route.TransportRegistrationNumber);
 
             routeToUpdate.TransportId = transport.Id;
         }
 
-        private Route RouteForCreationToRoute(RouteForCreation routeForCreation)
+        private Route RouteForCreationToRoute(RouteForCreationDto routeForCreation)
         {
             var transport = GetTransportByRegNumberAsync(routeForCreation.TransportRegistrationNumber);
 
@@ -133,8 +125,6 @@ namespace CargoTransportationAPI.Controllers
             return transport;
         }
 
-        
-
         private async Task CreateRouteAsync(Route route)
         {
             repository.Routes.CreateRoute(route);
@@ -150,7 +140,7 @@ namespace CargoTransportationAPI.Controllers
 
         private IActionResult RouteAdded(RouteDto route)
         {
-            return CreatedAtRoute("GetRouteById", new { id = route.Id }, route); ;
+            return CreatedAtRoute("GetRouteById", new { routeId = route.Id }, route); ;
         }
 
         private async Task DeleteRouteAsync(Route route)

@@ -1,4 +1,5 @@
-﻿using CargoTransportationAPI.Formatters;
+﻿using CargoTransportationAPI.ActionFilters;
+using CargoTransportationAPI.Formatters;
 using Contracts;
 using Entities;
 using LoggerService;
@@ -38,6 +39,18 @@ namespace CargoTransportationAPI.Extensions
 
         public static void ConfigureRepositoryManager(this IServiceCollection services)
             => services.AddScoped<IRepositoryManager, RepositoryManager>();
+
+        public static void ConfigureFilterAttributes(this IServiceCollection services)
+        {
+            services.AddScoped<ValidationFilterAttribute>();
+
+            services.AddScoped<ValidateCargoCategoryExistsAttribute>();
+            services.AddScoped<ValidateCargoExistsAttribute>();
+            services.AddScoped<ValidateRouteExistsAttribute>();
+            services.AddScoped<ValidateTransportExistsAttribute>();
+            services.AddScoped<ValidateCustomerExistsAttribute>();
+            services.AddScoped<ValidateOrderExistsAttribute>();
+        }
 
         public static void ConfigureFormatters(this IMvcBuilder builder)
             => builder

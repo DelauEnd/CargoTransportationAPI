@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace Entities.Models
 {
-    public class Customer
+    public class Customer : IEntity
     {
         [Key]
         [Column("CustomerId")]

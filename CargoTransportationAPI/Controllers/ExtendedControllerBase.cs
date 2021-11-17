@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CargoTransportationAPI.ActionFilters;
 using Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,28 +17,12 @@ namespace CargoTransportationAPI.Controllers
         private IMapper _mapper;
         protected IMapper mapper => _mapper ?? (_mapper = HttpContext.RequestServices.GetService<IMapper>());
 
-        protected IActionResult UnprocessableEntity(bool logInfo, string objName)
-        {
-            var message = $"Object({objName}) has incorrect state";
-            if (logInfo)
-                logger.LogInfo(message);
-            return UnprocessableEntity(ModelState);
-        }
-
         protected IActionResult NotFound(bool logInfo, string objName)
         {
             var message = $"The desired object({objName}) was not found";
             if (logInfo)
                 logger.LogInfo(message);
             return NotFound();
-        }
-
-        protected IActionResult SendedIsNull(bool logError, string objName)
-        {
-            var message = $"Sended {objName} is null";
-            if (logError)
-                logger.LogError(message);
-            return BadRequest(message);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using CargoTransportationAPI.ActionFilters;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
@@ -28,14 +29,9 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCategory([FromBody]CategoryForCreation category)
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> AddCategory([FromBody]CategoryForCreationDto category)
         {
-            if (category == null)
-                return SendedIsNull(logError: true, nameof(category));
-
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(true, nameof(category));
-
             CargoCategory addableCategory = mapper.Map<CargoCategory>(category);
             await CreateCategoryAsync(addableCategory);
 
@@ -44,30 +40,23 @@ namespace CargoTransportationAPI.Controllers
             return Ok(categoryToReturn);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategoryById(int id)
+        [HttpDelete("{categoryId}")]
+        [ServiceFilter(typeof(ValidateCargoCategoryExistsAttribute))]
+        public async Task<IActionResult> DeleteCategoryById(int categoryId)
         {
-            var category = await repository.CargoCategories.GetCategoryByIdAsync(id, true);
-            if (category == null)
-                return NotFound(logInfo: true, nameof(category));
+            var category = HttpContext.Items["category"] as CargoCategory;
 
             await DeleteCategoryAsync(category);
 
             return NoContent();
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCargoCategoryById(int id, CargoCategoryForUpdate category)
+        [HttpPut("{categoryId}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidateCargoCategoryExistsAttribute))]
+        public async Task<IActionResult> UpdateCargoCategoryById(int categoryId, CargoCategoryForUpdateDto category)
         {
-            if (category == null)
-                return SendedIsNull(true, nameof(category));
-
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(true, nameof(category));
-
-            var categoryToUpdate = await repository.CargoCategories.GetCategoryByIdAsync(id, true);
-            if (categoryToUpdate == null)
-                return NotFound(true, nameof(categoryToUpdate));
+            var categoryToUpdate = HttpContext.Items["category"] as CargoCategory;
 
             mapper.Map(category, categoryToUpdate);
             await repository.SaveAsync();

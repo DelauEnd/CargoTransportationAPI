@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using CargoTransportationAPI.ActionFilters;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
@@ -27,26 +28,20 @@ namespace CargoTransportationAPI.Controllers
             return Ok(customersDto);
         }
 
-        [HttpGet("{Id}", Name = "GetCustomerById")]
-        public async Task<IActionResult> GetCustomerById(int Id)
+        [HttpGet("{customerId}", Name = "GetCustomerById")]
+        [ServiceFilter(typeof(ValidateCustomerExistsAttribute))]
+        public IActionResult GetCustomerById(int customerId)
         {
-            var customer = await repository.Customers.GetCustomerByIdAsync(Id, false);
-            if (customer == null)
-                return NotFound(logInfo: true, nameof(customer));
+            var customer = HttpContext.Items["customer"] as Customer;
 
             var customerDto = mapper.Map<CustomerDto>(customer);
             return Ok(customerDto);
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> AddTransport([FromBody]CustomerForCreation customer)
         {
-            if (customer == null)
-                return SendedIsNull(logError: true, nameof(customer));
-
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(true, nameof(customer));
-
             var addableCustomer = mapper.Map<Customer>(customer);
             await CreateCustomerAsync(addableCustomer);
 
@@ -54,27 +49,22 @@ namespace CargoTransportationAPI.Controllers
             return CustomerAdded(customerToReturn);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCustomerById(int id)
+        [HttpDelete("{customerId}")]
+        [ServiceFilter(typeof(ValidateCustomerExistsAttribute))]
+        public async Task<IActionResult> DeleteCustomerById(int customerId)
         {
-            var customer = await repository.Customers.GetCustomerByIdAsync(id, true);
-            if (customer == null)
-                return NotFound(logInfo: true, nameof(customer));
+            var customer = HttpContext.Items["customer"] as Customer;
 
             await DeleteCustomerAsync(customer);
 
             return NoContent();
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> PartiallyUpdateCustomerById(int id, [FromBody]JsonPatchDocument<CustomerForUpdate> patchDoc)
+        [HttpPatch("{customerId}")]
+        [ServiceFilter(typeof(ValidateCustomerExistsAttribute))]
+        public async Task<IActionResult> PartiallyUpdateCustomerById(int customerId, [FromBody]JsonPatchDocument<CustomerForUpdateDto> patchDoc)
         {
-            if (patchDoc == null)
-                return SendedIsNull(true, nameof(patchDoc));
-
-            var customer = await repository.Customers.GetCustomerByIdAsync(id, true);
-            if (customer == null)
-                return NotFound(true, nameof(customer));
+            var customer = HttpContext.Items["customer"] as Customer;
 
             PatchCustomer(patchDoc, customer);
             await repository.SaveAsync();
@@ -82,9 +72,9 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
-        private void PatchCustomer(JsonPatchDocument<CustomerForUpdate> patchDoc, Customer customer)
+        private void PatchCustomer(JsonPatchDocument<CustomerForUpdateDto> patchDoc, Customer customer)
         {
-            var customerToPatch = mapper.Map<CustomerForUpdate>(customer);
+            var customerToPatch = mapper.Map<CustomerForUpdateDto>(customer);
             patchDoc.ApplyTo(customerToPatch, ModelState);
 
             TryToValidate(customerToPatch);
@@ -92,7 +82,7 @@ namespace CargoTransportationAPI.Controllers
             mapper.Map(customerToPatch, customer);
         }
 
-        private void TryToValidate(CustomerForUpdate orderToPatch)
+        private void TryToValidate(CustomerForUpdateDto orderToPatch)
         {
             TryValidateModel(orderToPatch);
             if (!ModelState.IsValid)
@@ -107,7 +97,7 @@ namespace CargoTransportationAPI.Controllers
 
         private IActionResult CustomerAdded(CustomerDto customer)
         {
-            return CreatedAtRoute("GetCustomerById", new { id = customer.Id }, customer);
+            return CreatedAtRoute("GetCustomerById", new { customerId = customer.Id }, customer);
         }
 
         private async Task DeleteCustomerAsync(Customer customer)

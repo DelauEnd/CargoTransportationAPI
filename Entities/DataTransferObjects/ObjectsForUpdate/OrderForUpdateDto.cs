@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Entities.DataTransferObjects.ObjectsForUpdate
 {
-    public class OrderForUpdate
+    public class OrderForUpdateDto
     {
         public int SenderId { get; set; }
 

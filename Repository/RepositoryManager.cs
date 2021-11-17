@@ -8,7 +8,7 @@ namespace Repository
 {
     public class RepositoryManager : IRepositoryManager
     {
-        private RepositoryContext repositoryContext;
+        private readonly RepositoryContext repositoryContext;
         private ICargoCategoryRepository cargoCategoryRepository;
         private ICargoRepository cargoRepository;
         private ICustomerRepository customerRepository;

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Entities.DataTransferObjects.ObjectsForUpdate
 {
-    public class CustomerForUpdate
+    public class CustomerForUpdateDto
     {
         [MaxLength(30, ErrorMessage = "Address max length - 30 simbols.")]
         public string Address { get; set; }

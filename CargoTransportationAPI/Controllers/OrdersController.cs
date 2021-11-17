@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using CargoTransportationAPI.ActionFilters;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CargoTransportationAPI.Controllers
 {
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     [Route("api/Orders")]
     [ApiController]
     public class OrdersController : ExtendedControllerBase
@@ -27,26 +29,20 @@ namespace CargoTransportationAPI.Controllers
             return Ok(ordersDto);
         }
 
-        [HttpGet("{Id}", Name = "GetOrderById")]
-        public async Task<IActionResult> GetOrderById(int id)
+        [HttpGet("{orderId}", Name = "GetOrderById")]
+        [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
+        public IActionResult GetOrderById(int orderId)
         {
-            var order = await repository.Orders.GetOrderByIdAsync(id, false);
-            if (order == null)
-                return NotFound(logInfo: true, nameof(order));
+            var order = HttpContext.Items["order"] as Order;
 
             var orderDto = mapper.Map<OrderWithCargoesDto>(order);
             return Ok(orderDto);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddOrder([FromBody] OrderForCreation order)
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> AddOrder([FromBody] OrderForCreationDto order)
         {
-            if (order == null)
-                return SendedIsNull(logError: true, nameof(order));
-
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(true, nameof(order));
-
             var addableOrder = mapper.Map<Order>(order);
             await CreateOrderAsync(addableOrder);
 
@@ -54,54 +50,48 @@ namespace CargoTransportationAPI.Controllers
             return OrderAdded(orderToReturn);
         }
 
-        [HttpGet("{id}/Cargoes")]
-        public async Task<IActionResult> GetCargoesByRouteId([FromRoute]int id)
+        [HttpGet("{orderId}/Cargoes")]
+        [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
+        public async Task<IActionResult> GetCargoesByOrderId([FromRoute]int orderId)
         {
-            var cargoes = await repository.Cargoes.GetCargoesByOrderIdAsync(id, false);
-            if (cargoes == null)
-                return NotFound(logInfo: true, nameof(cargoes));
+            var order = HttpContext.Items["order"] as Order;
+
+            var cargoes = await repository.Cargoes.GetCargoesByOrderIdAsync(order.Id, false);
 
             var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
             return Ok(cargoesDto);
         }
 
-        [HttpPost("{id}/Cargoes")]
-        public async Task<IActionResult> AddCargoesAsync([FromBody] IEnumerable<CargoForCreation> cargoes, [FromRoute]int id)
+        [HttpPost("{orderId}/Cargoes")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
+        public async Task<IActionResult> AddCargoesAsync([FromBody] IEnumerable<CargoForCreationDto> cargoes, [FromRoute]int orderId)
         {
-            if (cargoes == null)
-                return SendedIsNull(logError: true, nameof(cargoes));
-
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(true, nameof(cargoes));
+            var order = HttpContext.Items["order"] as Order;
 
             var addableCargoes = mapper.Map<IEnumerable<Cargo>>(cargoes);
-            await CreateCargoesAsync(addableCargoes, id);
+            await CreateCargoesAsync(addableCargoes, order.Id);
 
             var orderToReturn = await GetCargoesToReturnAsync(addableCargoes);
             return Ok(orderToReturn);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOrderById(int id)
+        [HttpDelete("{orderId}")]
+        [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
+        public async Task<IActionResult> DeleteOrderById(int orderId)
         {
-            var order = await repository.Orders.GetOrderByIdAsync(id, true);
-            if (order == null)
-                return NotFound(logInfo: true, nameof(order));
+            var order = HttpContext.Items["order"] as Order;
 
             await DeleteOrderAsync(order);
 
             return NoContent();
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> PartiallyUpdateOrderById(int id, [FromBody]JsonPatchDocument<OrderForUpdate> patchDoc)
+        [HttpPatch("{orderId}")]
+        [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
+        public async Task<IActionResult> PartiallyUpdateOrderById(int orderId, [FromBody]JsonPatchDocument<OrderForUpdateDto> patchDoc)
         {
-            if (patchDoc == null)
-                return SendedIsNull(true, nameof(patchDoc));
-
-            var order = await repository.Orders.GetOrderByIdAsync(id, true);
-            if (order == null)
-                return NotFound(true, nameof(order));
+            var order = HttpContext.Items["order"] as Order;
 
             PatchOrder(patchDoc, order);
             await repository.SaveAsync();
@@ -109,9 +99,9 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
-        private void PatchOrder(JsonPatchDocument<OrderForUpdate> patchDoc, Order order)
+        private void PatchOrder(JsonPatchDocument<OrderForUpdateDto> patchDoc, Order order)
         {
-            var orderToPatch = mapper.Map<OrderForUpdate>(order);
+            var orderToPatch = mapper.Map<OrderForUpdateDto>(order);
             patchDoc.ApplyTo(orderToPatch, ModelState);          
 
             TryToValidate(orderToPatch);
@@ -119,7 +109,7 @@ namespace CargoTransportationAPI.Controllers
             mapper.Map(orderToPatch, order);
         }
 
-        private void TryToValidate(OrderForUpdate orderToPatch)
+        private void TryToValidate(OrderForUpdateDto orderToPatch)
         {
             TryValidateModel(orderToPatch);
             if (!ModelState.IsValid)
@@ -159,13 +149,13 @@ namespace CargoTransportationAPI.Controllers
 
         private IActionResult OrderAdded(OrderWithCargoesDto order)
         {
-            return CreatedAtRoute("GetOrderById", new { id = order.Id }, order);
+            return CreatedAtRoute("GetOrderById", new { orderId = order.Id }, order);
         }
 
-        private async Task CreateCargoesAsync(IEnumerable<Cargo> cargoes, int id)
+        private async Task CreateCargoesAsync(IEnumerable<Cargo> cargoes, int orderId)
         {
             foreach (var cargo in cargoes)
-                repository.Cargoes.CreateCargoForOrder(cargo, id);
+                repository.Cargoes.CreateCargoForOrder(cargo, orderId);
             await repository.SaveAsync();
         }
 

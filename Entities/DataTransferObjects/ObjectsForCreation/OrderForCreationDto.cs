@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Entities.DataTransferObjects
 {
-    public class OrderForCreation
+    public class OrderForCreationDto
     {
         [Required(ErrorMessage = "DestinationId - required field")]
         public int SenderId { get; set; }
@@ -13,6 +13,6 @@ namespace Entities.DataTransferObjects
         [Required(ErrorMessage = "DestinationId - required field")]
         public int DestinationId { get; set; }
 
-        public IEnumerable<CargoForCreation> Cargoes { get; set; }
+        public IEnumerable<CargoForCreationDto> Cargoes { get; set; }
     }
 }

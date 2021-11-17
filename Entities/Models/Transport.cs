@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace Entities.Models
 {
-    public class Transport
+    public class Transport : IEntity
     {
         [Key]
         [Column("TransportId")]

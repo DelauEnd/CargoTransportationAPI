@@ -28,9 +28,9 @@ namespace CargoTransportationAPI
         {
             CreateMap<Transport, TransportDto>();
 
-            CreateMap<TransportForCreation, Transport>();
+            CreateMap<TransportForCreationDto, Transport>();
 
-            CreateMap<TransportForUpdate, Transport>().ReverseMap();
+            CreateMap<TransportForUpdateDto, Transport>().ReverseMap();
         }
 
         private void CreateCargoMaps()
@@ -40,9 +40,9 @@ namespace CargoTransportationAPI
                 option.MapFrom(cargo =>
                 cargo.Category.Title));
 
-            CreateMap<CargoForUpdate, Cargo>().ReverseMap();
+            CreateMap<CargoForUpdateDto, Cargo>().ReverseMap();
 
-            CreateMap<CargoForCreation, Cargo>();
+            CreateMap<CargoForCreationDto, Cargo>();
         }
 
         private void CreateRouteMaps()
@@ -75,11 +75,11 @@ namespace CargoTransportationAPI
                 .ForMember(orderDto => orderDto.Destination, option =>
                 option.MapFrom(order => order.Destination.Address));
 
-            CreateMap<OrderForCreation, Order>()
+            CreateMap<OrderForCreationDto, Order>()
                 .ForMember(order => order.Status, option =>
                 option.MapFrom(orderForCreation => EStatuses.PROCESSING));
 
-            CreateMap<OrderForUpdate, Order>()
+            CreateMap<OrderForUpdateDto, Order>()
                 .ForMember(order => order.Status, option =>
                 option.MapFrom(order => 
                     Enum.IsDefined(typeof(EStatuses), order.Status) ?
@@ -96,16 +96,16 @@ namespace CargoTransportationAPI
 
             CreateMap<CustomerForCreation, Customer>();
 
-            CreateMap<CustomerForUpdate, Customer>().ReverseMap();
+            CreateMap<CustomerForUpdateDto, Customer>().ReverseMap();
         }
 
         private void CreateCargoCategoryMaps()
         {
             CreateMap<CargoCategory, CargoCategoryDto>();
 
-            CreateMap<CategoryForCreation, CargoCategory>();
+            CreateMap<CategoryForCreationDto, CargoCategory>();
 
-            CreateMap<CargoCategoryForUpdate, CargoCategory>().ReverseMap();
+            CreateMap<CargoCategoryForUpdateDto, CargoCategory>().ReverseMap();
         }
     }
 }

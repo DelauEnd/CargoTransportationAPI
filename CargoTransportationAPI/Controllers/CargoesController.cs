@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoMapper;
+using CargoTransportationAPI.ActionFilters;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
@@ -28,38 +29,32 @@ namespace CargoTransportationAPI.Controllers
             return Ok(cargoesDto);
         }
 
-        [HttpGet("{Id}")]
-        public async Task<IActionResult> GetCargoById(int id)
+        [HttpGet("{cargoId}")]
+        [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
+        public IActionResult GetCargoById(int cargoId)
         {
-            var cargo = await repository.Cargoes.GetCargoByIdAsync(id, false);
-            if (cargo == null)
-                return NotFound(logInfo: true, nameof(cargo));
+            var cargo = HttpContext.Items["cargo"] as Cargo;
 
             var cargoDto = mapper.Map<CargoDto>(cargo);
             return Ok(cargoDto);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCargoById(int id)
+        [HttpDelete("{cargoId}")]
+        [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
+        public async Task<IActionResult> DeleteCargoById(int cargoId)
         {
-            var cargo = await repository.Cargoes.GetCargoByIdAsync(id, true);
-            if (cargo == null)
-                return NotFound(logInfo: true, nameof(cargo));
+            var cargo = HttpContext.Items["cargo"] as Cargo;
 
             await DeleteCargoAsync(cargo);
 
             return NoContent();
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> PartiallyUpdateCargoById(int id, [FromBody]JsonPatchDocument<CargoForUpdate> patchDoc)
+        [HttpPatch("{cargoId}")]
+        [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
+        public async Task<IActionResult> PartiallyUpdateCargoById(int cargoId, [FromBody]JsonPatchDocument<CargoForUpdateDto> patchDoc)
         {
-            if (patchDoc == null)
-                return SendedIsNull(true, nameof(patchDoc));
-
-            var cargo = await repository.Cargoes.GetCargoByIdAsync(id, true);
-            if (cargo == null)
-                return NotFound(true, nameof(cargo));
+            var cargo = HttpContext.Items["cargo"] as Cargo;
 
             PatchCargo(patchDoc, cargo);
             await repository.SaveAsync();
@@ -67,9 +62,9 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
-        private void PatchCargo(JsonPatchDocument<CargoForUpdate> patchDoc, Cargo cargo)
+        private void PatchCargo(JsonPatchDocument<CargoForUpdateDto> patchDoc, Cargo cargo)
         {
-            var cargoToPatch = mapper.Map<CargoForUpdate>(cargo);
+            var cargoToPatch = mapper.Map<CargoForUpdateDto>(cargo);
             patchDoc.ApplyTo(cargoToPatch, ModelState);
 
             TryToValidate(cargoToPatch);
@@ -77,12 +72,13 @@ namespace CargoTransportationAPI.Controllers
             mapper.Map(cargoToPatch, cargo);
         }
 
-        private void TryToValidate(CargoForUpdate cargoToPatch)
+        private void TryToValidate(CargoForUpdateDto cargoToPatch)
         {
             TryValidateModel(cargoToPatch);
             if (!ModelState.IsValid)
                 throw new Exception("InvalidModelState");
         }
+
 
         private async Task DeleteCargoAsync(Cargo cargo)
         {

@@ -13,7 +13,7 @@ namespace CargoTransportationAPI
 {
     public class Startup
     {
-        IConfiguration configuration;
+        readonly IConfiguration configuration;
 
         public Startup(IConfiguration configuration)
         {
@@ -37,6 +37,7 @@ namespace CargoTransportationAPI
             services.ConfigureSqlContext(configuration);
             services.ConfigureRepositoryManager();
             services.ConfigureApiBehaviorOptions();
+            services.ConfigureFilterAttributes();
 
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers(config =>

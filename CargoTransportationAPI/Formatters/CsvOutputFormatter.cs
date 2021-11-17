@@ -14,11 +14,7 @@ namespace CargoTransportationAPI.Formatters
 {
     public class CsvOutputFormatter : OutputFormatterBase
     {
-        protected override void ConfigureFormatter()
-        {
-            base.ConfigureFormatter();
-            SupportedMediaTypes.Add("text/csv");
-        }
+        protected override string MediaType { get; set; } = "text/csv";
 
         protected override void BuildResponseMessage(StringBuilder responseMessage, OutputFormatterWriteContext context)
         {

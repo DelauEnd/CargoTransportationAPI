@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CargoTransportationAPI.ActionFilters;
 using CargoTransportationAPI.Extensions;
 using Contracts;
 using Entities.DataTransferObjects;
@@ -27,26 +28,20 @@ namespace CargoTransportationAPI.Controllers
             return Ok(transportDto);
         }
 
-        [HttpGet("{Id}", Name = "GetTransportById")]
-        public async Task<IActionResult> GetTransportById(int Id)
+        [HttpGet("{transportId}", Name = "GetTransportById")]
+        [ServiceFilter(typeof(ValidateTransportExistsAttribute))]
+        public IActionResult GetTransportById(int transportId)
         {
-            var transport = await repository.Transport.GetTransportByIdAsync(Id, false);
-            if (transport == null)
-                return NotFound(logInfo: true, nameof(transport));
-            
+            var transport = HttpContext.Items["transport"] as Transport;
+
             var transportDto = mapper.Map<TransportDto>(transport);
             return Ok(transportDto);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddTransportAsync([FromBody]TransportForCreation transport)
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> AddTransportAsync([FromBody]TransportForCreationDto transport)
         {
-            if (transport == null)
-                return SendedIsNull(logError: true, nameof(transport));
-
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(true, nameof(transport));
-
             var addableTransport = mapper.Map<Transport>(transport);
             await CreateTransportAsync(addableTransport);
 
@@ -54,28 +49,22 @@ namespace CargoTransportationAPI.Controllers
             return TransportAdded(transportToReturn);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTransportById(int id)
+        [HttpDelete("{transportId}")]
+        [ServiceFilter(typeof(ValidateTransportExistsAttribute))]
+        public async Task<IActionResult> DeleteTransportById(int transportId)
         {
-            var transport = await repository.Transport.GetTransportByIdAsync(id, true);
-            if (transport == null)
-                return NotFound(logInfo: true, nameof(transport));
+            var transport = HttpContext.Items["transport"] as Transport;
 
             await DeleteTransportAsync(transport);
 
             return NoContent();
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> PartiallyUpdateTransportById(int id, [FromBody]JsonPatchDocument<TransportForUpdate> patchDoc)
+        [HttpPatch("{transportId}")]
+        [ServiceFilter(typeof(ValidateTransportExistsAttribute))]
+        public async Task<IActionResult> PartiallyUpdateTransportById(int transportId, [FromBody]JsonPatchDocument<TransportForUpdateDto> patchDoc)
         {
-            if (patchDoc == null)
-                return SendedIsNull(true, nameof(patchDoc));
-
-            var transport = await repository.Transport.GetTransportByIdAsync(id, true);
-            if (transport == null)
-                return NotFound(true, nameof(transport));
-
+            var transport = HttpContext.Items["transport"] as Transport;
 
             PatchTransport(patchDoc, transport);
             await repository.SaveAsync();
@@ -83,9 +72,9 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
-        private void PatchTransport(JsonPatchDocument<TransportForUpdate> patchDoc, Transport transport)
+        private void PatchTransport(JsonPatchDocument<TransportForUpdateDto> patchDoc, Transport transport)
         {
-            var orderToPatch = mapper.Map<TransportForUpdate>(transport);
+            var orderToPatch = mapper.Map<TransportForUpdateDto>(transport);
             patchDoc.ApplyTo(orderToPatch, ModelState);
 
             TryToValidate(orderToPatch);
@@ -93,7 +82,7 @@ namespace CargoTransportationAPI.Controllers
             mapper.Map(orderToPatch, transport);
         }
 
-        private void TryToValidate(TransportForUpdate transportToPatch)
+        private void TryToValidate(TransportForUpdateDto transportToPatch)
         {
             TryValidateModel(transportToPatch);
             if (!ModelState.IsValid)
@@ -114,7 +103,7 @@ namespace CargoTransportationAPI.Controllers
 
         private IActionResult TransportAdded(TransportDto transport)
         {
-            return CreatedAtRoute("GetTransportById", new { id = transport.Id }, transport);
+            return CreatedAtRoute("GetTransportById", new { transportId = transport.Id }, transport);
         }
     }
 }

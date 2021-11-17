@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Entities.DataTransferObjects
 {
-    public class RouteForCreation
+    public class RouteForCreationDto
     {
         [Required(ErrorMessage = "TransportId - required field")]
         public string TransportRegistrationNumber { get; set; }
