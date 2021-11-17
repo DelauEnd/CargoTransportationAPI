@@ -91,6 +91,9 @@ namespace CargoTransportationAPI.Controllers
         [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
         public async Task<IActionResult> PartiallyUpdateOrderById(int orderId, [FromBody]JsonPatchDocument<OrderForUpdateDto> patchDoc)
         {
+            if (patchDoc == null)
+                return SendedIsNull(true, nameof(patchDoc));
+
             var order = HttpContext.Items["order"] as Order;
 
             PatchOrder(patchDoc, order);

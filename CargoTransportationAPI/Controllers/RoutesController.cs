@@ -65,7 +65,6 @@ namespace CargoTransportationAPI.Controllers
         {
             var routeToUpdate = HttpContext.Items["route"] as Route;
 
-
             UpdateRoute(route, routeToUpdate);
             await repository.SaveAsync();
 

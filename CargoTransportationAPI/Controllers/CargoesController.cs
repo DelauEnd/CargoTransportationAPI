@@ -54,6 +54,9 @@ namespace CargoTransportationAPI.Controllers
         [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
         public async Task<IActionResult> PartiallyUpdateCargoById(int cargoId, [FromBody]JsonPatchDocument<CargoForUpdateDto> patchDoc)
         {
+            if (patchDoc == null)
+                return SendedIsNull(true, nameof(patchDoc));
+
             var cargo = HttpContext.Items["cargo"] as Cargo;
 
             PatchCargo(patchDoc, cargo);

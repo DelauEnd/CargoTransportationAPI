@@ -64,6 +64,9 @@ namespace CargoTransportationAPI.Controllers
         [ServiceFilter(typeof(ValidateCustomerExistsAttribute))]
         public async Task<IActionResult> PartiallyUpdateCustomerById(int customerId, [FromBody]JsonPatchDocument<CustomerForUpdateDto> patchDoc)
         {
+            if (patchDoc == null)
+                return SendedIsNull(true, nameof(patchDoc));
+
             var customer = HttpContext.Items["customer"] as Customer;
 
             PatchCustomer(patchDoc, customer);

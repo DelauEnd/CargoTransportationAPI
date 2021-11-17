@@ -24,5 +24,13 @@ namespace CargoTransportationAPI.Controllers
                 logger.LogInfo(message);
             return NotFound();
         }
+
+        protected IActionResult SendedIsNull(bool logError, string objName)
+        {
+            var message = $"Sended {objName} is null";
+            if (logError)
+                logger.LogError(message);
+            return BadRequest(message);
+        }
     }
 }
