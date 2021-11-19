@@ -30,7 +30,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{customerId}", Name = "GetCustomerById")]
-        [HttpHead]
+        [HttpHead("{customerId}")]
         [ServiceFilter(typeof(ValidateCustomerExistsAttribute))]
         public IActionResult GetCustomerById(int customerId)
         {
@@ -80,7 +80,14 @@ namespace CargoTransportationAPI.Controllers
         [HttpOptions]
         public IActionResult GetCustomerOptions()
         {
-            Response.Headers.Add("Allow", "GET, HEAD, POST, PATCH, DELETE, OPTIONS");
+            Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
+            return Ok();
+        }
+
+        [HttpOptions("{customerId}")]
+        public IActionResult GetCustomerByIdOptions()
+        {
+            Response.Headers.Add("Allow", "GET, HEAD, DELETE, PATCH, OPTIONS");
             return Ok();
         }
 

@@ -40,7 +40,7 @@ namespace Repository.Users
             .Sort(parameters)
             .ToListAsync();
 
-            var cargoPagedList = cargoes.ToPagedList(parameters.PageNumber, parameters.PageSize);
+            var cargoPagedList = cargoes.ToPagedList(parameters.Page, parameters.PageSize);
             return cargoPagedList;
         }
 
@@ -60,7 +60,7 @@ namespace Repository.Users
             .Sort(parameters)
             .ToListAsync();
 
-            var cargoPagedList = cargoes.ToPagedList(parameters.PageNumber, parameters.PageSize);
+            var cargoPagedList = cargoes.ToPagedList(parameters.Page, parameters.PageSize);
             return cargoPagedList;
         }
 
@@ -74,7 +74,7 @@ namespace Repository.Users
             .Sort(parameters)
             .ToListAsync();
 
-            var cargoPagedList = cargoes.ToPagedList(parameters.PageNumber, parameters.PageSize);
+            var cargoPagedList = cargoes.ToPagedList(parameters.Page, parameters.PageSize);
             return cargoPagedList;
         }
 

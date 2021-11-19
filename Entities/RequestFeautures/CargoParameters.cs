@@ -9,7 +9,6 @@ namespace Entities.RequestFeautures
         public CargoParameters()
         {
             OrderBy = "Title";
-            Fields = "Title";
         }
 
         public DateTime ArrivalDateFrom { get; set; } = DateTime.MinValue;

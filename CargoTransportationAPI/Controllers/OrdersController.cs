@@ -39,7 +39,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{orderId}", Name = "GetOrderById")]
-        [HttpHead]
+        [HttpHead("{orderId}")]
         [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
         public IActionResult GetOrderById(int orderId)
         {
@@ -61,7 +61,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{orderId}/Cargoes")]
-        [HttpHead]
+        [HttpHead("{orderId}/Cargoes")]
         [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
         public async Task<IActionResult> GetCargoesByOrderId([FromRoute]int orderId, [FromQuery]CargoParameters parameters)
         {
@@ -118,7 +118,21 @@ namespace CargoTransportationAPI.Controllers
         [HttpOptions]
         public IActionResult GetOrderOptions()
         {
-            Response.Headers.Add("Allow", "GET, HEAD, POST, PATCH, DELETE, OPTIONS");
+            Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
+            return Ok();
+        }
+
+        [HttpOptions("{orderId}")]
+        public IActionResult GetOrderByIdOptions()
+        {
+            Response.Headers.Add("Allow", "GET, HEAD, PATCH, DELETE, OPTIONS");
+            return Ok();
+        }
+
+        [HttpOptions("{orderId}")]
+        public IActionResult GetOrderByIdWithCargoesOptions()
+        {
+            Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
             return Ok();
         }
 

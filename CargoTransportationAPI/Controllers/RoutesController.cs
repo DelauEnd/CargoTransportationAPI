@@ -35,7 +35,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{routeId}", Name = "GetRouteById")]
-        [HttpHead]
+        [HttpHead("{routeId}")]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
         public IActionResult GetRouteById(int routeId)
         {
@@ -82,7 +82,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{routeId}/Cargoes")]
-        [HttpHead]
+        [HttpHead("{routeId}/Cargoes")]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
         public async Task<IActionResult> GetCargoesByRouteId(int routeId, [FromQuery]CargoParameters parameters)
         {
@@ -97,7 +97,7 @@ namespace CargoTransportationAPI.Controllers
             return Ok(cargoDataShaper.ShapeData(cargoesDto, parameters.Fields));
         }
 
-        [HttpPost("{routeId}/Cargoes/MarkCargo")]
+        [HttpPost("{routeId}/Cargoes")]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
         [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
         public async Task<IActionResult> MarkCargoToRouteAsync(int routeId, int cargoId)
@@ -114,7 +114,21 @@ namespace CargoTransportationAPI.Controllers
         [HttpOptions]
         public IActionResult GetRouteOptions()
         {
-            Response.Headers.Add("Allow", "GET, HEAD, POST, PUT, DELETE, OPTIONS");
+            Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
+            return Ok();
+        }
+
+        [HttpOptions("{routeId}")]
+        public IActionResult GetRouteByIdOptions()
+        {
+            Response.Headers.Add("Allow", "GET, HEAD, PUT, DELETE, OPTIONS");
+            return Ok();
+        }
+
+        [HttpOptions("{routeId}/Cargoes")]
+        public IActionResult GetRouteByIdWithCargoesOptions()
+        {
+            Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
             return Ok();
         }
 
