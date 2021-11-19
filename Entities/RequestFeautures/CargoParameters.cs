@@ -6,6 +6,11 @@ namespace Entities.RequestFeautures
 {
     public class CargoParameters : RequestParameters
     {
+        public CargoParameters()
+        {
+            OrderBy = "Title";
+        }
+
         public DateTime ArrivalDateFrom { get; set; } = DateTime.MinValue;
         public DateTime ArrivalDateTo { get; set; } = DateTime.MaxValue;
 

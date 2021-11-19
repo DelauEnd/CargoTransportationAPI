@@ -37,6 +37,7 @@ namespace Repository.Users
             .Include(cargo => cargo.Category)
             .ApplyFilters(parameters)
             .Search(parameters.Search)
+            .Sort(parameters)
             .ToListAsync();
 
             var cargoPagedList = cargoes.ToPagedList(parameters.PageNumber, parameters.PageSize);
@@ -56,6 +57,7 @@ namespace Repository.Users
             .Include(cargo => cargo.Category)
             .ApplyFilters(parameters)
             .Search(parameters.Search)
+            .Sort(parameters)
             .ToListAsync();
 
             var cargoPagedList = cargoes.ToPagedList(parameters.PageNumber, parameters.PageSize);
@@ -63,12 +65,13 @@ namespace Repository.Users
         }
 
         public async Task<PagedList<Cargo>> GetCargoesByRouteIdAsync(int id, CargoParameters parameters, bool trackChanges)
-        { 
-            var cargoes = await FindByCondition(cargo => 
+        {
+            var cargoes = await FindByCondition(cargo =>
             cargo.RouteId == id, trackChanges)
             .Include(cargo => cargo.Category)
             .ApplyFilters(parameters)
             .Search(parameters.Search)
+            .Sort(parameters)
             .ToListAsync();
 
             var cargoPagedList = cargoes.ToPagedList(parameters.PageNumber, parameters.PageSize);

@@ -3,7 +3,9 @@ using Entities.RequestFeautures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Linq.Dynamic.Core;
 
 namespace Repository.Extensions
 {
@@ -27,6 +29,18 @@ namespace Repository.Extensions
             return cargoes.Where(cargoes =>
                    cargoes.Title.Contains(searchValues) ||
                    cargoes.Category.Title.Contains(searchValues));
+        }
+
+        public static IQueryable<Cargo> Sort(this IQueryable<Cargo> cargoes, CargoParameters parameters)
+        {
+            OrderByQueryBuilder<Cargo> builder = new OrderByQueryBuilder<Cargo>(cargoes, parameters.OrderBy);
+
+            var orderQuery = builder.BuildOrderByQuery();
+
+            if (string.IsNullOrWhiteSpace(orderQuery))
+                return cargoes;
+
+            return cargoes.OrderBy(orderQuery);
         }
     }
 }
