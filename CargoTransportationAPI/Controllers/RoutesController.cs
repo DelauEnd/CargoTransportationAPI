@@ -4,6 +4,7 @@ using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Models;
+using Entities.RequestFeautures;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -73,11 +74,13 @@ namespace CargoTransportationAPI.Controllers
 
         [HttpGet("{routeId}/Cargoes")]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
-        public async Task<IActionResult> GetCargoesByRouteId(int routeId)
+        public async Task<IActionResult> GetCargoesByRouteId(int routeId, [FromQuery]RequestParameters parameters)
         {
             var route = HttpContext.Items["route"] as Route;
 
-            var cargoes = await repository.Cargoes.GetCargoesByRouteIdAsync(route.Id, false);
+            var cargoes = await repository.Cargoes.GetCargoesByRouteIdAsync(route.Id, parameters, false);
+
+            AddPaginationHeader(cargoes);
 
             var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
 

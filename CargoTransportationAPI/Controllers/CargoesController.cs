@@ -9,6 +9,7 @@ using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Models;
+using Entities.RequestFeautures;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -20,9 +21,11 @@ namespace CargoTransportationAPI.Controllers
     public class CargoesController : ExtendedControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAllCargoes()
+        public async Task<IActionResult> GetAllCargoes([FromQuery]RequestParameters parameters)
         {
-            var cargoes = await repository.Cargoes.GetAllCargoesAsync(false);
+            var cargoes = await repository.Cargoes.GetAllCargoesAsync(parameters, false);
+
+            AddPaginationHeader(cargoes);
 
             var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
 

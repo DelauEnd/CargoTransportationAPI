@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using CargoTransportationAPI.ActionFilters;
 using Contracts;
+using Entities.RequestFeautures;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace CargoTransportationAPI.Controllers
 {
@@ -31,6 +33,11 @@ namespace CargoTransportationAPI.Controllers
             if (logError)
                 logger.LogError(message);
             return BadRequest(message);
+        }
+
+        protected void AddPaginationHeader<T>(PagedList<T> elem)
+        {
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(elem.MetaData));
         }
     }
 }

@@ -51,25 +51,11 @@ namespace CargoTransportationAPI
                 .ForMember(routeDto => routeDto.TransportRegistrationNumber, option =>
                 option.MapFrom(transport =>
                 transport.Transport.RegistrationNumber));
-
-            CreateMap<Route, RouteWithCargoesDto>()
-                .ForMember(routeDto => routeDto.TransportRegistrationNumber, option =>
-                option.MapFrom(transport =>
-                transport.Transport.RegistrationNumber))
-                .ForMember(routeDto => routeDto.Cargoes, option =>
-                option.MapFrom(Transport =>
-                Transport.Cargoes));
         }
 
         private void CreateOrderMaps()
         {
             CreateMap<Order, OrderDto>()
-                .ForMember(orderDto => orderDto.Sender, option =>
-                option.MapFrom(order => order.Sender.Address))
-                .ForMember(orderDto => orderDto.Destination, option =>
-                option.MapFrom(order => order.Destination.Address));
-
-            CreateMap<Order, OrderWithCargoesDto>()
                 .ForMember(orderDto => orderDto.Sender, option =>
                 option.MapFrom(order => order.Sender.Address))
                 .ForMember(orderDto => orderDto.Destination, option =>

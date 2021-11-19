@@ -12,8 +12,6 @@ namespace CargoTransportationAPI.Formatters
         {
             typeof(RouteDto),
             typeof(IEnumerable<RouteDto>),
-            typeof(RouteWithCargoesDto),
-            typeof(IEnumerable<RouteWithCargoesDto>),
             typeof(CargoDto),
             typeof(IEnumerable<CargoDto>),
             typeof(TransportDto),

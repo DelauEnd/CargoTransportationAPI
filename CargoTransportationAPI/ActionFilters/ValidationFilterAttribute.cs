@@ -57,14 +57,14 @@ namespace CargoTransportationAPI.ActionFilters
             context.Result = new BadRequestObjectResult(message);
         }
 
-        private static Controller GetController(ActionExecutingContext context)
+        private static string GetController(ActionExecutingContext context)
         {
-            return (Controller)context.RouteData.Values["controller"];
+            return (string)context.RouteData.Values["controller"];
         }
 
-        private static Action GetAction(ActionExecutingContext context)
+        private static string GetAction(ActionExecutingContext context)
         {
-            return (Action)context.RouteData.Values["action"];
+            return (string)context.RouteData.Values["action"];
         }
     }
 }

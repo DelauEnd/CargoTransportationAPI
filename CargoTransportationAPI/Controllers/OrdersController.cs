@@ -8,13 +8,14 @@ using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Models;
+using Entities.RequestFeautures;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace CargoTransportationAPI.Controllers
 {
-    [ServiceFilter(typeof(ValidationFilterAttribute))]
     [Route("api/Orders")]
     [ApiController]
     public class OrdersController : ExtendedControllerBase
@@ -35,7 +36,7 @@ namespace CargoTransportationAPI.Controllers
         {
             var order = HttpContext.Items["order"] as Order;
 
-            var orderDto = mapper.Map<OrderWithCargoesDto>(order);
+            var orderDto = mapper.Map<OrderDto>(order);
             return Ok(orderDto);
         }
 
@@ -52,11 +53,13 @@ namespace CargoTransportationAPI.Controllers
 
         [HttpGet("{orderId}/Cargoes")]
         [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
-        public async Task<IActionResult> GetCargoesByOrderId([FromRoute]int orderId)
+        public async Task<IActionResult> GetCargoesByOrderId([FromRoute]int orderId, [FromQuery]RequestParameters parameters)
         {
             var order = HttpContext.Items["order"] as Order;
 
-            var cargoes = await repository.Cargoes.GetCargoesByOrderIdAsync(order.Id, false);
+            var cargoes = await repository.Cargoes.GetCargoesByOrderIdAsync(order.Id, parameters, false);
+            
+            AddPaginationHeader(cargoes);
 
             var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
             return Ok(cargoesDto);
@@ -131,26 +134,24 @@ namespace CargoTransportationAPI.Controllers
             await repository.SaveAsync();
         }
 
-        private async Task<OrderWithCargoesDto> GetOrderToReturnAsync(Order addableOrder)
+        private async Task<OrderDto> GetOrderToReturnAsync(Order addableOrder)
         {
             var order = await IncludeDataAsync(addableOrder);
-            return mapper.Map<OrderWithCargoesDto>(order);
+            return mapper.Map<OrderDto>(order);
         }
 
         private async Task<Order> IncludeDataAsync(Order order)
         {
             var sender = await repository.Customers.GetSenderByOrderIdAsync(order.Id, false);
             var destination = await repository.Customers.GetDestinationByOrderIdAsync(order.Id, false);
-            var cargoes = await repository.Cargoes.GetCargoesByOrderIdAsync(order.Id, false);
 
-            order.Cargoes = cargoes.ToList();
             order.Destination = destination;
             order.Sender = sender;
 
             return order;
         }
 
-        private IActionResult OrderAdded(OrderWithCargoesDto order)
+        private IActionResult OrderAdded(OrderDto order)
         {
             return CreatedAtRoute("GetOrderById", new { orderId = order.Id }, order);
         }
