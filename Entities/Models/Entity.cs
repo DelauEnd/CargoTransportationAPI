@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Entities.Models
 {
-    public interface IEntity
+    public interface Entity
     {
     }
 }

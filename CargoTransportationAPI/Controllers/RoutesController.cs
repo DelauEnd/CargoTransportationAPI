@@ -16,6 +16,13 @@ namespace CargoTransportationAPI.Controllers
     [ApiController]
     public class RoutesController : ExtendedControllerBase
     {
+        private readonly IDataShaper<CargoDto> cargoDataShaper;
+
+        public RoutesController(IDataShaper<CargoDto> cargoDataShaper)
+        {
+            this.cargoDataShaper = cargoDataShaper;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllRoutes()
         {
@@ -84,7 +91,7 @@ namespace CargoTransportationAPI.Controllers
 
             var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
 
-            return Ok(cargoesDto);
+            return Ok(cargoDataShaper.ShapeData(cargoesDto, parameters.Fields));
         }
 
         [HttpPost("{routeId}/Cargoes/MarkCargo")]

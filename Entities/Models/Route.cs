@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace Entities.Models
 {
-    public class Route : IEntity
+    public class Route : Entity
     {
         [Key]
         [Column("RouteId")]

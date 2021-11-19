@@ -20,6 +20,13 @@ namespace CargoTransportationAPI.Controllers
     [ApiController]
     public class OrdersController : ExtendedControllerBase
     {
+        private readonly IDataShaper<CargoDto> cargoDataShaper;
+
+        public OrdersController(IDataShaper<CargoDto> cargoDataShaper)
+        {
+            this.cargoDataShaper = cargoDataShaper;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
@@ -62,7 +69,7 @@ namespace CargoTransportationAPI.Controllers
             AddPaginationHeader(cargoes);
 
             var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
-            return Ok(cargoesDto);
+            return Ok(cargoDataShaper.ShapeData(cargoesDto, parameters.Fields));
         }
 
         [HttpPost("{orderId}/Cargoes")]

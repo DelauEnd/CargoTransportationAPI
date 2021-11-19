@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using CargoTransportationAPI.ActionFilters;
 using Contracts;
+using Entities.DataTransferObjects;
+using Entities.Models;
 using Entities.RequestFeautures;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;

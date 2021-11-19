@@ -5,12 +5,17 @@ using System.Text;
 
 namespace Entities.DataTransferObjects
 {
-    public class CustomerDto
+    public class CustomerDto : Dto, IModelFormatter
     {
         public int Id { get; set; }
 
         public string Address { get; set; }
 
         public Person ContactPerson { get; set; }
+
+        public string FormatToCsv()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

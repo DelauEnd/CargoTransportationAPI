@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 
 namespace Entities.Models
 {
-    public class Order : IEntity
+    public class Order : Entity
     {
         [Key]
         [Column("OrderId")]

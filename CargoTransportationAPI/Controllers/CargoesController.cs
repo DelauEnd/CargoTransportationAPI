@@ -20,6 +20,13 @@ namespace CargoTransportationAPI.Controllers
     [ApiController]
     public class CargoesController : ExtendedControllerBase
     {
+        private readonly IDataShaper<CargoDto> cargoDataShaper;
+
+        public CargoesController(IDataShaper<CargoDto> cargoDataShaper)
+        {
+            this.cargoDataShaper = cargoDataShaper;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllCargoes([FromQuery]CargoParameters parameters)
         {
@@ -32,17 +39,18 @@ namespace CargoTransportationAPI.Controllers
 
             var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
 
-            return Ok(cargoesDto);
+            return Ok(cargoDataShaper.ShapeData(cargoesDto, parameters.Fields));
         }
 
         [HttpGet("{cargoId}")]
         [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
-        public IActionResult GetCargoById(int cargoId)
+        public IActionResult GetCargoById(int cargoId, [FromQuery]CargoParameters parameters)
         {
             var cargo = HttpContext.Items["cargo"] as Cargo;
 
             var cargoDto = mapper.Map<CargoDto>(cargo);
-            return Ok(cargoDto);
+
+            return Ok(cargoDataShaper.ShapeData(cargoDto, parameters.Fields));
         }
 
         [HttpDelete("{cargoId}")]

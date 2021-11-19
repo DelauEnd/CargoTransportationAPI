@@ -2,6 +2,8 @@
 using CargoTransportationAPI.Formatters;
 using Contracts;
 using Entities;
+using Entities.DataTransferObjects;
+using Entities.Models;
 using LoggerService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +41,11 @@ namespace CargoTransportationAPI.Extensions
 
         public static void ConfigureRepositoryManager(this IServiceCollection services)
             => services.AddScoped<IRepositoryManager, RepositoryManager>();
+
+        public static void ConfigureDataShaper(this IServiceCollection services)
+        { 
+            services.AddScoped<IDataShaper<CargoDto>, DataShaper<CargoDto>>();
+        }
 
         public static void ConfigureFilterAttributes(this IServiceCollection services)
         {
