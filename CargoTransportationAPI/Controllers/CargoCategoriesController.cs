@@ -19,6 +19,7 @@ namespace CargoTransportationAPI.Controllers
     public class CargoCategoriesController : ExtendedControllerBase
     {
         [HttpGet]
+        [HttpHead]
         public async Task<IActionResult> GetAllCategories()
         {
             var categories = await repository.CargoCategories.GetAllCategoriesAsync(false);
@@ -63,6 +64,14 @@ namespace CargoTransportationAPI.Controllers
 
             return NoContent();
         }
+
+        [HttpOptions]
+        public IActionResult GetCargoCategoryOptions()
+        {
+            Response.Headers.Add("Allow", "GET, HEAD, POST, PUT, DELETE, OPTIONS");
+            return Ok();
+        }
+
 
         private async Task CreateCategoryAsync(CargoCategory category)
         {

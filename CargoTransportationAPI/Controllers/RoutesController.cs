@@ -24,6 +24,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet]
+        [HttpHead]
         public async Task<IActionResult> GetAllRoutes()
         {
             var route = await repository.Routes.GetAllRoutesAsync(false);
@@ -34,6 +35,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{routeId}", Name = "GetRouteById")]
+        [HttpHead]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
         public IActionResult GetRouteById(int routeId)
         {
@@ -80,6 +82,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{routeId}/Cargoes")]
+        [HttpHead]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
         public async Task<IActionResult> GetCargoesByRouteId(int routeId, [FromQuery]CargoParameters parameters)
         {
@@ -107,7 +110,14 @@ namespace CargoTransportationAPI.Controllers
 
             return Ok();
         }
-    
+
+        [HttpOptions]
+        public IActionResult GetRouteOptions()
+        {
+            Response.Headers.Add("Allow", "GET, HEAD, POST, PUT, DELETE, OPTIONS");
+            return Ok();
+        }
+
         private void UpdateRoute(RouteForUpdateDto route, Route routeToUpdate)
         {
             var transport = GetTransportByRegNumberAsync(route.TransportRegistrationNumber);

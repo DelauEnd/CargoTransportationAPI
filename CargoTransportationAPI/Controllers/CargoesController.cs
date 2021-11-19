@@ -28,6 +28,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet]
+        [HttpHead]
         public async Task<IActionResult> GetAllCargoes([FromQuery]CargoParameters parameters)
         {
             if (!parameters.IsValidDateFilter())
@@ -43,6 +44,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{cargoId}")]
+        [HttpHead]
         [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
         public IActionResult GetCargoById(int cargoId, [FromQuery]CargoParameters parameters)
         {
@@ -77,6 +79,13 @@ namespace CargoTransportationAPI.Controllers
             await repository.SaveAsync();
 
             return NoContent();
+        }
+
+        [HttpOptions]
+        public IActionResult GetCargoOptions()
+        {
+            Response.Headers.Add("Allow", "GET, HEAD, POST, PATCH, DELETE, OPTIONS");
+            return Ok();
         }
 
         private void PatchCargo(JsonPatchDocument<CargoForUpdateDto> patchDoc, Cargo cargo)

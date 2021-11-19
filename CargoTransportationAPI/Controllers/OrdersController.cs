@@ -28,6 +28,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet]
+        [HttpHead]
         public async Task<IActionResult> GetAllOrders()
         {
             var orders = await repository.Orders.GetAllOrdersAsync(false);
@@ -38,6 +39,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{orderId}", Name = "GetOrderById")]
+        [HttpHead]
         [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
         public IActionResult GetOrderById(int orderId)
         {
@@ -59,6 +61,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{orderId}/Cargoes")]
+        [HttpHead]
         [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
         public async Task<IActionResult> GetCargoesByOrderId([FromRoute]int orderId, [FromQuery]CargoParameters parameters)
         {
@@ -110,6 +113,13 @@ namespace CargoTransportationAPI.Controllers
             await repository.SaveAsync();
 
             return NoContent();
+        }
+
+        [HttpOptions]
+        public IActionResult GetOrderOptions()
+        {
+            Response.Headers.Add("Allow", "GET, HEAD, POST, PATCH, DELETE, OPTIONS");
+            return Ok();
         }
 
         private void PatchOrder(JsonPatchDocument<OrderForUpdateDto> patchDoc, Order order)

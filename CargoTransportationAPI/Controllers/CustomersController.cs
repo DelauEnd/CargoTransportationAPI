@@ -19,6 +19,7 @@ namespace CargoTransportationAPI.Controllers
     public class CustomersController : ExtendedControllerBase
     {
         [HttpGet]
+        [HttpHead]
         public async Task<IActionResult> GetAllCustomers()
         {
             var customers = await repository.Customers.GetAllCustomersAsync(false);
@@ -29,6 +30,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{customerId}", Name = "GetCustomerById")]
+        [HttpHead]
         [ServiceFilter(typeof(ValidateCustomerExistsAttribute))]
         public IActionResult GetCustomerById(int customerId)
         {
@@ -73,6 +75,13 @@ namespace CargoTransportationAPI.Controllers
             await repository.SaveAsync();
 
             return NoContent();
+        }
+
+        [HttpOptions]
+        public IActionResult GetCustomerOptions()
+        {
+            Response.Headers.Add("Allow", "GET, HEAD, POST, PATCH, DELETE, OPTIONS");
+            return Ok();
         }
 
         private void PatchCustomer(JsonPatchDocument<CustomerForUpdateDto> patchDoc, Customer customer)

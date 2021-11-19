@@ -19,6 +19,7 @@ namespace CargoTransportationAPI.Controllers
     public class TransportController : ExtendedControllerBase
     {
         [HttpGet]
+        [HttpHead]
         public async Task<IActionResult> GetAllTransport()
         {
             var transpor = await repository.Transport.GetAllTransportAsync(false);
@@ -29,6 +30,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{transportId}", Name = "GetTransportById")]
+        [HttpHead]
         [ServiceFilter(typeof(ValidateTransportExistsAttribute))]
         public IActionResult GetTransportById(int transportId)
         {
@@ -73,6 +75,13 @@ namespace CargoTransportationAPI.Controllers
             await repository.SaveAsync();
 
             return NoContent();
+        }
+
+        [HttpOptions]
+        public IActionResult GetTransportOptions()
+        {
+            Response.Headers.Add("Allow", "GET, HEAD, POST, PATCH, DELETE, OPTIONS");
+            return Ok();
         }
 
         private void PatchTransport(JsonPatchDocument<TransportForUpdateDto> patchDoc, Transport transport)
