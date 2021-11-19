@@ -68,10 +68,16 @@ namespace CargoTransportationAPI.Controllers
         [HttpOptions]
         public IActionResult GetCargoCategoryOptions()
         {
-            Response.Headers.Add("Allow", "GET, HEAD, POST, PUT, DELETE, OPTIONS");
+            Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
             return Ok();
         }
 
+        [HttpOptions("{categoryId}")]
+        public IActionResult GetCargoCategoryByIdOptions()
+        {
+            Response.Headers.Add("Allow", "PUT, DELETE, OPTIONS");
+            return Ok();
+        }
 
         private async Task CreateCategoryAsync(CargoCategory category)
         {

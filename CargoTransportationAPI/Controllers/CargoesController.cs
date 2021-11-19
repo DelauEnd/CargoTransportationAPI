@@ -44,7 +44,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{cargoId}")]
-        [HttpHead]
+        [HttpHead("{cargoId}")]
         [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
         public IActionResult GetCargoById(int cargoId, [FromQuery]CargoParameters parameters)
         {
@@ -84,7 +84,14 @@ namespace CargoTransportationAPI.Controllers
         [HttpOptions]
         public IActionResult GetCargoOptions()
         {
-            Response.Headers.Add("Allow", "GET, HEAD, POST, PATCH, DELETE, OPTIONS");
+            Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
+            return Ok();
+        }
+
+        [HttpOptions("{cargoId}")]
+        public IActionResult GetCargoByIdOptions()
+        {
+            Response.Headers.Add("Allow", "GET, HEAD, PATCH, DELETE, OPTIONS");
             return Ok();
         }
 

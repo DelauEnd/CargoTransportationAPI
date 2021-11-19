@@ -30,7 +30,7 @@ namespace CargoTransportationAPI.Controllers
         }
 
         [HttpGet("{transportId}", Name = "GetTransportById")]
-        [HttpHead]
+        [HttpHead("{transportId}")]
         [ServiceFilter(typeof(ValidateTransportExistsAttribute))]
         public IActionResult GetTransportById(int transportId)
         {
@@ -80,7 +80,14 @@ namespace CargoTransportationAPI.Controllers
         [HttpOptions]
         public IActionResult GetTransportOptions()
         {
-            Response.Headers.Add("Allow", "GET, HEAD, POST, PATCH, DELETE, OPTIONS");
+            Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
+            return Ok();
+        }
+
+        [HttpOptions("{transportId}")]
+        public IActionResult GetTransportByIdOptions()
+        {
+            Response.Headers.Add("Allow", "GET, HEAD, PATCH, DELETE, OPTIONS");
             return Ok();
         }
 
