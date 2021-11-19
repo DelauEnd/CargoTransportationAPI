@@ -74,7 +74,7 @@ namespace CargoTransportationAPI.Controllers
 
         [HttpGet("{routeId}/Cargoes")]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
-        public async Task<IActionResult> GetCargoesByRouteId(int routeId, [FromQuery]RequestParameters parameters)
+        public async Task<IActionResult> GetCargoesByRouteId(int routeId, [FromQuery]CargoParameters parameters)
         {
             var route = HttpContext.Items["route"] as Route;
 

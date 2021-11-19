@@ -21,8 +21,11 @@ namespace CargoTransportationAPI.Controllers
     public class CargoesController : ExtendedControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAllCargoes([FromQuery]RequestParameters parameters)
+        public async Task<IActionResult> GetAllCargoes([FromQuery]CargoParameters parameters)
         {
+            if (!parameters.IsValidDateFilter())
+                return BadRequest("date from cannot be later than date to");
+
             var cargoes = await repository.Cargoes.GetAllCargoesAsync(parameters, false);
 
             AddPaginationHeader(cargoes);

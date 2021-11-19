@@ -53,7 +53,7 @@ namespace CargoTransportationAPI.Controllers
 
         [HttpGet("{orderId}/Cargoes")]
         [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
-        public async Task<IActionResult> GetCargoesByOrderId([FromRoute]int orderId, [FromQuery]RequestParameters parameters)
+        public async Task<IActionResult> GetCargoesByOrderId([FromRoute]int orderId, [FromQuery]CargoParameters parameters)
         {
             var order = HttpContext.Items["order"] as Order;
 

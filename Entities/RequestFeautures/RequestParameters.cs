@@ -6,6 +6,8 @@ namespace Entities.RequestFeautures
 {
     public class RequestParameters
     {
+        public string Search { get; set; }
+
         const int maxPageSize = 50;
         public int PageNumber { get; set; } = 1;
         private int _pageSize = 10;
@@ -19,7 +21,6 @@ namespace Entities.RequestFeautures
             {
                 _pageSize = (value > maxPageSize) ? maxPageSize : value;
             }
-        }
-
+        }   
     }
 }
