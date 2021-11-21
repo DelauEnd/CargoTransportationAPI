@@ -9,6 +9,7 @@ using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Models;
 using Entities.RequestFeautures;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ using Newtonsoft.Json;
 
 namespace CargoTransportationAPI.Controllers
 {
-    [Route("api/Orders")]
+    [Route("api/Orders"), Authorize]
     [ApiController]
     public class OrdersController : ExtendedControllerBase
     {
@@ -27,6 +28,12 @@ namespace CargoTransportationAPI.Controllers
             this.cargoDataShaper = cargoDataShaper;
         }
 
+        /// <summary>
+        /// Get list of orders
+        /// </summary>
+        /// <returns>Returns orders list</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="500">Unhandled exception</response>
         [HttpGet]
         [HttpHead]
         public async Task<IActionResult> GetAllOrders()
@@ -38,6 +45,14 @@ namespace CargoTransportationAPI.Controllers
             return Ok(ordersDto);
         }
 
+        /// <summary>
+        /// Get order by requested id
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns>Returns order by requested id</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested order not found</response>
+        /// <response code="500">Unhandled exception</response>
         [HttpGet("{orderId}", Name = "GetOrderById")]
         [HttpHead("{orderId}")]
         [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
@@ -49,7 +64,16 @@ namespace CargoTransportationAPI.Controllers
             return Ok(orderDto);
         }
 
-        [HttpPost]
+        /// <summary>
+        /// Create new order
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns>Returns created order</returns>
+        /// <response code="400">If sended order object is null</response>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpPost, Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> AddOrder([FromBody] OrderForCreationDto order)
         {
@@ -60,6 +84,15 @@ namespace CargoTransportationAPI.Controllers
             return OrderAdded(orderToReturn);
         }
 
+        /// <summary>
+        /// Get cargoes by requested order id
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="parameters"></param>
+        /// <returns>Returns cargoes by requested order id</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested order not found</response>
+        /// <response code="500">Unhandled exception</response>
         [HttpGet("{orderId}/Cargoes")]
         [HttpHead("{orderId}/Cargoes")]
         [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
@@ -75,7 +108,18 @@ namespace CargoTransportationAPI.Controllers
             return Ok(cargoDataShaper.ShapeData(cargoesDto, parameters.Fields));
         }
 
-        [HttpPost("{orderId}/Cargoes")]
+        /// <summary>
+        /// Add cargoes to order
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="cargoes"></param>
+        /// <returns>Returns updated order</returns>
+        /// <response code="400">If sended cargoes object is null</response>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested order not found</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpPost("{orderId}/Cargoes"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
         public async Task<IActionResult> AddCargoesAsync([FromBody] IEnumerable<CargoForCreationDto> cargoes, [FromRoute]int orderId)
@@ -89,7 +133,16 @@ namespace CargoTransportationAPI.Controllers
             return Ok(orderToReturn);
         }
 
-        [HttpDelete("{orderId}")]
+        /// <summary>
+        /// Delete order by id
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns>Returns if deleted successfully</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested order not found</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpDelete("{orderId}"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
         public async Task<IActionResult> DeleteOrderById(int orderId)
         {
@@ -100,7 +153,18 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{orderId}")]
+        /// <summary>
+        /// Update order by id
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="patchDoc"></param>
+        /// <returns>Returns if updated successfully</returns>
+        /// <response code="400">If sended pathDoc is null</response>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested order not found</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpPatch("{orderId}"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
         public async Task<IActionResult> PartiallyUpdateOrderById(int orderId, [FromBody]JsonPatchDocument<OrderForUpdateDto> patchDoc)
         {
@@ -115,6 +179,10 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Get allowed requests
+        /// </summary>
+        /// <returns>Returns allowed requests</returns>
         [HttpOptions]
         public IActionResult GetOrderOptions()
         {
@@ -122,6 +190,10 @@ namespace CargoTransportationAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Get allowed requests for id
+        /// </summary>
+        /// <returns>Returns allowed requests</returns>
         [HttpOptions("{orderId}")]
         public IActionResult GetOrderByIdOptions()
         {
@@ -129,7 +201,11 @@ namespace CargoTransportationAPI.Controllers
             return Ok();
         }
 
-        [HttpOptions("{orderId}")]
+        /// <summary>
+        /// Get allowed requests for cargoes
+        /// </summary>
+        /// <returns>Returns allowed requests</returns>
+        [HttpOptions("{orderId}/Cargoes")]
         public IActionResult GetOrderByIdWithCargoesOptions()
         {
             Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");

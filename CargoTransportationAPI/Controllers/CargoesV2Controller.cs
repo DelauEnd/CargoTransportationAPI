@@ -17,13 +17,19 @@ using Microsoft.AspNetCore.Mvc;
 namespace CargoTransportationAPI.Controllers
 {
     [ApiVersion("2")]
-    [Route("api/v{v:apiversion}/Cargoes")]
+    [Route("api/{v:apiversion}/Cargoes")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v2")]
     public class CargoesV2Controller : ExtendedControllerBase
     {
         [HttpGet]
         [HttpHead]
-        public async Task<IActionResult> GetAllCargoes([FromQuery]CargoParameters parameters)
+        /// <summary>
+        /// Get list of cargoes
+        /// </summary>
+        /// <returns>Returns cargoes list</returns>
+        /// <response code="400">If incorrect date filter</response>
+        public async Task<IActionResult> GetAllCargoes(CargoParameters parameters)
         {
             if (!parameters.IsValidDateFilter())
                 return BadRequest("date from cannot be later than date to");

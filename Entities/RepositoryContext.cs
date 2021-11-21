@@ -1,11 +1,12 @@
 ﻿using Entities.Configuration;
 using Entities.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace Entities
 {
-    public class RepositoryContext : DbContext
+    public class RepositoryContext : IdentityDbContext<User>
     {
         public DbSet<Cargo> Cargoes { get; set; }
         public DbSet<CargoCategory> Categories { get; set; }
@@ -22,12 +23,14 @@ namespace Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             ApplyConfigurations(modelBuilder);
         }
 
         private void ApplyConfigurations(ModelBuilder modelBuilder)
         {
-
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new CustomerConfiguration());
             modelBuilder.ApplyConfiguration(new TransportConfiguration());
             modelBuilder.ApplyConfiguration(new CargoCategoryConfiguration());

@@ -5,6 +5,7 @@ using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,10 +15,16 @@ using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Controllers
 {
-    [Route("api/Transport")]
+    [Route("api/Transport"), Authorize]
     [ApiController]
     public class TransportController : ExtendedControllerBase
     {
+        /// <summary>
+        /// Get list of transport
+        /// </summary>
+        /// <returns>Returns transport list</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="500">Unhandled exception</response>
         [HttpGet]
         [HttpHead]
         public async Task<IActionResult> GetAllTransport()
@@ -29,6 +36,14 @@ namespace CargoTransportationAPI.Controllers
             return Ok(transportDto);
         }
 
+        /// <summary>
+        /// Get transport by requested id
+        /// </summary>
+        /// <param name="transportId"></param>
+        /// <returns>Returns transport by requested id</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested transport not found</response>
+        /// <response code="500">Unhandled exception</response>
         [HttpGet("{transportId}", Name = "GetTransportById")]
         [HttpHead("{transportId}")]
         [ServiceFilter(typeof(ValidateTransportExistsAttribute))]
@@ -40,18 +55,36 @@ namespace CargoTransportationAPI.Controllers
             return Ok(transportDto);
         }
 
-        [HttpPost]
+        /// <summary>
+        /// Create new transport
+        /// </summary>
+        /// <param name="transport"></param>
+        /// <returns>Returns created transport</returns>
+        /// <response code="400">If sended transport object is null</response>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpPost, Authorize(Roles = "Administrator")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> AddTransportAsync([FromBody]TransportForCreationDto transport)
         {
             var addableTransport = mapper.Map<Transport>(transport);
-            await CreateTransportAsync(addableTransport);
-
+            await CreateTransportAsync(addableTransport);   
+            
             var transportToReturn = mapper.Map<TransportDto>(addableTransport);
             return TransportAdded(transportToReturn);
         }
 
-        [HttpDelete("{transportId}")]
+        /// <summary>
+        /// Delete transport by id
+        /// </summary>
+        /// <param name="transportId"></param>
+        /// <returns>Returns if deleted successfully</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested transport not found</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpDelete("{transportId}"), Authorize(Roles = "Administrator")]
         [ServiceFilter(typeof(ValidateTransportExistsAttribute))]
         public async Task<IActionResult> DeleteTransportById(int transportId)
         {
@@ -62,7 +95,18 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{transportId}")]
+        /// <summary>
+        /// Update transport by id
+        /// </summary>
+        /// <param name="transportId"></param>
+        /// <param name="patchDoc"></param>
+        /// <returns>Returns if updated successfully</returns>
+        /// <response code="400">If sended pathDoc is null</response>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested transport not found</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpPatch("{transportId}"), Authorize(Roles = "Administrator")]
         [ServiceFilter(typeof(ValidateTransportExistsAttribute))]
         public async Task<IActionResult> PartiallyUpdateTransportById(int transportId, [FromBody]JsonPatchDocument<TransportForUpdateDto> patchDoc)
         {
@@ -77,6 +121,10 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Get allowed requests
+        /// </summary>
+        /// <returns>Returns allowed requests</returns>
         [HttpOptions]
         public IActionResult GetTransportOptions()
         {
@@ -84,6 +132,10 @@ namespace CargoTransportationAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Get allowed requests for id
+        /// </summary>
+        /// <returns>Returns allowed requests</returns>
         [HttpOptions("{transportId}")]
         public IActionResult GetTransportByIdOptions()
         {

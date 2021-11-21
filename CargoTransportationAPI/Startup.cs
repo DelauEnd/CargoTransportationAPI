@@ -40,6 +40,12 @@ namespace CargoTransportationAPI
             services.ConfigureFilterAttributes();
             services.ConfigureDataShaper();
             services.ConfigureVersioning();
+            services.ConfigureSwagger();
+
+            services.AddAuthentication();
+            services.ConfigureIdentity();
+            services.ConfigureJWT(configuration);
+            services.ConfigureAuthenticationManager();
 
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers(config =>
@@ -63,6 +69,14 @@ namespace CargoTransportationAPI
 
             app.ConfigureExceptionHandler(logger);
 
+            app.UseSwagger();
+            app.UseSwaggerUI(setup =>
+            {
+                setup.SwaggerEndpoint("/swagger/v1/swagger.json", "Cargo Transportation Api v1");
+                setup.SwaggerEndpoint("/swagger/v2/swagger.json", "Cargo Transportation Api v2");
+
+                setup.RoutePrefix = "";
+            });
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -78,6 +92,7 @@ namespace CargoTransportationAPI
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

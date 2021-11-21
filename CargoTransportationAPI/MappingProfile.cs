@@ -22,6 +22,12 @@ namespace CargoTransportationAPI
             CreateOrderMaps();
             CreateCustomerMaps();
             CreateCargoCategoryMaps();
+            CreateUserMaps();
+        }
+
+        private void CreateUserMaps()
+        {
+            CreateMap<UserForCreationDto, User>();
         }
 
         private void CreateTransportMaps()

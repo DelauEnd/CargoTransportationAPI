@@ -4,14 +4,16 @@ using Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CargoTransportationAPI.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20211121004917_CreatingIdentityTables")]
+    partial class CreatingIdentityTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,9 +66,9 @@ namespace CargoTransportationAPI.Migrations
                         new
                         {
                             Id = 1,
-                            ArrivalDate = new DateTime(2021, 12, 1, 3, 57, 23, 103, DateTimeKind.Local).AddTicks(8588),
+                            ArrivalDate = new DateTime(2021, 12, 1, 3, 49, 16, 187, DateTimeKind.Local).AddTicks(9471),
                             CategoryId = 1,
-                            DepartureDate = new DateTime(2021, 11, 21, 3, 57, 23, 103, DateTimeKind.Local).AddTicks(8351),
+                            DepartureDate = new DateTime(2021, 11, 21, 3, 49, 16, 187, DateTimeKind.Local).AddTicks(9227),
                             OrderId = 1,
                             RouteId = 1,
                             Title = "Initial Cargo",
@@ -311,22 +313,6 @@ namespace CargoTransportationAPI.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "c4459678-51b2-4e27-92a3-72e420052759",
-                            ConcurrencyStamp = "b79635f8-5546-4136-90c8-b29a98345067",
-                            Name = "Manager",
-                            NormalizedName = "MANAGER"
-                        },
-                        new
-                        {
-                            Id = "8d699a73-d8f8-49c6-b4e2-a8ba4d5a8126",
-                            ConcurrencyStamp = "3ceec481-1f98-4c78-9002-073f622c8b8a",
-                            Name = "Administrator",
-                            NormalizedName = "ADMINISTRATOR"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

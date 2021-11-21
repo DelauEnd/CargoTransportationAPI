@@ -8,16 +8,23 @@ using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CargoTransportationAPI.Controllers
 {
-    [Route("api/Customers")]
+    [Route("api/Customers"), Authorize]
     [ApiController]
     public class CustomersController : ExtendedControllerBase
     {
+        /// <summary>
+        /// Get list of customers
+        /// </summary>
+        /// <returns>Returns customers list</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="500">Unhandled exception</response>
         [HttpGet]
         [HttpHead]
         public async Task<IActionResult> GetAllCustomers()
@@ -29,6 +36,14 @@ namespace CargoTransportationAPI.Controllers
             return Ok(customersDto);
         }
 
+        /// <summary>
+        /// Get customer by id
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns>Returns requested customer</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested customer not found</response>
+        /// <response code="500">Unhandled exception</response>
         [HttpGet("{customerId}", Name = "GetCustomerById")]
         [HttpHead("{customerId}")]
         [ServiceFilter(typeof(ValidateCustomerExistsAttribute))]
@@ -40,9 +55,17 @@ namespace CargoTransportationAPI.Controllers
             return Ok(customerDto);
         }
 
-        [HttpPost]
+        /// <summary>
+        /// Create new customer by id
+        /// </summary>
+        /// <param name="customer"></param>
+        /// <returns>Returns created customer</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpPost, Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> AddTransport([FromBody]CustomerForCreation customer)
+        public async Task<IActionResult> AddCustomer([FromBody]CustomerForCreation customer)
         {
             var addableCustomer = mapper.Map<Customer>(customer);
             await CreateCustomerAsync(addableCustomer);
@@ -51,7 +74,16 @@ namespace CargoTransportationAPI.Controllers
             return CustomerAdded(customerToReturn);
         }
 
-        [HttpDelete("{customerId}")]
+        /// <summary>
+        /// Delete customer by id
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns>Returns if deleted successfully</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested customer not found</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpDelete("{customerId}"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidateCustomerExistsAttribute))]
         public async Task<IActionResult> DeleteCustomerById(int customerId)
         {
@@ -62,7 +94,18 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{customerId}")]
+        /// <summary>
+        /// Update customer by id
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="patchDoc"></param>
+        /// <returns>Returns if updated successfully</returns>
+        /// <response code="400">If sended pathDoc is null</response>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested customer not found</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpPatch("{customerId}"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidateCustomerExistsAttribute))]
         public async Task<IActionResult> PartiallyUpdateCustomerById(int customerId, [FromBody]JsonPatchDocument<CustomerForUpdateDto> patchDoc)
         {
@@ -77,6 +120,10 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Get allowed requests
+        /// </summary>
+        /// <returns>Returns allowed requests</returns>
         [HttpOptions]
         public IActionResult GetCustomerOptions()
         {
@@ -84,6 +131,10 @@ namespace CargoTransportationAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Get allowed requests for id
+        /// </summary>
+        /// <returns>Returns allowed requests</returns>
         [HttpOptions("{customerId}")]
         public IActionResult GetCustomerByIdOptions()
         {

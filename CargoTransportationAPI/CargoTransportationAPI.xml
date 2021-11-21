@@ -1,0 +1,455 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CargoTransportationAPI</name>
+    </assembly>
+    <members>
+        <member name="M:CargoTransportationAPI.Controllers.AuthenticationController.RegisterUser(Entities.DataTransferObjects.UserForCreationDto)">
+            <summary>
+            Creates a new user
+            </summary>
+            <param name="userForCreation"></param>
+            <returns>Returns the newly created user</returns>
+            <response code="400">If created user is incorrect</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.AuthenticationController.Authenticate(Entities.DataTransferObjects.UserForAuthenticationDto)">
+            <summary>
+            Authenticate user by username and password
+            </summary>
+            <param name="user"></param>
+            <returns>Returns access token for authenticated user</returns>
+            <response code="400">If sended is null</response>
+            <response code="401">If incorrect username or password</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CargoCategoriesController.GetAllCategories">
+            <summary>
+            Get list of categories
+            </summary>
+            <returns>Returns cargoes list</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CargoCategoriesController.AddCategory(Entities.DataTransferObjects.CategoryForCreationDto)">
+            <summary>
+            Create category
+            </summary>
+            <param name="category"></param>
+            <returns>Returns requested category</returns>
+            <response code="400">If sended category object is null</response>
+            <response code="401">If user unauthenticated</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CargoCategoriesController.DeleteCategoryById(System.Int32)">
+            <summary>
+            Delete category by id
+            </summary>
+            <param name="categoryId"></param>
+            <returns>Returns if deleted successfully</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested category not found</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CargoCategoriesController.UpdateCargoCategoryById(System.Int32,Entities.DataTransferObjects.ObjectsForUpdate.CargoCategoryForUpdateDto)">
+            <summary>
+            Update category by id
+            </summary>
+            <param name="categoryId"></param>
+            <returns>Returns if updated successfully</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested category not found</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CargoCategoriesController.GetCargoCategoryOptions">
+            <summary>
+            Get allowed requests
+            </summary>
+            <returns>Returns allowed requests</returns>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CargoCategoriesController.GetCargoCategoryByIdOptions">
+            <summary>
+            Get allowed requests for id
+            </summary>
+            <returns>Returns allowed requests</returns>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CargoesController.GetAllCargoes(Entities.RequestFeautures.CargoParameters)">
+            <summary>
+            Get list of cargo categories
+            </summary>
+            <param name="parameters"></param>
+            <returns>Returns cargo categories list</returns>
+            <response code="400">If incorrect date filter</response>
+            <response code="401">If user unauthenticated</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CargoesController.GetCargoById(System.Int32,Entities.RequestFeautures.CargoParameters)">
+            <summary>
+            Get cargo by id
+            </summary>
+            <param name="cargoId"></param>
+            <param name="parameters"></param>
+            <returns>Returns requested cargo</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested cargo not found</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CargoesController.DeleteCargoById(System.Int32)">
+            <summary>
+            Delete cargo by id
+            </summary>
+            <param name="cargoId"></param>
+            <returns>Returns if deleted successfully</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested cargo not found</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CargoesController.PartiallyUpdateCargoById(System.Int32,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{Entities.DataTransferObjects.ObjectsForUpdate.CargoForUpdateDto})">
+            <summary>
+            Update cargo by id
+            </summary>
+            <param name="cargoId"></param>
+            <param name="patchDoc"></param>
+            <returns>Returns if updated successfully</returns>
+            <response code="400">If sended pathDoc is null</response>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested cargo not found</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CargoesController.GetCargoOptions">
+            <summary>
+            Get allowed requests
+            </summary>
+            <returns>Returns allowed requests</returns>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CargoesController.GetCargoByIdOptions">
+            <summary>
+            Get allowed requests for id
+            </summary>
+            <returns>Returns allowed requests</returns>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CustomersController.GetAllCustomers">
+            <summary>
+            Get list of customers
+            </summary>
+            <returns>Returns customers list</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CustomersController.GetCustomerById(System.Int32)">
+            <summary>
+            Get customer by id
+            </summary>
+            <param name="customerId"></param>
+            <returns>Returns requested customer</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested customer not found</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CustomersController.AddCustomer(Entities.DataTransferObjects.CustomerForCreation)">
+            <summary>
+            Create new customer by id
+            </summary>
+            <param name="customer"></param>
+            <returns>Returns created customer</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CustomersController.DeleteCustomerById(System.Int32)">
+            <summary>
+            Delete customer by id
+            </summary>
+            <param name="customerId"></param>
+            <returns>Returns if deleted successfully</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested customer not found</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CustomersController.PartiallyUpdateCustomerById(System.Int32,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{Entities.DataTransferObjects.ObjectsForUpdate.CustomerForUpdateDto})">
+            <summary>
+            Update customer by id
+            </summary>
+            <param name="customerId"></param>
+            <param name="patchDoc"></param>
+            <returns>Returns if updated successfully</returns>
+            <response code="400">If sended pathDoc is null</response>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested customer not found</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CustomersController.GetCustomerOptions">
+            <summary>
+            Get allowed requests
+            </summary>
+            <returns>Returns allowed requests</returns>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.CustomersController.GetCustomerByIdOptions">
+            <summary>
+            Get allowed requests for id
+            </summary>
+            <returns>Returns allowed requests</returns>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.OrdersController.GetAllOrders">
+            <summary>
+            Get list of orders
+            </summary>
+            <returns>Returns orders list</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.OrdersController.GetOrderById(System.Int32)">
+            <summary>
+            Get order by requested id
+            </summary>
+            <param name="orderId"></param>
+            <returns>Returns order by requested id</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested order not found</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.OrdersController.AddOrder(Entities.DataTransferObjects.OrderForCreationDto)">
+            <summary>
+            Create new order
+            </summary>
+            <param name="order"></param>
+            <returns>Returns created order</returns>
+            <response code="400">If sended order object is null</response>
+            <response code="401">If user unauthenticated</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.OrdersController.GetCargoesByOrderId(System.Int32,Entities.RequestFeautures.CargoParameters)">
+            <summary>
+            Get cargoes by requested order id
+            </summary>
+            <param name="orderId"></param>
+            <param name="parameters"></param>
+            <returns>Returns cargoes by requested order id</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested order not found</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.OrdersController.AddCargoesAsync(System.Collections.Generic.IEnumerable{Entities.DataTransferObjects.CargoForCreationDto},System.Int32)">
+            <summary>
+            Add cargoes to order
+            </summary>
+            <param name="orderId"></param>
+            <param name="cargoes"></param>
+            <returns>Returns updated order</returns>
+            <response code="400">If sended cargoes object is null</response>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested order not found</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.OrdersController.DeleteOrderById(System.Int32)">
+            <summary>
+            Delete order by id
+            </summary>
+            <param name="orderId"></param>
+            <returns>Returns if deleted successfully</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested order not found</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.OrdersController.PartiallyUpdateOrderById(System.Int32,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{Entities.DataTransferObjects.ObjectsForUpdate.OrderForUpdateDto})">
+            <summary>
+            Update order by id
+            </summary>
+            <param name="orderId"></param>
+            <param name="patchDoc"></param>
+            <returns>Returns if updated successfully</returns>
+            <response code="400">If sended pathDoc is null</response>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested order not found</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.OrdersController.GetOrderOptions">
+            <summary>
+            Get allowed requests
+            </summary>
+            <returns>Returns allowed requests</returns>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.OrdersController.GetOrderByIdOptions">
+            <summary>
+            Get allowed requests for id
+            </summary>
+            <returns>Returns allowed requests</returns>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.OrdersController.GetOrderByIdWithCargoesOptions">
+            <summary>
+            Get allowed requests for cargoes
+            </summary>
+            <returns>Returns allowed requests</returns>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.RoutesController.GetAllRoutes">
+            <summary>
+            Get list of routes
+            </summary>
+            <returns>Returns routes list</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.RoutesController.GetRouteById(System.Int32)">
+            <summary>
+            Get route by requested id
+            </summary>
+            <param name="routeId"></param>
+            <returns>Returns route by requested id</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested route not found</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.RoutesController.AddRoute(Entities.DataTransferObjects.RouteForCreationDto)">
+            <summary>
+            Create new route
+            </summary>
+            <param name="route"></param>
+            <returns>Returns created route</returns>
+            <response code="400">If sended route object is null</response>
+            <response code="401">If user unauthenticated</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.RoutesController.DeleteRouteById(System.Int32)">
+            <summary>
+            Delete route by id
+            </summary>
+            <param name="routeId"></param>
+            <returns>Returns if deleted successfully</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested route not found</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.RoutesController.UpdateRouteById(System.Int32,Entities.DataTransferObjects.ObjectsForUpdate.RouteForUpdateDto)">
+            <summary>
+            Update route by id
+            </summary>
+            <param name="routeId"></param>
+            <param name="route"></param>
+            <returns>Returns if updated successfully</returns>
+            <response code="400">If sended route object is null</response>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested route not found</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.RoutesController.GetCargoesByRouteId(System.Int32,Entities.RequestFeautures.CargoParameters)">
+            <summary>
+            Get cargoes by requested route id
+            </summary>
+            <param name="routeId"></param>
+            <param name="parameters"></param>
+            <returns>Returns cargoes by requested order id</returns>
+            <response code="400">If sended patchDoc is null</response>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested route not found</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.RoutesController.MarkCargoToRouteAsync(System.Int32,System.Int32)">
+            <summary>
+            Mark cargo by requested id to route by requested id
+            </summary>
+            <param name="routeId"></param>
+            <param name="cargoId"></param>
+            <returns>Returns if marked successfully</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested route or cargo not found</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.RoutesController.GetRouteOptions">
+            <summary>
+            Get allowed requests
+            </summary>
+            <returns>Returns allowed requests</returns>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.RoutesController.GetRouteByIdOptions">
+            <summary>
+            Get allowed requests for id
+            </summary>
+            <returns>Returns allowed requests</returns>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.RoutesController.GetRouteByIdWithCargoesOptions">
+            <summary>
+            Get allowed requests for cargoes
+            </summary>
+            <returns>Returns allowed requests</returns>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.TransportController.GetAllTransport">
+            <summary>
+            Get list of transport
+            </summary>
+            <returns>Returns transport list</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.TransportController.GetTransportById(System.Int32)">
+            <summary>
+            Get transport by requested id
+            </summary>
+            <param name="transportId"></param>
+            <returns>Returns transport by requested id</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested transport not found</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.TransportController.AddTransportAsync(Entities.DataTransferObjects.TransportForCreationDto)">
+            <summary>
+            Create new transport
+            </summary>
+            <param name="transport"></param>
+            <returns>Returns created transport</returns>
+            <response code="400">If sended transport object is null</response>
+            <response code="401">If user unauthenticated</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.TransportController.DeleteTransportById(System.Int32)">
+            <summary>
+            Delete transport by id
+            </summary>
+            <param name="transportId"></param>
+            <returns>Returns if deleted successfully</returns>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested transport not found</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.TransportController.PartiallyUpdateTransportById(System.Int32,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{Entities.DataTransferObjects.ObjectsForUpdate.TransportForUpdateDto})">
+            <summary>
+            Update transport by id
+            </summary>
+            <param name="transportId"></param>
+            <param name="patchDoc"></param>
+            <returns>Returns if updated successfully</returns>
+            <response code="400">If sended pathDoc is null</response>
+            <response code="401">If user unauthenticated</response>
+            <response code="404">If requested transport not found</response>
+            <response code="403">If user authenticated but has incorrect role</response>
+            <response code="500">Unhandled exception</response>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.TransportController.GetTransportOptions">
+            <summary>
+            Get allowed requests
+            </summary>
+            <returns>Returns allowed requests</returns>
+        </member>
+        <member name="M:CargoTransportationAPI.Controllers.TransportController.GetTransportByIdOptions">
+            <summary>
+            Get allowed requests for id
+            </summary>
+            <returns>Returns allowed requests</returns>
+        </member>
+    </members>
+</doc>

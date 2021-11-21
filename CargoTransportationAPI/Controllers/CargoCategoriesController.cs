@@ -8,16 +8,23 @@ using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CargoTransportationAPI.Controllers
 {
-    [Route("api/Cargoes/Categories")]
+    [Route("api/Cargoes/Categories"), Authorize]
     [ApiController]
     public class CargoCategoriesController : ExtendedControllerBase
     {
+        /// <summary>
+        /// Get list of categories
+        /// </summary>
+        /// <returns>Returns cargoes list</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="500">Unhandled exception</response>
         [HttpGet]
         [HttpHead]
         public async Task<IActionResult> GetAllCategories()
@@ -29,7 +36,16 @@ namespace CargoTransportationAPI.Controllers
             return Ok(categoriesDto);
         }
 
-        [HttpPost]
+        /// <summary>
+        /// Create category
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns>Returns requested category</returns>
+        /// <response code="400">If sended category object is null</response>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpPost, Authorize(Roles ="Administrator")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> AddCategory([FromBody]CategoryForCreationDto category)
         {
@@ -41,7 +57,16 @@ namespace CargoTransportationAPI.Controllers
             return Ok(categoryToReturn);
         }
 
-        [HttpDelete("{categoryId}")]
+        /// <summary>
+        /// Delete category by id
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns>Returns if deleted successfully</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested category not found</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpDelete("{categoryId}"), Authorize(Roles = "Administrator")]
         [ServiceFilter(typeof(ValidateCargoCategoryExistsAttribute))]
         public async Task<IActionResult> DeleteCategoryById(int categoryId)
         {
@@ -52,7 +77,16 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("{categoryId}")]
+        /// <summary>
+        /// Update category by id
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns>Returns if updated successfully</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested category not found</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpPut("{categoryId}"), Authorize(Roles = "Administrator")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ServiceFilter(typeof(ValidateCargoCategoryExistsAttribute))]
         public async Task<IActionResult> UpdateCargoCategoryById(int categoryId, CargoCategoryForUpdateDto category)
@@ -65,6 +99,10 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Get allowed requests
+        /// </summary>
+        /// <returns>Returns allowed requests</returns>
         [HttpOptions]
         public IActionResult GetCargoCategoryOptions()
         {
@@ -72,6 +110,10 @@ namespace CargoTransportationAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Get allowed requests for id
+        /// </summary>
+        /// <returns>Returns allowed requests</returns>
         [HttpOptions("{categoryId}")]
         public IActionResult GetCargoCategoryByIdOptions()
         {

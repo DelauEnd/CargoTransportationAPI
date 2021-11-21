@@ -5,6 +5,7 @@ using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Models;
 using Entities.RequestFeautures;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Controllers
 {
-    [Route("api/Routes")]
+    [Route("api/Routes"), Authorize]
     [ApiController]
     public class RoutesController : ExtendedControllerBase
     {
@@ -23,6 +24,12 @@ namespace CargoTransportationAPI.Controllers
             this.cargoDataShaper = cargoDataShaper;
         }
 
+        /// <summary>
+        /// Get list of routes
+        /// </summary>
+        /// <returns>Returns routes list</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="500">Unhandled exception</response>
         [HttpGet]
         [HttpHead]
         public async Task<IActionResult> GetAllRoutes()
@@ -34,6 +41,14 @@ namespace CargoTransportationAPI.Controllers
             return Ok(routeDto);
         }
 
+        /// <summary>
+        /// Get route by requested id
+        /// </summary>
+        /// <param name="routeId"></param>
+        /// <returns>Returns route by requested id</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested route not found</response>
+        /// <response code="500">Unhandled exception</response>
         [HttpGet("{routeId}", Name = "GetRouteById")]
         [HttpHead("{routeId}")]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
@@ -46,7 +61,16 @@ namespace CargoTransportationAPI.Controllers
             return Ok(routeDto);
         }
 
-        [HttpPost]
+        /// <summary>
+        /// Create new route
+        /// </summary>
+        /// <param name="route"></param>
+        /// <returns>Returns created route</returns>
+        /// <response code="400">If sended route object is null</response>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpPost, Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> AddRoute([FromBody]RouteForCreationDto route)
         {
@@ -57,7 +81,16 @@ namespace CargoTransportationAPI.Controllers
             return RouteAdded(routeToReturn);
         }
 
-        [HttpDelete("{routeId}")]
+        /// <summary>
+        /// Delete route by id
+        /// </summary>
+        /// <param name="routeId"></param>
+        /// <returns>Returns if deleted successfully</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested route not found</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpDelete("{routeId}"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
         public async Task<IActionResult> DeleteRouteById(int routeId)
         {
@@ -68,7 +101,18 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("{routeId}")]
+        /// <summary>
+        /// Update route by id
+        /// </summary>
+        /// <param name="routeId"></param>
+        /// <param name="route"></param>
+        /// <returns>Returns if updated successfully</returns>
+        /// <response code="400">If sended route object is null</response>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested route not found</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpPut("{routeId}"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
         public async Task<IActionResult> UpdateRouteById(int routeId, RouteForUpdateDto route)
@@ -81,6 +125,16 @@ namespace CargoTransportationAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Get cargoes by requested route id
+        /// </summary>
+        /// <param name="routeId"></param>
+        /// <param name="parameters"></param>
+        /// <returns>Returns cargoes by requested order id</returns>
+        /// <response code="400">If sended patchDoc is null</response>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested route not found</response>
+        /// <response code="500">Unhandled exception</response>
         [HttpGet("{routeId}/Cargoes")]
         [HttpHead("{routeId}/Cargoes")]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
@@ -97,7 +151,16 @@ namespace CargoTransportationAPI.Controllers
             return Ok(cargoDataShaper.ShapeData(cargoesDto, parameters.Fields));
         }
 
-        [HttpPost("{routeId}/Cargoes")]
+        /// <summary>
+        /// Mark cargo by requested id to route by requested id
+        /// </summary>
+        /// <param name="routeId"></param>
+        /// <param name="cargoId"></param>
+        /// <returns>Returns if marked successfully</returns>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If requested route or cargo not found</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpPost("{routeId}/Cargoes"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
         [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
         public async Task<IActionResult> MarkCargoToRouteAsync(int routeId, int cargoId)
@@ -111,6 +174,10 @@ namespace CargoTransportationAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Get allowed requests
+        /// </summary>
+        /// <returns>Returns allowed requests</returns>
         [HttpOptions]
         public IActionResult GetRouteOptions()
         {
@@ -118,6 +185,10 @@ namespace CargoTransportationAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Get allowed requests for id
+        /// </summary>
+        /// <returns>Returns allowed requests</returns>
         [HttpOptions("{routeId}")]
         public IActionResult GetRouteByIdOptions()
         {
@@ -125,6 +196,10 @@ namespace CargoTransportationAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Get allowed requests for cargoes
+        /// </summary>
+        /// <returns>Returns allowed requests</returns>
         [HttpOptions("{routeId}/Cargoes")]
         public IActionResult GetRouteByIdWithCargoesOptions()
         {
