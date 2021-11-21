@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Entities.DataTransferObjects
 {
-    public class CustomerDto : Dto, IModelFormatter
+    public class CustomerDto : IModelFormatter
     {
         public int Id { get; set; }
 

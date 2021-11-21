@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Entities.DataTransferObjects
 {
-    public class CargoCategoryDto : Dto, IModelFormatter
+    public class CargoCategoryDto : IModelFormatter
     {
         public int Id { get; set; }
 

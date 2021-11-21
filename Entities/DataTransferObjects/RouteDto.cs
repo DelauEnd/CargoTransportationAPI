@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Entities.DataTransferObjects
 {
-    public class RouteDto : Dto, IModelFormatter
+    public class RouteDto : IModelFormatter
     {
         public int Id { get; set; }
 

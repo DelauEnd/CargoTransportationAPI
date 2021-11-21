@@ -39,6 +39,7 @@ namespace CargoTransportationAPI
             services.ConfigureApiBehaviorOptions();
             services.ConfigureFilterAttributes();
             services.ConfigureDataShaper();
+            services.ConfigureVersioning();
 
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers(config =>

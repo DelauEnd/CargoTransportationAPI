@@ -59,6 +59,16 @@ namespace CargoTransportationAPI.Extensions
             services.AddScoped<ValidateOrderExistsAttribute>();
         }
 
+        public static void ConfigureVersioning(this IServiceCollection services)
+        {
+            services.AddApiVersioning(options =>
+            {
+                options.ReportApiVersions = true;
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+            });
+        }
+
         public static void ConfigureFormatters(this IMvcBuilder builder)
             => builder
             .AddNewtonsoftJson(options =>

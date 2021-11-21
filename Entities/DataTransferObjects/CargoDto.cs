@@ -2,7 +2,7 @@
 using System;
 namespace Entities.DataTransferObjects
 {
-    public class CargoDto : Dto, IModelFormatter
+    public class CargoDto : IModelFormatter
     {
         public int Id { get; set; }
 
