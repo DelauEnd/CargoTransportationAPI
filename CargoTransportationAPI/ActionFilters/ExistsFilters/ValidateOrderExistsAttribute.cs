@@ -13,11 +13,8 @@ namespace CargoTransportationAPI.ActionFilters
         }
 
         protected override async Task<FilterAttribute> GetAttributeAsync(ActionExecutingContext context)
-        {
-            FilterAttribute attribute = await BuildAttribute(context);
+            => await BuildAttribute(context);
 
-            return attribute;
-        }
         private async Task<FilterAttribute> BuildAttribute(ActionExecutingContext context)
         {
             var trackChanges = context.HttpContext.Request.Method.Equals("PUT");
