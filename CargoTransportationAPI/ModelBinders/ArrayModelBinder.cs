@@ -23,9 +23,7 @@ namespace CargoTransportationAPI.ModelBinders
         }
 
         private static bool IsEnumerable(ModelBindingContext bindingContext)
-        {
-            return bindingContext.ModelMetadata.IsEnumerableType;
-        }
+            => bindingContext.ModelMetadata.IsEnumerableType;
 
         private static Task BindingResult(ModelBindingContext bindingContext, ModelBindingResult result)
         {
@@ -40,11 +38,9 @@ namespace CargoTransportationAPI.ModelBinders
         }
 
         private static string GetProvidedValue(ModelBindingContext bindingContext)
-        {
-            return bindingContext.ValueProvider
+            => bindingContext.ValueProvider
                 .GetValue(bindingContext.ModelName)
-                .ToString();
-        }
+                .ToString();     
 
         private static void SetupBindingContextModel(ModelBindingContext bindingContext)
         {

@@ -9,9 +9,9 @@ namespace Repository.Extensions
     {
         public static IQueryable<Cargo> ApplyFilters(this IQueryable<Cargo> cargoes, CargoParameters parameters)
             => cargoes.Where(cargo => cargo.DepartureDate >= parameters.ArrivalDateFrom && 
-            cargo.DepartureDate <= parameters.ArrivalDateTo &&
-            cargo.DepartureDate >= parameters.DepartureDateFrom &&
-            cargo.DepartureDate <= parameters.DepartureDateTo);
+                cargo.DepartureDate <= parameters.ArrivalDateTo &&
+                cargo.DepartureDate >= parameters.DepartureDateFrom &&
+                cargo.DepartureDate <= parameters.DepartureDateTo);
 
         public static IQueryable<Cargo> Search(this IQueryable<Cargo> cargoes, string search)
         {

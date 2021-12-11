@@ -27,9 +27,7 @@ namespace CargoTransportationAPI.Formatters
         }
 
         private void InitSupportedTypes()
-        {
-            SupportedTypes = FormatterSupportedTypes.SupportedTypes;
-        }
+            => SupportedTypes = FormatterSupportedTypes.SupportedTypes;
 
         protected override bool CanWriteType(Type type)
         {

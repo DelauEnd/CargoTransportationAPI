@@ -36,8 +36,7 @@ namespace CargoTransportationAPI.ActionFilters
 
         private static object GetActionArgument(ActionExecutingContext context)
         {
-            return context.ActionArguments
-                            .SingleOrDefault(x => x.Value.ToString().Contains("Dto")).Value;
+            return context.ActionArguments.SingleOrDefault(x => x.Value.ToString().Contains("Dto")).Value;
         }
 
         private void InvalidModelStateResult(ActionExecutingContext context)

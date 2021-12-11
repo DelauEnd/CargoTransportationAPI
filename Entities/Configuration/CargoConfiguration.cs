@@ -29,7 +29,7 @@ namespace Entities.Configuration
                 }
             );
             builder.OwnsOne(Cargo => Cargo.Dimensions).HasData(
-                new //По возможности избавиться от анонимного типа
+                new 
                 {
                     CargoId = 1,
                     Height = 50d,

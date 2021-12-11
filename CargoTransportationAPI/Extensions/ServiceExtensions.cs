@@ -46,16 +46,14 @@ namespace CargoTransportationAPI.Extensions
 
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
             => services.AddDbContext<RepositoryContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("sqlConnection"), x =>
-            x.MigrationsAssembly("CargoTransportationAPI")));
+                options.UseSqlServer(configuration.GetConnectionString("sqlConnection"), x =>
+                x.MigrationsAssembly("CargoTransportationAPI")));
 
         public static void ConfigureRepositoryManager(this IServiceCollection services)
             => services.AddScoped<IRepositoryManager, RepositoryManager>();
 
         public static void ConfigureDataShaper(this IServiceCollection services)
-        {
-            services.AddScoped<IDataShaper<CargoDto>, DataShaper<CargoDto>>();
-        }
+            => services.AddScoped<IDataShaper<CargoDto>, DataShaper<CargoDto>>();
 
         public static void ConfigureFilterAttributes(this IServiceCollection services)
         {
