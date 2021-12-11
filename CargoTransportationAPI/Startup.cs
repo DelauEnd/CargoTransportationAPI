@@ -1,4 +1,3 @@
-using System.IO;
 using CargoTransportationAPI.Extensions;
 using Contracts;
 using Microsoft.AspNetCore.Builder;
@@ -8,18 +7,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NLog;
+using System.IO;
 
 namespace CargoTransportationAPI
 {
     public class Startup
     {
-        readonly IConfiguration configuration;
+        private readonly IConfiguration configuration;
 
         public Startup(IConfiguration configuration)
         {
             this.configuration = configuration;
 
-            LogManager.LoadConfiguration(GetNlogConfigPath());     
+            LogManager.LoadConfiguration(GetNlogConfigPath());
         }
 
         private string GetNlogConfigPath()

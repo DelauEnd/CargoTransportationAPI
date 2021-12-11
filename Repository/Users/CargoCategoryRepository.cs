@@ -2,10 +2,8 @@
 using Entities;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Repository.Users
@@ -26,16 +24,16 @@ namespace Repository.Users
 
         public async Task<IEnumerable<CargoCategory>> GetAllCategoriesAsync(bool trackChanges)
             => await FindAll(trackChanges)
-            .ToListAsync();
+                .ToListAsync();
 
         public async Task<CargoCategory> GetCategoryByCargoIdAsync(int id, bool trackChanges)
             => await FindByCondition(category =>
-             category.Cargoes.Where(cargo => cargo.Id == id).Any(), trackChanges)
-            .SingleOrDefaultAsync();
+                 category.Cargoes.Where(cargo => cargo.Id == id).Any(), trackChanges)
+                .SingleOrDefaultAsync();
 
         public async Task<CargoCategory> GetCategoryByIdAsync(int id, bool trackChanges)
             => await FindByCondition(category =>
-            category.Id == id, trackChanges)
-            .SingleOrDefaultAsync();
+                category.Id == id, trackChanges)
+                .SingleOrDefaultAsync();
     }
 }

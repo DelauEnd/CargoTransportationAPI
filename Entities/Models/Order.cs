@@ -1,10 +1,7 @@
 ﻿using Entities.Enums;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using System.Text.Json.Serialization;
 
 namespace Entities.Models
 {
@@ -15,7 +12,7 @@ namespace Entities.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Status - required field")]
-        public EStatuses Status { get; set; }
+        public Status Status { get; set; }
 
         [Required(ErrorMessage = "SenderId - required field")]
         public int SenderId { get; set; }

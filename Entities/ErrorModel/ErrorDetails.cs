@@ -1,8 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json.Serialization;
 
 namespace Entities.ErrorModel
 {
@@ -12,6 +8,6 @@ namespace Entities.ErrorModel
         public string Message { get; set; }
 
         public override string ToString() =>
-            JsonConvert.SerializeObject(this);       
+            JsonConvert.SerializeObject(this);
     }
 }

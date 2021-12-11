@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using CargoTransportationAPI.ActionFilters;
-using Contracts;
+﻿using CargoTransportationAPI.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Models;
@@ -12,6 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Controllers
 {

@@ -1,7 +1,5 @@
 ﻿using Entities.Models;
-using Entities.RequestFeautures;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -56,23 +54,19 @@ namespace Repository.Extensions
         }
 
         private static bool IsPropertyExist(PropertyInfo objectProperty)
-        {
-            return objectProperty == null;
-        }
+            => objectProperty == null;
 
         private static PropertyInfo GetObjectProperty(PropertyInfo[] propertiInfos, string param)
         {
             var propertyFromQueryName = param.Split(" ")[0];
-            var objectProperty = propertiInfos.FirstOrDefault(pi =>
+            var objectProperty = propertiInfos.FirstOrDefault(pi => 
                 pi.Name.Equals(propertyFromQueryName, StringComparison.InvariantCultureIgnoreCase));
             return objectProperty;
         }
 
         private static string SetupOrderByDirection(string param)
-        {
-            return param.EndsWith(" desc") ?
+            => param.EndsWith(" desc") ? 
                 "descending" :
-                "ascending";
-        }
+                "ascending";       
     }
 }

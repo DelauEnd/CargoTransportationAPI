@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using CargoTransportationAPI.ActionFilters;
+﻿using CargoTransportationAPI.ActionFilters;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
@@ -13,7 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Controllers
 {
@@ -101,7 +98,7 @@ namespace CargoTransportationAPI.Controllers
             var order = HttpContext.Items["order"] as Order;
 
             var cargoes = await repository.Cargoes.GetCargoesByOrderIdAsync(order.Id, parameters, false);
-            
+
             AddPaginationHeader(cargoes);
 
             var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
@@ -215,7 +212,7 @@ namespace CargoTransportationAPI.Controllers
         private void PatchOrder(JsonPatchDocument<OrderForUpdateDto> patchDoc, Order order)
         {
             var orderToPatch = mapper.Map<OrderForUpdateDto>(order);
-            patchDoc.ApplyTo(orderToPatch, ModelState);          
+            patchDoc.ApplyTo(orderToPatch, ModelState);
 
             TryToValidate(orderToPatch);
 

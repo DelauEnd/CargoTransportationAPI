@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using CargoTransportationAPI.ActionFilters;
-using Contracts;
+﻿using CargoTransportationAPI.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Controllers
 {
@@ -45,7 +40,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="401">If user unauthenticated</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpPost, Authorize(Roles ="Administrator")]
+        [HttpPost, Authorize(Roles = "Administrator")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> AddCategory([FromBody]CategoryForCreationDto category)
         {
@@ -81,6 +76,7 @@ namespace CargoTransportationAPI.Controllers
         /// Update category by id
         /// </summary>
         /// <param name="categoryId"></param>
+        /// <param name="category"></param>
         /// <returns>Returns if updated successfully</returns>
         /// <response code="401">If user unauthenticated</response>
         /// <response code="404">If requested category not found</response>

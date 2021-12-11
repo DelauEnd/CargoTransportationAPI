@@ -1,9 +1,9 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
 namespace CargoTransportationAPI.Migrations
 {
-    public partial class initialData : Migration
+    public partial class InitialData : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

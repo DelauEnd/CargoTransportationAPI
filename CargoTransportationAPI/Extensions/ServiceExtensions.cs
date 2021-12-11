@@ -13,16 +13,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Repository;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
-using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore;
-using System.Text;
-using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
-using System.Reflection;
 using System.IO;
+using System.Reflection;
+using System.Text;
 
 namespace CargoTransportationAPI.Extensions
 {
@@ -54,7 +53,7 @@ namespace CargoTransportationAPI.Extensions
             => services.AddScoped<IRepositoryManager, RepositoryManager>();
 
         public static void ConfigureDataShaper(this IServiceCollection services)
-        { 
+        {
             services.AddScoped<IDataShaper<CargoDto>, DataShaper<CargoDto>>();
         }
 
@@ -72,10 +71,10 @@ namespace CargoTransportationAPI.Extensions
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
-            var jwtSettings = configuration.GetSection("JwtSettings");           
+            var jwtSettings = configuration.GetSection("JwtSettings");
             var secretKey = jwtSettings.GetSection("secretKey").Value;
 
-            services.AddAuthentication(opt => 
+            services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -133,7 +132,7 @@ namespace CargoTransportationAPI.Extensions
             })
             .AddXmlDataContractSerializerFormatters()
             .AddMvcOptions(config => config.OutputFormatters.Add(new CsvOutputFormatter()));
-       
+
         public static void ConfigureApiBehaviorOptions(this IServiceCollection services)
             => services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -141,12 +140,11 @@ namespace CargoTransportationAPI.Extensions
             });
 
         public static void ConfigureSwagger(this IServiceCollection services)
-        {
-            services.AddSwaggerGen(setup =>
+            => services.AddSwaggerGen(setup =>
             {
                 setup.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "Cargo Transportation Api", 
+                    Title = "Cargo Transportation Api",
                     Version = "v1"
                 });
 
@@ -156,9 +154,7 @@ namespace CargoTransportationAPI.Extensions
                     Version = "v2"
                 });
 
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                setup.IncludeXmlComments(xmlPath);
+                SetupXmlComments(setup);
 
                 setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -177,7 +173,7 @@ namespace CargoTransportationAPI.Extensions
                         { Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer" 
+                                Id = "Bearer"
                             },
                             Name = "Bearer",
                         },
@@ -185,6 +181,12 @@ namespace CargoTransportationAPI.Extensions
                     }
                 });
             });
+
+        private static void SetupXmlComments(SwaggerGenOptions setup)
+        {
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            setup.IncludeXmlComments(xmlPath);
         }
     }
 }

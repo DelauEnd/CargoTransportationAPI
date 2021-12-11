@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -21,7 +20,7 @@ namespace CargoTransportationAPI.ModelBinders
             SetupBindingContextModel(bindingContext);
 
             return BindingResult(bindingContext, ModelBindingResult.Success(bindingContext.Model));
-        }     
+        }
 
         private static bool IsEnumerable(ModelBindingContext bindingContext)
         {
@@ -45,7 +44,7 @@ namespace CargoTransportationAPI.ModelBinders
             return bindingContext.ValueProvider
                 .GetValue(bindingContext.ModelName)
                 .ToString();
-        }       
+        }
 
         private static void SetupBindingContextModel(ModelBindingContext bindingContext)
         {

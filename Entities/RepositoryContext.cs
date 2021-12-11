@@ -2,7 +2,6 @@
 using Entities.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace Entities
 {
@@ -15,7 +14,7 @@ namespace Entities
         public DbSet<Transport> Transports { get; set; }
         public DbSet<Customer> Customers { get; set; }
 
-        public RepositoryContext(DbContextOptions options) 
+        public RepositoryContext(DbContextOptions options)
             : base(options)
         {
             Database.EnsureCreated();

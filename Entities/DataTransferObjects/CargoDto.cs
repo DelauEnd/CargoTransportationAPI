@@ -22,17 +22,17 @@ namespace Entities.DataTransferObjects
         {
             var separator = ",\"";
 
-            return string.Join               
+            return string.Join
             (
-                separator, 
-                Id, 
-                Title, 
-                Category, 
-                DepartureDate, 
-                ArrivalDate, 
-                Weight, 
-                Dimensions.Height, 
-                Dimensions.Length, 
+                separator,
+                Id,
+                Title,
+                Category,
+                DepartureDate,
+                ArrivalDate,
+                Weight,
+                Dimensions.Height,
+                Dimensions.Length,
                 Dimensions.Width
             );
         }

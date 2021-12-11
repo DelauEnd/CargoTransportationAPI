@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Entities.Configuration
 {
@@ -27,7 +25,7 @@ namespace Entities.Configuration
                     ArrivalDate = DateTime.Now.AddDays(10),
                     RouteId = 1,
                     OrderId = 1,
-                    Weight = 200,                           
+                    Weight = 200,
                 }
             );
             builder.OwnsOne(Cargo => Cargo.Dimensions).HasData(

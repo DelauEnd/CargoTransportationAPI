@@ -1,9 +1,6 @@
 ﻿using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Entities.Configuration
 {
@@ -21,13 +18,13 @@ namespace Entities.Configuration
                 new Customer
                 {
                     Id = 1,
-                    Address = "14681 Longview Dr, Loxley, AL, 36551 ",                     
+                    Address = "14681 Longview Dr, Loxley, AL, 36551 ",
                 }
             );
 
             builder.OwnsOne(Customer => Customer.ContactPerson).HasData
             (
-                new //По возможности избавиться от анонимного типа
+                new
                 {
                     CustomerId = 1,
                     Name = "Pasha",

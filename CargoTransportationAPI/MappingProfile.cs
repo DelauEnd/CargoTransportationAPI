@@ -1,14 +1,9 @@
 ﻿using AutoMapper;
-using CargoTransportationAPI.Controllers;
-using Contracts;
-using Entities;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Enums;
 using Entities.Models;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
 
 namespace CargoTransportationAPI
 {
@@ -69,16 +64,16 @@ namespace CargoTransportationAPI
 
             CreateMap<OrderForCreationDto, Order>()
                 .ForMember(order => order.Status, option =>
-                option.MapFrom(orderForCreation => EStatuses.PROCESSING));
+                option.MapFrom(orderForCreation => Status.Processing));
 
             CreateMap<OrderForUpdateDto, Order>()
                 .ForMember(order => order.Status, option =>
-                option.MapFrom(order => 
-                    Enum.IsDefined(typeof(EStatuses), order.Status) ?
-                    Enum.Parse(typeof(EStatuses), order.Status) :
-                    EStatuses.PROCESSING))
+                option.MapFrom(order =>
+                    Enum.IsDefined(typeof(Status), order.Status) ?
+                    Enum.Parse(typeof(Status), order.Status) :
+                    Status.Processing))
                 .ReverseMap()
-                .ForMember(updateOrder => updateOrder.Status, option  =>  
+                .ForMember(updateOrder => updateOrder.Status, option =>
                 option.MapFrom(order => order.Status.ToString()));
         }
 

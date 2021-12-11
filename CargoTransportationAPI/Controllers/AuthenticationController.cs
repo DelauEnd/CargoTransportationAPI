@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CargoTransportationAPI.ActionFilters;
+﻿using CargoTransportationAPI.ActionFilters;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Controllers
 {
@@ -47,7 +44,7 @@ namespace CargoTransportationAPI.Controllers
 
             if (userForCreation.Roles != null)
             {
-                var validRoles = await validateAndRebuildRolesAsync(userForCreation.Roles);
+                var validRoles = await ValidateAndRebuildRolesAsync(userForCreation.Roles);
                 await userManager.AddToRolesAsync(user, validRoles);
             }
 
@@ -70,15 +67,15 @@ namespace CargoTransportationAPI.Controllers
 
             if (validUser == null)
             {
-                logger.LogWarn($"nameof(Authenticate): wrong login or password");
+                logger.LogWarn($"{nameof(Authenticate)}: wrong login or password");
                 return Unauthorized();
             }
 
-            return Ok(new { Token = await authManager.CreateToken(validUser)});
+            return Ok(new { Token = await authManager.CreateToken(validUser) });
         }
 
 
-        private async Task<ICollection<string>> validateAndRebuildRolesAsync(ICollection<string> roles)
+        private async Task<ICollection<string>> ValidateAndRebuildRolesAsync(ICollection<string> roles)
         {
             foreach (var role in roles)
                 await RemoveIfNotExistAsync(roles, role);

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Entities.RequestFeautures
+﻿namespace Entities.RequestFeautures
 {
     public class RequestParameters
     {
@@ -12,7 +8,7 @@ namespace Entities.RequestFeautures
 
         public string Fields { get; set; }
 
-        const int maxPageSize = 50;
+        private const int maxPageSize = 50;
         public int Page { get; set; } = 1;
         private int _pageSize = 10;
         public int PageSize
@@ -25,6 +21,6 @@ namespace Entities.RequestFeautures
             {
                 _pageSize = (value > maxPageSize) ? maxPageSize : value;
             }
-        }   
+        }
     }
 }

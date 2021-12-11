@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using AutoMapper;
-using CargoTransportationAPI.ActionFilters;
-using Contracts;
-using Entities.DataTransferObjects;
-using Entities.DataTransferObjects.ObjectsForUpdate;
-using Entities.Models;
+﻿using Entities.Models;
 using Entities.RequestFeautures;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Controllers
 {
@@ -22,17 +11,17 @@ namespace CargoTransportationAPI.Controllers
     [ApiExplorerSettings(GroupName = "v2")]
     public class CargoesV2Controller : ExtendedControllerBase
     {
-        [HttpGet]
-        [HttpHead]
         /// <summary>
         /// Get list of cargoes
         /// </summary>
         /// <returns>Returns cargoes list</returns>
         /// <response code="400">If incorrect date filter</response>
+        [HttpGet]
+        [HttpHead]
         public async Task<IActionResult> GetAllCargoes(CargoParameters parameters)
         {
             if (!parameters.IsValidDateFilter())
-                return BadRequest("date from cannot be later than date to");
+                return BadRequest("Date from cannot be later than date to");
 
             var cargoes = await repository.Cargoes.GetAllCargoesAsync(parameters, false);
 

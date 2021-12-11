@@ -1,10 +1,7 @@
 ﻿using Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.ActionFilters
 {
@@ -48,7 +45,7 @@ namespace CargoTransportationAPI.ActionFilters
             var message = $"Object has incorrect state. Controller: {GetController(context)}, Action: {GetAction(context)}";
             logger.LogError(message);
             context.Result = new BadRequestObjectResult(message);
-        }       
+        }
 
         private void SendedIsNullResult(ActionExecutingContext context)
         {

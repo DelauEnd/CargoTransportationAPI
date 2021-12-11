@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using AutoMapper;
-using CargoTransportationAPI.ActionFilters;
+﻿using CargoTransportationAPI.ActionFilters;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
@@ -14,6 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Controllers
 {
@@ -42,7 +39,7 @@ namespace CargoTransportationAPI.Controllers
         public async Task<IActionResult> GetAllCargoes([FromQuery]CargoParameters parameters)
         {
             if (!parameters.IsValidDateFilter())
-                return BadRequest("date from cannot be later than date to");
+                return BadRequest("Date from cannot be later than date to");
 
             var cargoes = await repository.Cargoes.GetAllCargoesAsync(parameters, false);
 
@@ -83,7 +80,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="404">If requested cargo not found</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpDelete("{cargoId}"), Authorize(Roles="Manager")]
+        [HttpDelete("{cargoId}"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
         public async Task<IActionResult> DeleteCargoById(int cargoId)
         {
