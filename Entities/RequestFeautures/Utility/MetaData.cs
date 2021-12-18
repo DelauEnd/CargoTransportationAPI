@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Entities.RequestFeautures
+﻿namespace Entities.RequestFeautures
 {
     public class MetaData
     {
@@ -10,7 +6,7 @@ namespace Entities.RequestFeautures
         public int TotalPages { get; set; }
         public int PageSize { get; set; }
         public int TotalCount { get; set; }
-        public bool HasPrevious => CurrentPage > 1; 
+        public bool HasPrevious => CurrentPage > 1;
         public bool HasNext => CurrentPage < TotalPages;
     }
 }

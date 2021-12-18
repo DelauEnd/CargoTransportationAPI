@@ -1,14 +1,7 @@
-﻿using Contracts;
-using Entities;
-using Entities.DataTransferObjects;
-using Microsoft.AspNetCore.Http;
+﻿using Entities;
 using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.Net.Http.Headers;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Formatters
 {
@@ -18,10 +11,10 @@ namespace CargoTransportationAPI.Formatters
 
         protected override void BuildResponseMessage(StringBuilder responseMessage, OutputFormatterWriteContext context)
         {
-            if (context.Object is IModelFormatter)
-                Append(responseMessage, (IModelFormatter)context.Object);
-            else if (context.Object is IEnumerable<IModelFormatter>)
-                Append(responseMessage, (IEnumerable<IModelFormatter>)context.Object);               
+            if (context.Object is IModelFormatter model)
+                Append(responseMessage, model);
+            else if (context.Object is IEnumerable<IModelFormatter> models)
+                Append(responseMessage, models);
         }
 
         private void Append(StringBuilder responseMessage, IModelFormatter model)

@@ -59,7 +59,7 @@ namespace Repository
                 new Claim(ClaimTypes.Name, user.UserName)
             };
 
-            var roles = await userManager.GetRolesAsync(user); 
+            var roles = await userManager.GetRolesAsync(user);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));

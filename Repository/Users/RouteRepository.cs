@@ -3,7 +3,6 @@ using Entities;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Repository.Users
@@ -18,14 +17,14 @@ namespace Repository.Users
 
         public async Task<Route> GetRouteByIdAsync(int id, bool trackChanges)
             => await FindByCondition(route => route.Id == id, trackChanges)
-            .Include(route => route.Cargoes).ThenInclude(cargo => cargo.Category)
-            .Include(route => route.Transport)
-            .SingleOrDefaultAsync();
+                .Include(route => route.Cargoes).ThenInclude(cargo => cargo.Category)
+                .Include(route => route.Transport)
+                .SingleOrDefaultAsync();
 
         public async Task<IEnumerable<Route>> GetAllRoutesAsync(bool trackChanges)
             => await FindAll(trackChanges)
-            .Include(route => route.Transport)
-            .ToListAsync();
+                .Include(route => route.Transport)
+                .ToListAsync();
 
         public void CreateRoute(Route route)
             => Create(route);

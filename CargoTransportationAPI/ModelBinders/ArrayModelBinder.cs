@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -21,12 +20,10 @@ namespace CargoTransportationAPI.ModelBinders
             SetupBindingContextModel(bindingContext);
 
             return BindingResult(bindingContext, ModelBindingResult.Success(bindingContext.Model));
-        }     
+        }
 
         private static bool IsEnumerable(ModelBindingContext bindingContext)
-        {
-            return bindingContext.ModelMetadata.IsEnumerableType;
-        }
+            => bindingContext.ModelMetadata.IsEnumerableType;
 
         private static Task BindingResult(ModelBindingContext bindingContext, ModelBindingResult result)
         {
@@ -41,11 +38,9 @@ namespace CargoTransportationAPI.ModelBinders
         }
 
         private static string GetProvidedValue(ModelBindingContext bindingContext)
-        {
-            return bindingContext.ValueProvider
+            => bindingContext.ValueProvider
                 .GetValue(bindingContext.ModelName)
-                .ToString();
-        }       
+                .ToString();     
 
         private static void SetupBindingContextModel(ModelBindingContext bindingContext)
         {

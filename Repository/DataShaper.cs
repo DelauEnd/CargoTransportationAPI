@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Repository
 {
@@ -15,7 +14,7 @@ namespace Repository
         public DataShaper()
         {
             Properties = typeof(T).GetProperties(BindingFlags.Public |
-            BindingFlags.Instance);
+                BindingFlags.Instance);
         }
 
         public IEnumerable<ExpandoObject> ShapeData(IEnumerable<T> entities, string fieldsString)
@@ -41,8 +40,8 @@ namespace Repository
 
             foreach (var field in fields)
             {
-                var property = Properties.FirstOrDefault(pi => 
-                pi.Name.Equals(field.Trim(), StringComparison.InvariantCultureIgnoreCase));
+                var property = Properties.FirstOrDefault(propertyInfo =>
+                    propertyInfo.Name.Equals(field.Trim(), StringComparison.InvariantCultureIgnoreCase));
 
                 if (property == null)
                     continue;
@@ -59,7 +58,7 @@ namespace Repository
 
             foreach (var entity in entities)
             {
-                var shapedObject = FetchDataForEntity(entity, requiredProperties); 
+                var shapedObject = FetchDataForEntity(entity, requiredProperties);
                 shapedData.Add(shapedObject);
             }
 

@@ -1,7 +1,6 @@
 ﻿using Contracts;
 using Entities;
 using Repository.Users;
-using System;
 using System.Threading.Tasks;
 
 namespace Repository
@@ -81,7 +80,7 @@ namespace Repository
         public void ClearTrackers()
             => repositoryContext.ChangeTracker.Clear();
 
-        public async Task SaveAsync() 
+        public async Task SaveAsync()
             => await repositoryContext.SaveChangesAsync();
 
     }

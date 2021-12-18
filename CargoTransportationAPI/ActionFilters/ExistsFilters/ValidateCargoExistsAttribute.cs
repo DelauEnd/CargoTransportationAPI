@@ -1,8 +1,5 @@
 ﻿using Contracts;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.ActionFilters
@@ -16,11 +13,7 @@ namespace CargoTransportationAPI.ActionFilters
         }
 
         protected override async Task<FilterAttribute> GetAttributeAsync(ActionExecutingContext context)
-        {
-            FilterAttribute attribute = await BuildAttribute(context);
-
-            return attribute;
-        }
+            => await BuildAttribute(context);
 
         private async Task<FilterAttribute> BuildAttribute(ActionExecutingContext context)
         {

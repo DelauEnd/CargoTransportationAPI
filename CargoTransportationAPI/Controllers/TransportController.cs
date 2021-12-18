@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using CargoTransportationAPI.ActionFilters;
-using CargoTransportationAPI.Extensions;
-using Contracts;
+﻿using CargoTransportationAPI.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
 using Entities.Models;
@@ -10,7 +7,6 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Controllers
@@ -69,8 +65,8 @@ namespace CargoTransportationAPI.Controllers
         public async Task<IActionResult> AddTransportAsync([FromBody]TransportForCreationDto transport)
         {
             var addableTransport = mapper.Map<Transport>(transport);
-            await CreateTransportAsync(addableTransport);   
-            
+            await CreateTransportAsync(addableTransport);
+
             var transportToReturn = mapper.Map<TransportDto>(addableTransport);
             return TransportAdded(transportToReturn);
         }

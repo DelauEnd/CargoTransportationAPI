@@ -1,11 +1,6 @@
-﻿using CargoTransportationAPI.ActionFilters;
-using Contracts;
-using Entities.Models;
-using Microsoft.AspNetCore.Http;
+﻿using Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.ActionFilters

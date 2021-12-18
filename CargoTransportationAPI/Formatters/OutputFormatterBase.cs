@@ -1,7 +1,5 @@
-﻿using Entities;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,9 +27,7 @@ namespace CargoTransportationAPI.Formatters
         }
 
         private void InitSupportedTypes()
-        {
-            SupportedTypes = FormatterSupportedTypes.SupportedTypes;
-        }
+            => SupportedTypes = FormatterSupportedTypes.SupportedTypes;
 
         protected override bool CanWriteType(Type type)
         {

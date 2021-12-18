@@ -1,10 +1,8 @@
 ﻿using Contracts;
 using Entities;
-using Entities.DataTransferObjects;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Repository.Users
@@ -24,14 +22,14 @@ namespace Repository.Users
 
         public async Task<IEnumerable<Transport>> GetAllTransportAsync(bool trackChanges)
             => await FindAll(trackChanges)
-            .ToListAsync();
+                .ToListAsync();
 
         public async Task<Transport> GetTransportByIdAsync(int id, bool trackChanges)
             => await FindByCondition(transport => transport.Id == id, trackChanges)
-            .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync();
 
         public async Task<Transport> GetTransportByRegistrationNumberAsync(string number, bool trackChanges)
             => await FindByCondition(transport => transport.RegistrationNumber == number, trackChanges)
-            .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync();
     }
 }

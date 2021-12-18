@@ -1,4 +1,3 @@
-using System.IO;
 using CargoTransportationAPI.Extensions;
 using Contracts;
 using Microsoft.AspNetCore.Builder;
@@ -8,24 +7,23 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NLog;
+using System.IO;
 
 namespace CargoTransportationAPI
 {
     public class Startup
     {
-        readonly IConfiguration configuration;
+        private readonly IConfiguration configuration;
 
         public Startup(IConfiguration configuration)
         {
             this.configuration = configuration;
 
-            LogManager.LoadConfiguration(GetNlogConfigPath());     
+            LogManager.LoadConfiguration(GetNlogConfigPath());
         }
 
         private string GetNlogConfigPath()
-        {
-            return Directory.GetCurrentDirectory() + "/nLog.config";
-        }
+            => Directory.GetCurrentDirectory() + "/nLog.config";       
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940

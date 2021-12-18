@@ -28,17 +28,17 @@ namespace Repository.Users
 
         public async Task<Customer> GetCustomerByIdAsync(int id, bool trackChanges)
             => await FindByCondition(destination =>
-            destination.Id == id, trackChanges)
-            .SingleOrDefaultAsync();
+                destination.Id == id, trackChanges)
+                .SingleOrDefaultAsync();
 
         public async Task<Customer> GetDestinationByOrderIdAsync(int id, bool trackChanges)
-            => await FindByCondition(destination => 
-            destination.OrderDestination.Where(order => order.Id == id).Any() , trackChanges)
-            .SingleOrDefaultAsync();
+            => await FindByCondition(destination =>
+                destination.OrderDestination.Where(order => order.Id == id).Any(), trackChanges)
+                .SingleOrDefaultAsync();
 
         public async Task<Customer> GetSenderByOrderIdAsync(int id, bool trackChanges)
             => await FindByCondition(sender =>
-            sender.OrderSender.Where(order => order.Id == id).Any(), trackChanges)
-            .SingleOrDefaultAsync();
+                sender.OrderSender.Where(order => order.Id == id).Any(), trackChanges)
+                .SingleOrDefaultAsync();
     }
 }

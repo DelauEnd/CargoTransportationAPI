@@ -11,7 +11,7 @@ namespace CargoTransportationAPI.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
     [Migration("20211030125934_initialData")]
-    partial class initialData
+    partial class InitialData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
