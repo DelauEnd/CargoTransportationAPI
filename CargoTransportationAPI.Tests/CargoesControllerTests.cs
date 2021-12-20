@@ -41,8 +41,6 @@ namespace CargoTransportationAPI.Tests
         public async void GetAllCargoesReturnsCorrectValue()
         {
             //Arrange
-            CargoesController controller = SetupController();
-
             var cargoesList = new List<Cargo>();
             cargoesList.Add(TestModels.TestCargo());
             var cargoes = cargoesList.ToPagedList<Cargo>(1, 10);
@@ -52,6 +50,7 @@ namespace CargoTransportationAPI.Tests
             var mockRepo = new Mock<IRepositoryManager>();
             mockRepo.Setup(repo => repo.Cargoes.GetAllCargoesAsync(parameters, false)).ReturnsAsync(cargoes);
 
+            CargoesController controller = SetupController();
             controller._repository = mockRepo.Object;
 
             //Act
@@ -59,15 +58,19 @@ namespace CargoTransportationAPI.Tests
 
             //Assert
             Assert.IsType<OkObjectResult>(result);
-            var objResult = result as OkObjectResult;
-            Assert.Equal(cargoes, objResult.Value);
         }
 
         private static CargoesController SetupController()
         {
             var mockShaper = new Mock<IDataShaper<CargoDto>>();
 
-            var controller = new CargoesController(mockShaper.Object);
+            var controller = new CargoesController(mockShaper.Object)
+            {
+                ControllerContext = new ControllerContext()
+                {
+                    HttpContext = new DefaultHttpContext()
+                }
+            };
 
             var mockLogger = new Mock<ILoggerManager>();
             controller._logger = mockLogger.Object;
