@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Routing;
 using Moq;
 using System.Collections.Generic;
 using Xunit;
+using FluentAssertions;
 
 namespace CargoTransportationAPI.Tests
 {
@@ -39,7 +40,7 @@ namespace CargoTransportationAPI.Tests
             await validator.OnActionExecutionAsync(context, nextMock.Object);
 
             //Assert
-            Assert.IsType<NotFoundResult>(context.Result);
+            context.Result.Should().BeOfType<NotFoundResult>("because object with requested id not exists");
         }
 
         public ActionExecutingContext CreateContext(Dictionary<string, object> arguments, object controller)

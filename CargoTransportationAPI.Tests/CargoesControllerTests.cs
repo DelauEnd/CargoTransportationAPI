@@ -10,6 +10,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using Xunit;
+using FluentAssertions;
 
 namespace CargoTransportationAPI.Tests
 {
@@ -34,7 +35,7 @@ namespace CargoTransportationAPI.Tests
             var result = await controller.GetAllCargoes(parameters);
 
             //Assert
-            Assert.IsType<BadRequestObjectResult>(result);
+            result.Should().BeOfType<BadRequestObjectResult>("because DateTime filter parameters invalid");
         }
 
         [Fact]
@@ -57,7 +58,7 @@ namespace CargoTransportationAPI.Tests
             var result = await controller.GetAllCargoes(parameters);
 
             //Assert
-            Assert.IsType<OkObjectResult>(result);
+            result.Should().BeOfType<OkObjectResult>();
         }
 
         private static CargoesController SetupController()
