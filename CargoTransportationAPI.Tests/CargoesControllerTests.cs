@@ -43,7 +43,7 @@ namespace CargoTransportationAPI.Tests
         {
             //Arrange
             var cargoesList = new List<Cargo>();
-            cargoesList.Add(TestModels.TestCargo());
+            cargoesList.Add(TestModels.TestCargo);
             var cargoes = cargoesList.ToPagedList<Cargo>(1, 10);
 
             var parameters = new CargoParameters();

@@ -7,8 +7,8 @@ namespace CargoTransportationAPI.Tests
 {
     public class TestModels
     {
-        public static Cargo TestCargo()
-            => new Cargo
+        public static Cargo TestCargo
+            = new Cargo
             {
                 ArrivalDate = DateTime.Now,
                 DepartureDate = DateTime.Now.AddDays(-5),

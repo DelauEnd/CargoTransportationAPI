@@ -43,6 +43,33 @@ namespace CargoTransportationAPI.Tests
             context.Result.Should().BeOfType<NotFoundResult>("because object with requested id not exists");
         }
 
+        [Fact]
+        public async void ExistsCargoFilterIfExists()
+        {
+            //Arrange
+            var cargo = TestModels.TestCargo;
+
+            var mockLogger = new Mock<ILoggerManager>();
+            var mockRepo = new Mock<IRepositoryManager>();
+            mockRepo.Setup(repo => repo.Cargoes.GetCargoByIdAsync(cargo.Id, false)).ReturnsAsync(cargo as Cargo);
+
+            var arguments = new Dictionary<string, object>();
+            arguments.Add("cargoId", cargo.Id);
+            var cargoController = new CargoesController(new Mock<IDataShaper<CargoDto>>().Object);
+
+            var context = CreateContext(arguments, cargoController);
+            var nextMock = new Mock<ActionExecutionDelegate>();
+
+            var validator = new ValidateCargoExistsAttribute(mockLogger.Object, mockRepo.Object);
+
+            //Act
+            await validator.OnActionExecutionAsync(context, nextMock.Object);
+
+            //Assert
+            context.HttpContext.Items.Should().ContainKey("cargo")
+                .WhoseValue.Should().BeOfType(typeof(Cargo)).And.BeEquivalentTo(cargo);
+        }
+
         public ActionExecutingContext CreateContext(Dictionary<string, object> arguments, object controller)
         {
             var actionContext = new ActionContext();
