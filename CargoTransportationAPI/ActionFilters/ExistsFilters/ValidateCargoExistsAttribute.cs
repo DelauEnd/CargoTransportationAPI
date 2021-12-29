@@ -17,11 +17,11 @@ namespace CargoTransportationAPI.ActionFilters
 
         private async Task<FilterAttribute> BuildAttribute(ActionExecutingContext context)
         {
-            var trackChanges = context.HttpContext.Request.Method.Equals("PUT");
+            var trackChanges = context.HttpContext.Request.Method.Equals("PATCH");
             var id = (int)context.ActionArguments["cargoId"];
             var cargo = await repository.Cargoes.GetCargoByIdAsync(id, trackChanges);
 
-            FilterAttribute attribute = new FilterAttribute
+            FilterAttribute attribute = new FilterAttribute 
             {
                 Entity = cargo,
                 EntityId = id,

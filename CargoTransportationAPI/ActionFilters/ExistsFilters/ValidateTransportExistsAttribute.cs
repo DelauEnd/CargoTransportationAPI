@@ -17,7 +17,7 @@ namespace CargoTransportationAPI.ActionFilters
 
         private async Task<FilterAttribute> BuildAttribute(ActionExecutingContext context)
         {
-            var trackChanges = context.HttpContext.Request.Method.Equals("PUT");
+            var trackChanges = context.HttpContext.Request.Method.Equals("PATCH");
             var id = (int)context.ActionArguments["transportId"];
             var transport = await repository.Transport.GetTransportByIdAsync(id, trackChanges);
 
