@@ -168,7 +168,7 @@ namespace CargoTransportationAPI.Controllers
 
             var cargo = HttpContext.Items["cargo"] as Cargo;
 
-            repository.Cargoes.MarkTheCargoToRoute(cargoId, routeId);
+            repository.Cargoes.MarkTheCargoToRoute(cargo.Id, route.Id);
 
             return Ok();
         }
