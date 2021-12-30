@@ -73,7 +73,7 @@ namespace CargoTransportationAPI.Controllers
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> AddRoute([FromBody]RouteForCreationDto route)
         {
-            Route addableRoute = RouteForCreationToRoute(route);
+            Route addableRoute = await RouteForCreationToRoute(route);
             await CreateRouteAsync(addableRoute);
 
             var routeToReturn = await GetRouteToReturnAsync(addableRoute);
@@ -118,7 +118,7 @@ namespace CargoTransportationAPI.Controllers
         {
             var routeToUpdate = HttpContext.Items["route"] as Route;
 
-            UpdateRoute(route, routeToUpdate);
+            await UpdateRouteAsync(route, routeToUpdate);
             await repository.SaveAsync();
 
             return NoContent();
@@ -206,16 +206,16 @@ namespace CargoTransportationAPI.Controllers
             return Ok();
         }
 
-        private void UpdateRoute(RouteForUpdateDto route, Route routeToUpdate)
+        private async Task UpdateRouteAsync(RouteForUpdateDto route, Route routeToUpdate)
         {
-            var transport = GetTransportByRegNumberAsync(route.TransportRegistrationNumber);
+            var transport = await GetTransportByRegNumberAsync(route.TransportRegistrationNumber);
 
             routeToUpdate.TransportId = transport.Id;
         }
 
-        private Route RouteForCreationToRoute(RouteForCreationDto routeForCreation)
+        private async Task<Route> RouteForCreationToRoute(RouteForCreationDto routeForCreation)
         {
-            var transport = GetTransportByRegNumberAsync(routeForCreation.TransportRegistrationNumber);
+            var transport = await GetTransportByRegNumberAsync(routeForCreation.TransportRegistrationNumber);
 
             Route route = new Route
             {
