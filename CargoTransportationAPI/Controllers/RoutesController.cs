@@ -162,13 +162,13 @@ namespace CargoTransportationAPI.Controllers
         [HttpPost("{routeId}/Cargoes"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
         [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
-        public async Task<IActionResult> MarkCargoToRouteAsync(int routeId, int cargoId)
+        public IActionResult MarkCargoToRoute(int routeId, int cargoId)
         {
             var route = HttpContext.Items["route"] as Route;
 
             var cargo = HttpContext.Items["cargo"] as Cargo;
 
-            await MarkTheCargoToRouteAsync(route.Id, cargo.Id);
+            repository.Cargoes.MarkTheCargoToRoute(cargoId, routeId);
 
             return Ok();
         }
@@ -253,12 +253,6 @@ namespace CargoTransportationAPI.Controllers
         private async Task DeleteRouteAsync(Route route)
         {
             repository.Routes.DeleteRoute(route);
-            await repository.SaveAsync();
-        }
-
-        private async Task MarkTheCargoToRouteAsync(int routeId, int cargoId)
-        {
-            await repository.Cargoes.MarkTheCargoToRouteAsync(cargoId, routeId);
             await repository.SaveAsync();
         }
     }

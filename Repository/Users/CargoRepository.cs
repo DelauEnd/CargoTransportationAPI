@@ -73,11 +73,7 @@ namespace Repository.Users
             return cargoPagedList;
         }
 
-        public async Task MarkTheCargoToRouteAsync(int cargoId, int routeId)
-        {
-            var route = await FindByCondition(cargo => cargo.Id == cargoId, false).FirstOrDefaultAsync();
-            route.RouteId = routeId;
-            Update(route);
-        }
+        public void MarkTheCargoToRoute(int cargoId, int routeId)
+            => ExecQuery($"exec AssignCargoToRoute @cargoId={cargoId}, @routeId={routeId}", false);
     }
 }

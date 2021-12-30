@@ -30,6 +30,14 @@ namespace Repository
              RepositoryContext.Set<T>()
                  .Where(expression);
 
+        public IQueryable<T> ExecQuery(string query, bool trackChanges)
+            => !trackChanges ?
+            RepositoryContext.Set<T>()
+                .FromSqlRaw(query)
+                .AsNoTracking() :
+            RepositoryContext.Set<T>()
+                .FromSqlRaw(query);
+
         public void Create(T entity)
             => RepositoryContext.Set<T>().Add(entity);
 

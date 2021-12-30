@@ -25,6 +25,22 @@ namespace Entities
             base.OnModelCreating(modelBuilder);
 
             ApplyConfigurations(modelBuilder);
+
+            AddProcedures();
+        }
+
+        private void AddProcedures()
+        {
+            TryToExecQuery(StoredProcedures.AssignCargoToRoute);
+        }
+
+        private void TryToExecQuery(string query)
+        {
+            try
+            {
+                this.Database.ExecuteSqlRaw(query);
+            }
+            catch { }
         }
 
         private void ApplyConfigurations(ModelBuilder modelBuilder)
