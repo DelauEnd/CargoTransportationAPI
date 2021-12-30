@@ -2,6 +2,7 @@
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -42,13 +43,36 @@ namespace CargoTransportationAPI.Controllers
             if (!result.Succeeded)
                 return BuildUnregistratedResult(result);
 
-            if (userForCreation.Roles != null)
-            {
-                var validRoles = await ValidateAndRebuildRolesAsync(userForCreation.Roles);
-                await userManager.AddToRolesAsync(user, validRoles);
-            }
-
             return Ok(userForCreation);
+        }
+
+        /// <summary>
+        /// Add role to user
+        /// </summary>
+        /// <param name="login"></param>
+        /// <param name="role"></param>
+        /// <returns>Returns edited user</returns>
+        /// <response code="400">If userRole not exists</response>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="404">If user not found</response>
+        /// <response code="403">If user authenticated but has incorrect role</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpPost]
+        [Route("AddRole")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> AddRoleToUser([FromQuery]string login, [FromQuery]string role)
+        {
+            var user = await userManager.FindByNameAsync(login);
+
+            if (user == null)
+                return NotFound();
+
+            if (!await roleManager.RoleExistsAsync(role))
+                return BadRequest();
+
+            await userManager.AddToRoleAsync(user, role);
+
+            return Ok(user);
         }
 
         /// <summary>
@@ -72,21 +96,6 @@ namespace CargoTransportationAPI.Controllers
             }
 
             return Ok(new { Token = await authManager.CreateToken(validUser) });
-        }
-
-
-        private async Task<ICollection<string>> ValidateAndRebuildRolesAsync(ICollection<string> roles)
-        {
-            foreach (var role in roles)
-                await RemoveIfNotExistAsync(roles, role);
-
-            return roles;
-        }
-
-        private async Task RemoveIfNotExistAsync(ICollection<string> roles, string role)
-        {
-            if (!await roleManager.RoleExistsAsync(role))
-                roles.Remove(role);
         }
 
         private IActionResult BuildUnregistratedResult(IdentityResult result)
