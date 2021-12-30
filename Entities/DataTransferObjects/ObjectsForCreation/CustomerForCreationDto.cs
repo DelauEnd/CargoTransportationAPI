@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Entities.DataTransferObjects
 {
-    public class CustomerForCreation
+    public class CustomerForCreationDto
     {
         [Required(ErrorMessage = "Address - required field")]
         [MaxLength(30, ErrorMessage = "RegistrationNumber max length - 30 simbols.")]

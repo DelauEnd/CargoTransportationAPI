@@ -62,7 +62,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="500">Unhandled exception</response>
         [HttpPost, Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> AddCustomer([FromBody]CustomerForCreation customer)
+        public async Task<IActionResult> AddCustomer([FromBody]CustomerForCreationDto customer)
         {
             var addableCustomer = mapper.Map<Customer>(customer);
             await CreateCustomerAsync(addableCustomer);
