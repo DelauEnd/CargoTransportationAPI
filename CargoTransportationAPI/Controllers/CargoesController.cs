@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Controllers
@@ -42,6 +43,31 @@ namespace CargoTransportationAPI.Controllers
                 return BadRequest("Date from cannot be later than date to");
 
             var cargoes = await repository.Cargoes.GetAllCargoesAsync(parameters, false);
+
+            AddPaginationHeader(cargoes);
+
+            var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
+
+            return Ok(cargoDataShaper.ShapeData(cargoesDto, parameters.Fields));
+        }
+
+        /// <summary>
+        /// Get list of cargo categories
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns>Returns cargo categories list</returns>
+        /// <response code="400">If incorrect date filter</response>
+        /// <response code="401">If user unauthenticated</response>
+        /// <response code="500">Unhandled exception</response>
+        [HttpGet]
+        [HttpHead]
+        [Route("Unassigned")]
+        public async Task<IActionResult> GetUnassignedCargoes([FromQuery]CargoParameters parameters)
+        {
+            if (!parameters.IsValidDateFilter())
+                return BadRequest("Date from cannot be later than date to");
+
+            var cargoes = await repository.Cargoes.GetUnassignedCargoesAsync(parameters, false);
 
             AddPaginationHeader(cargoes);
 

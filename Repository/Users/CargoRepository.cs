@@ -4,6 +4,7 @@ using Entities.Models;
 using Entities.RequestFeautures;
 using Microsoft.EntityFrameworkCore;
 using Repository.Extensions;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Repository.Users
@@ -73,7 +74,21 @@ namespace Repository.Users
             return cargoPagedList;
         }
 
-        public void MarkTheCargoToRoute(int cargoId, int routeId)
-            => ExecQuery($"exec AssignCargoToRoute @cargoId={cargoId}, @routeId={routeId}", false);
+        public async Task AssignCargoToRoute(int cargoId, int routeId)
+            => await ExecQuery($"exec AssignCargoToRoute @cargoId={cargoId}, @routeId={routeId}");
+
+        public async Task<PagedList<Cargo>> GetUnassignedCargoesAsync(CargoParameters parameters, bool trackChanges)
+        {
+            var cargoes = await FindAll(trackChanges)
+                .Include(cargo => cargo.Category)
+                .Where(cargo=>cargo.RouteId == null)
+                .ApplyFilters(parameters)
+                .Search(parameters.Search)
+                .Sort(parameters)
+                .ToListAsync();
+
+            var cargoPagedList = cargoes.ToPagedList(parameters.Page, parameters.PageSize);
+            return cargoPagedList;
+        }
     }
 }

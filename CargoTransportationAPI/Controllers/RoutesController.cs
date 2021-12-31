@@ -1,4 +1,5 @@
 ﻿using CargoTransportationAPI.ActionFilters;
+using CargoTransportationAPI.ModelBinders;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
@@ -153,24 +154,37 @@ namespace CargoTransportationAPI.Controllers
         /// <summary>
         /// Mark cargo by requested id to route by requested id
         /// </summary>
+        /// <param name="ids"></param>
         /// <param name="routeId"></param>
-        /// <param name="cargoId"></param>
         /// <returns>Returns if marked successfully</returns>
         /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested route or cargo not found</response>
+        /// <response code="404">If requested route not found</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPost("{routeId}/Cargoes"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
-        [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
-        public IActionResult MarkCargoToRoute(int routeId, int cargoId)
+        public async Task<IActionResult> MarkCargoesToRoute([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<int> ids, int routeId)
         {
             var route = HttpContext.Items["route"] as Route;
 
-            var cargo = HttpContext.Items["cargo"] as Cargo;
-
-            repository.Cargoes.MarkTheCargoToRoute(cargo.Id, route.Id);
+            await AssignCargoes(ids, route);
 
             return Ok();
+        }
+
+        private async Task AssignCargoes(IEnumerable<int> ids, Route route)
+        {
+            foreach (var id in ids)
+               await AssignIfExist(id, route);
+        }
+
+        private async Task AssignIfExist(int id, Route route)
+        {
+            if (await repository.Cargoes.GetCargoByIdAsync(id, false) == null)
+            {
+                logger.LogWarn($"Cargo with Id={id} not exists");
+                return;
+            }    
+            await repository.Cargoes.AssignCargoToRoute(id, route.Id);
         }
 
         /// <summary>

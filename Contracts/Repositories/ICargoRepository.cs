@@ -1,5 +1,6 @@
 ﻿using Entities.Models;
 using Entities.RequestFeautures;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Contracts
@@ -9,9 +10,10 @@ namespace Contracts
         Task<PagedList<Cargo>> GetCargoesByOrderIdAsync(int id, CargoParameters parameters, bool trackChanges);
         Task<PagedList<Cargo>> GetCargoesByRouteIdAsync(int id, CargoParameters parameters, bool trackChanges);
         void CreateCargoForOrder(Cargo cargo, int OrderId);
-        void MarkTheCargoToRoute(int cargoId, int routeId);
+        Task AssignCargoToRoute(int cargoIds, int routeId);
         Task<Cargo> GetCargoByIdAsync(int cargoId, bool trackChanges);
         void DeleteCargo(Cargo cargo);
         Task<PagedList<Cargo>> GetAllCargoesAsync(CargoParameters parameters, bool trackChanges);
+        Task<PagedList<Cargo>> GetUnassignedCargoesAsync(CargoParameters parameters, bool trackChanges);
     }
 }

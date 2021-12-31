@@ -11,6 +11,8 @@ namespace Entities.DataTransferObjects.ObjectsForUpdate
 
         public int CategoryId { get; set; }
 
+        public int? RouteId { get; set; }
+
         public DateTime DepartureDate { get; set; } = DateTime.Now;
 
         public DateTime ArrivalDate { get; set; } = DateTime.Now;
