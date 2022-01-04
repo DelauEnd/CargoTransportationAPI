@@ -25,5 +25,8 @@ namespace Entities.DataTransferObjects
 
         [Required(ErrorMessage = "Dimensions - required fields")]
         public Dimensions Dimensions { get; set; }
+
+        [Required(ErrorMessage = "Image - required fields")]
+        public byte[] Image { get; set; }
     }
 }

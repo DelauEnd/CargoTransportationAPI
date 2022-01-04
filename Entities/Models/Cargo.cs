@@ -26,6 +26,9 @@ namespace Entities.Models
         [Required(ErrorMessage = "Dimensions - required fields")]
         public Dimensions Dimensions { get; set; }
 
+        [Required(ErrorMessage = "Image - required fields")]
+        public byte[] Image { get; set; }
+
         [Required(ErrorMessage = "CategoryId - required field")]
         [ForeignKey(nameof(CargoCategory))]
         public int CategoryId { get; set; }

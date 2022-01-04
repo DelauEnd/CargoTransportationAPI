@@ -17,6 +17,8 @@ namespace Entities.DataTransferObjects.ObjectsForUpdate
 
         public DateTime ArrivalDate { get; set; } = DateTime.Now;
 
+        public byte[] Image { get; set; }
+
         [Range(0, double.MaxValue, ErrorMessage = "Weight - required field and can not be less then 0")]
         public double Weight { get; set; }
 

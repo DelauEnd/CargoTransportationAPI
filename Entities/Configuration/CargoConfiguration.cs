@@ -26,6 +26,7 @@ namespace Entities.Configuration
                     RouteId = 1,
                     OrderId = 1,
                     Weight = 200,
+                    Image = new byte[0]
                 }
             );
             builder.OwnsOne(Cargo => Cargo.Dimensions).HasData(

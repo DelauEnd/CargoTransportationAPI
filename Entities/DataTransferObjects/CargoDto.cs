@@ -18,6 +18,8 @@ namespace Entities.DataTransferObjects
 
         public Dimensions Dimensions { get; set; }
 
+        public byte[] Image { get; set; }
+
         public string FormatToCsv()
         {
             var separator = ",\"";
