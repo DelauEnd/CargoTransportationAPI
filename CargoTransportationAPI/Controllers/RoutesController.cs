@@ -63,6 +63,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Create new route
+        /// | Required role: Manager
         /// </summary>
         /// <param name="route"></param>
         /// <returns>Returns created route</returns>
@@ -83,6 +84,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Delete route by id
+        /// | Required role: Manager
         /// </summary>
         /// <param name="routeId"></param>
         /// <returns>Returns if deleted successfully</returns>
@@ -103,6 +105,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Update route by id
+        /// | Required role: Manager
         /// </summary>
         /// <param name="routeId"></param>
         /// <param name="route"></param>
@@ -153,6 +156,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Mark cargo by requested id to route by requested id
+        /// | Required role: Manager
         /// </summary>
         /// <param name="ids"></param>
         /// <param name="routeId"></param>

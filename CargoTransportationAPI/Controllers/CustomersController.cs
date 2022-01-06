@@ -54,6 +54,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Create new customer by id
+        /// | Required role: Manager
         /// </summary>
         /// <param name="customer"></param>
         /// <returns>Returns created customer</returns>
@@ -73,6 +74,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Delete customer by id
+        /// | Required role: Manager
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns>Returns if deleted successfully</returns>
@@ -93,6 +95,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Update customer by id
+        /// | Required role: Manager
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="patchDoc"></param>

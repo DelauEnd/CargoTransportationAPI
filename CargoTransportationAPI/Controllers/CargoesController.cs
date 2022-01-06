@@ -99,6 +99,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Delete cargo by id
+        /// | Required role: Manager
         /// </summary>
         /// <param name="cargoId"></param>
         /// <returns>Returns if deleted successfully</returns>
@@ -119,6 +120,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Update cargo by id
+        /// | Required role: Manager
         /// </summary>
         /// <param name="cargoId"></param>
         /// <param name="patchDoc"></param>

@@ -63,6 +63,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Create new order
+        /// | Required role: Manager
         /// </summary>
         /// <param name="order"></param>
         /// <returns>Returns created order</returns>
@@ -107,6 +108,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Add cargoes to order
+        /// | Required role: Manager
         /// </summary>
         /// <param name="orderId"></param>
         /// <param name="cargoes"></param>
@@ -132,6 +134,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Delete order by id
+        /// | Required role: Manager
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns>Returns if deleted successfully</returns>
@@ -152,6 +155,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Update order by id
+        /// | Required role: Manager
         /// </summary>
         /// <param name="orderId"></param>
         /// <param name="patchDoc"></param>

@@ -33,6 +33,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Create category
+        /// | Required role: Administrator
         /// </summary>
         /// <param name="category"></param>
         /// <returns>Returns requested category</returns>
@@ -54,6 +55,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Delete category by id
+        /// | Required role: Administrator
         /// </summary>
         /// <param name="categoryId"></param>
         /// <returns>Returns if deleted successfully</returns>
@@ -74,6 +76,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Update category by id
+        /// | Required role: Administrator
         /// </summary>
         /// <param name="categoryId"></param>
         /// <param name="category"></param>

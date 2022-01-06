@@ -53,6 +53,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Create new transport
+        /// | Required role: Administrator
         /// </summary>
         /// <param name="transport"></param>
         /// <returns>Returns created transport</returns>
@@ -73,6 +74,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Delete transport by id
+        /// | Required role: Administrator
         /// </summary>
         /// <param name="transportId"></param>
         /// <returns>Returns if deleted successfully</returns>
@@ -93,6 +95,7 @@ namespace CargoTransportationAPI.Controllers
 
         /// <summary>
         /// Update transport by id
+        /// | Required role: Administrator
         /// </summary>
         /// <param name="transportId"></param>
         /// <param name="patchDoc"></param>
