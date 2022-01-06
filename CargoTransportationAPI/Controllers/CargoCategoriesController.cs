@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Controllers
 {
-    [Route("api/Cargoes/Categories"), Authorize]
+    [Route("api/Categories"), Authorize]
     [ApiController]
     public class CargoCategoriesController : ExtendedControllerBase
     {
