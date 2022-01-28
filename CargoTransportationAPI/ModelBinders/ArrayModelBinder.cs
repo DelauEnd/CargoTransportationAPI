@@ -40,7 +40,7 @@ namespace CargoTransportationAPI.ModelBinders
         private static string GetProvidedValue(ModelBindingContext bindingContext)
             => bindingContext.ValueProvider
                 .GetValue(bindingContext.ModelName)
-                .ToString();     
+                .ToString();
 
         private static void SetupBindingContextModel(ModelBindingContext bindingContext)
         {

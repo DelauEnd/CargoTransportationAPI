@@ -59,14 +59,14 @@ namespace Repository.Extensions
         private static PropertyInfo GetObjectProperty(PropertyInfo[] propertiInfos, string param)
         {
             var propertyFromQueryName = param.Split(" ")[0];
-            var objectProperty = propertiInfos.FirstOrDefault(pi => 
+            var objectProperty = propertiInfos.FirstOrDefault(pi =>
                 pi.Name.Equals(propertyFromQueryName, StringComparison.InvariantCultureIgnoreCase));
             return objectProperty;
         }
 
         private static string SetupOrderByDirection(string param)
-            => param.EndsWith(" desc") ? 
+            => param.EndsWith(" desc") ?
                 "descending" :
-                "ascending";       
+                "ascending";
     }
 }

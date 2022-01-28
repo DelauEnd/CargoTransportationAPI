@@ -1,8 +1,8 @@
 ﻿using CargoTransportationAPI.ActionFilters;
-using CargoTransportationAPI.Controllers;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Routing;
 using Moq;
 using System.Collections.Generic;
 using Xunit;
-using FluentAssertions;
 
 namespace CargoTransportationAPI.Tests
 {
@@ -76,8 +75,8 @@ namespace CargoTransportationAPI.Tests
             actionContext.HttpContext = new DefaultHttpContext();
             actionContext.RouteData = new RouteData();
             actionContext.ActionDescriptor = new ActionDescriptor();
-            
-            var actionExecutingContext = new ActionExecutingContext(actionContext, new Mock<IList<IFilterMetadata>>().Object, arguments, controller);          
+
+            var actionExecutingContext = new ActionExecutingContext(actionContext, new Mock<IList<IFilterMetadata>>().Object, arguments, controller);
 
             return actionExecutingContext;
         }

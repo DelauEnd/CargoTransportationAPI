@@ -6,8 +6,6 @@ using Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CargoTransportationAPI.Controllers.v1
@@ -98,7 +96,7 @@ namespace CargoTransportationAPI.Controllers.v1
                 return Unauthorized();
             }
 
-            return Ok(new { Token = await authManager.CreateToken(validUser), Roles = await userManager.GetRolesAsync(validUser)});
+            return Ok(new { Token = await authManager.CreateToken(validUser), Roles = await userManager.GetRolesAsync(validUser) });
         }
 
         private IActionResult BuildUnregistratedResult(IdentityResult result)

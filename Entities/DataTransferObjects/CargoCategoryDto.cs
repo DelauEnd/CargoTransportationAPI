@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Entities.DataTransferObjects
+﻿namespace Entities.DataTransferObjects
 {
     public class CargoCategoryDto : IModelFormatter
     {

@@ -21,7 +21,7 @@ namespace CargoTransportationAPI.ActionFilters
             var id = (int)context.ActionArguments["cargoId"];
             var cargo = await repository.Cargoes.GetCargoByIdAsync(id, trackChanges);
 
-            FilterAttribute attribute = new FilterAttribute 
+            FilterAttribute attribute = new FilterAttribute
             {
                 Entity = cargo,
                 EntityId = id,

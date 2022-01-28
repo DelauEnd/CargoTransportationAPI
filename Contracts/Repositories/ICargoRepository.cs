@@ -1,6 +1,5 @@
 ﻿using Entities.Models;
 using Entities.RequestFeautures;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Contracts

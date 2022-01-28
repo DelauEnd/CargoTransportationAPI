@@ -30,7 +30,7 @@ namespace Entities.Configuration
                 }
             );
             builder.OwnsOne(cargo => cargo.Dimensions).HasData(
-                new 
+                new
                 {
                     CargoId = 1,
                     Height = 50d,

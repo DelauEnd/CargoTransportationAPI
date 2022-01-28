@@ -179,7 +179,7 @@ namespace CargoTransportationAPI.Controllers.v1
         private async Task AssignCargoes(IEnumerable<int> ids, Route route)
         {
             foreach (var id in ids)
-               await AssignIfExist(id, route);
+                await AssignIfExist(id, route);
         }
 
         private async Task AssignIfExist(int id, Route route)
@@ -188,7 +188,7 @@ namespace CargoTransportationAPI.Controllers.v1
             {
                 logger.LogWarn($"Cargo with Id={id} not exists");
                 return;
-            }    
+            }
             await repository.Cargoes.AssignCargoToRoute(id, route.Id);
         }
 
