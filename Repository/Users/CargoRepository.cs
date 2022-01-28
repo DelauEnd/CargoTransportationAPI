@@ -17,9 +17,9 @@ namespace Repository.Users
 
         }
 
-        public void CreateCargoForOrder(Cargo cargo, int OrderId)
+        public void CreateCargoForOrder(Cargo cargo, int orderId)
         {
-            cargo.OrderId = OrderId;
+            cargo.OrderId = orderId;
             Create(cargo);
         }
 

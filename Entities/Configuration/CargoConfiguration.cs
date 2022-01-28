@@ -29,7 +29,7 @@ namespace Entities.Configuration
                     Image = new byte[0]
                 }
             );
-            builder.OwnsOne(Cargo => Cargo.Dimensions).HasData(
+            builder.OwnsOne(cargo => cargo.Dimensions).HasData(
                 new 
                 {
                     CargoId = 1,

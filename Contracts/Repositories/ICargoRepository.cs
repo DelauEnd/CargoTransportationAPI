@@ -9,7 +9,7 @@ namespace Contracts
     {
         Task<PagedList<Cargo>> GetCargoesByOrderIdAsync(int id, CargoParameters parameters, bool trackChanges);
         Task<PagedList<Cargo>> GetCargoesByRouteIdAsync(int id, CargoParameters parameters, bool trackChanges);
-        void CreateCargoForOrder(Cargo cargo, int OrderId);
+        void CreateCargoForOrder(Cargo cargo, int orderId);
         Task AssignCargoToRoute(int cargoIds, int routeId);
         Task<Cargo> GetCargoByIdAsync(int cargoId, bool trackChanges);
         void DeleteCargo(Cargo cargo);

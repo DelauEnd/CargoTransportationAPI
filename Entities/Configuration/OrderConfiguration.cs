@@ -14,14 +14,14 @@ namespace Entities.Configuration
 
         private void ConfigureModel(EntityTypeBuilder<Order> builder)
         {
-            builder.HasOne(Order => Order.Destination)
-                .WithMany(Customer => Customer.OrderDestination)
-                .HasForeignKey(Order => Order.DestinationId)
+            builder.HasOne(order => order.Destination)
+                .WithMany(customer => customer.OrderDestination)
+                .HasForeignKey(order => order.DestinationId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasOne(Order => Order.Sender)
-                 .WithMany(Customer => Customer.OrderSender)
-                 .HasForeignKey(Order => Order.SenderId)
+            builder.HasOne(order => order.Sender)
+                 .WithMany(customer => customer.OrderSender)
+                 .HasForeignKey(order => order.SenderId)
                  .OnDelete(DeleteBehavior.NoAction);
         }
 
