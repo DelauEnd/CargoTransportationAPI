@@ -21,5 +21,17 @@ namespace Entities.Models
         [Required(ErrorMessage = "PhoneNumber - required field")]
         [MaxLength(30, ErrorMessage = "PhoneNumber max length - 16 simbols.")]
         public string PhoneNumber { get; set; }
+        
+        public string FormatToCsv()
+        {
+            var separator = ",\"";
+
+            return string.Join
+            (
+                Name,
+                Surname,
+                Patronymic
+            );
+        }
     }
 }

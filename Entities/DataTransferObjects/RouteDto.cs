@@ -11,11 +11,11 @@
             var separator = ",\"";
 
             return string.Join
-                (
+            (
                 separator,
                 Id,
                 TransportRegistrationNumber
-                );
+            );
         }
     }
 }

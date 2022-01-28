@@ -10,7 +10,14 @@ namespace Entities.DataTransferObjects
 
         public string FormatToCsv()
         {
-            throw new NotImplementedException();
+            var separator = ",\"";
+
+            return string.Join
+            (
+                separator,
+                Id,
+                Title
+            );
         }
     }
 }
