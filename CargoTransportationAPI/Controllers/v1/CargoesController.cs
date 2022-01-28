@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CargoTransportationAPI.Controllers
+namespace CargoTransportationAPI.Controllers.v1
 {
     [Route("api/Cargoes"), Authorize]
     [ApiController]

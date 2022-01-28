@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CargoTransportationAPI.Controllers
+namespace CargoTransportationAPI.Controllers.v1
 {
     [Route("api/Routes"), Authorize]
     [ApiController]

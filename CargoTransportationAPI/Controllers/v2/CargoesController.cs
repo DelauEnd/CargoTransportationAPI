@@ -3,13 +3,13 @@ using Entities.RequestFeautures;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace CargoTransportationAPI.Controllers
+namespace CargoTransportationAPI.Controllers.v2
 {
     [ApiVersion("2")]
     [Route("api/{v:apiversion}/Cargoes")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "v2")]
-    public class CargoesV2Controller : ExtendedControllerBase
+    public class CargoesController : ExtendedControllerBase
     {
         /// <summary>
         /// Get list of cargoes

@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using FluentAssertions;
+using CargoTransportationAPI.Controllers.v1;
 
 namespace CargoTransportationAPI.Tests
 {
