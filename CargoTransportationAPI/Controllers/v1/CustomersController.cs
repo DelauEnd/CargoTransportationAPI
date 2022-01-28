@@ -1,6 +1,7 @@
 ﻿using CargoTransportationAPI.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
+using Entities.Enums;
 using Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -61,7 +62,7 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="401">If user unauthenticated</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpPost, Authorize(Roles = "Manager")]
+        [HttpPost, Authorize(Roles = nameof(UserRole.Manager))]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> AddCustomer([FromBody]CustomerForCreationDto customer)
         {
@@ -82,7 +83,7 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="404">If requested customer not found</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpDelete("{customerId}"), Authorize(Roles = "Manager")]
+        [HttpDelete("{customerId}"), Authorize(Roles = nameof(UserRole.Manager))]
         [ServiceFilter(typeof(ValidateCustomerExistsAttribute))]
         public async Task<IActionResult> DeleteCustomerById(int customerId)
         {
@@ -105,7 +106,7 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="404">If requested customer not found</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpPatch("{customerId}"), Authorize(Roles = "Manager")]
+        [HttpPatch("{customerId}"), Authorize(Roles = nameof(UserRole.Manager))]
         [ServiceFilter(typeof(ValidateCustomerExistsAttribute))]
         public async Task<IActionResult> PartiallyUpdateCustomerById(int customerId, [FromBody]JsonPatchDocument<CustomerForUpdateDto> patchDoc)
         {

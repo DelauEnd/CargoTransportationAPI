@@ -1,6 +1,7 @@
 ﻿using CargoTransportationAPI.ActionFilters;
 using Contracts;
 using Entities.DataTransferObjects;
+using Entities.Enums;
 using Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -61,7 +62,7 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="500">Unhandled exception</response>
         [HttpPost]
         [Route("AddRole")]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> AddRoleToUser([FromQuery]string login, [FromQuery]string role)
         {
             var user = await userManager.FindByNameAsync(login);
