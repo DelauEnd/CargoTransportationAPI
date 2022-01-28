@@ -33,12 +33,12 @@ namespace Repository.Users
 
         public async Task<Customer> GetDestinationByOrderIdAsync(int id, bool trackChanges)
             => await FindByCondition(destination =>
-                destination.OrderDestination.Where(order => order.Id == id).Any(), trackChanges)
+                destination.OrderDestination.Any(order => order.Id == id), trackChanges)
                 .SingleOrDefaultAsync();
 
         public async Task<Customer> GetSenderByOrderIdAsync(int id, bool trackChanges)
             => await FindByCondition(sender =>
-                sender.OrderSender.Where(order => order.Id == id).Any(), trackChanges)
+                sender.OrderSender.Any(order => order.Id == id), trackChanges)
                 .SingleOrDefaultAsync();
     }
 }

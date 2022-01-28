@@ -28,7 +28,7 @@ namespace Repository.Users
 
         public async Task<CargoCategory> GetCategoryByCargoIdAsync(int id, bool trackChanges)
             => await FindByCondition(category =>
-                 category.Cargoes.Where(cargo => cargo.Id == id).Any(), trackChanges)
+                 category.Cargoes.Any(cargo => cargo.Id == id), trackChanges)
                 .SingleOrDefaultAsync();
 
         public async Task<CargoCategory> GetCategoryByIdAsync(int id, bool trackChanges)
