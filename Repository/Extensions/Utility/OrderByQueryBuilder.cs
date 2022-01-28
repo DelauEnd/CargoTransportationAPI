@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Repository.Extensions
 {
-    public class OrderByQueryBuilder<T> where T : Entity
+    public class OrderByQueryBuilder<T> where T : IEntity
     {
         public IQueryable<T> source { get; set; }
         public string orderByStrFromRequest { get; set; }

@@ -28,6 +28,7 @@ namespace Entities.Models
 
             return string.Join
             (
+                separator,
                 Name,
                 Surname,
                 Patronymic

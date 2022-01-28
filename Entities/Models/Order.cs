@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities.Models
 {
-    public class Order : Entity
+    public class Order : IEntity
     {
         [Key]
         [Column("OrderId")]

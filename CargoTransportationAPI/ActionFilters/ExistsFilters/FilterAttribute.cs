@@ -4,7 +4,7 @@ namespace CargoTransportationAPI.ActionFilters
 {
     public class FilterAttribute
     {
-        public Entity Entity { get; set; }
+        public IEntity Entity { get; set; }
 
         public int EntityId { get; set; }
 

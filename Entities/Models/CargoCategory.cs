@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities.Models
 {
-    public class CargoCategory : Entity
+    public class CargoCategory : IEntity
     {
         [Key]
         [Column("CategoryId")]
