@@ -1,6 +1,7 @@
 ﻿using CargoTransportationAPI.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
+using Entities.Enums;
 using Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CargoTransportationAPI.Controllers
+namespace CargoTransportationAPI.Controllers.v1
 {
     [Route("api/Categories"), Authorize]
     [ApiController]
@@ -41,7 +42,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="401">If user unauthenticated</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpPost, Authorize(Roles = "Administrator")]
+        [HttpPost, Authorize(Roles = nameof(UserRole.Administrator))]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> AddCategory([FromBody]CategoryForCreationDto category)
         {
@@ -63,7 +64,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="404">If requested category not found</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpDelete("{categoryId}"), Authorize(Roles = "Administrator")]
+        [HttpDelete("{categoryId}"), Authorize(Roles = nameof(UserRole.Administrator))]
         [ServiceFilter(typeof(ValidateCargoCategoryExistsAttribute))]
         public async Task<IActionResult> DeleteCategoryById(int categoryId)
         {
@@ -85,7 +86,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="404">If requested category not found</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpPut("{categoryId}"), Authorize(Roles = "Administrator")]
+        [HttpPut("{categoryId}"), Authorize(Roles = nameof(UserRole.Administrator))]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ServiceFilter(typeof(ValidateCargoCategoryExistsAttribute))]
         public async Task<IActionResult> UpdateCargoCategoryById(int categoryId, CargoCategoryForUpdateDto category)

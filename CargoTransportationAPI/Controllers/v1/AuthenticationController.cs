@@ -1,15 +1,14 @@
 ﻿using CargoTransportationAPI.ActionFilters;
 using Contracts;
 using Entities.DataTransferObjects;
+using Entities.Enums;
 using Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace CargoTransportationAPI.Controllers
+namespace CargoTransportationAPI.Controllers.v1
 {
     [Route("api/Authentication")]
     [ApiController]
@@ -61,7 +60,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="500">Unhandled exception</response>
         [HttpPost]
         [Route("AddRole")]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> AddRoleToUser([FromQuery]string login, [FromQuery]string role)
         {
             var user = await userManager.FindByNameAsync(login);
@@ -97,7 +96,7 @@ namespace CargoTransportationAPI.Controllers
                 return Unauthorized();
             }
 
-            return Ok(new { Token = await authManager.CreateToken(validUser), Roles = await userManager.GetRolesAsync(validUser)});
+            return Ok(new { Token = await authManager.CreateToken(validUser), Roles = await userManager.GetRolesAsync(validUser) });
         }
 
         private IActionResult BuildUnregistratedResult(IdentityResult result)

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Entities.Enums;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -17,13 +18,13 @@ namespace Entities.Configuration
             (
                 new IdentityRole
                 {
-                    Name = "Manager",
-                    NormalizedName = "MANAGER"
+                    Name = nameof(UserRole.Manager),
+                    NormalizedName = nameof(UserRole.Manager).ToUpper()
                 },
                 new IdentityRole
                 {
-                    Name = "Administrator",
-                    NormalizedName = "ADMINISTRATOR"
+                    Name = nameof(UserRole.Administrator),
+                    NormalizedName = nameof(UserRole.Administrator).ToUpper()
                 }
             );
         }

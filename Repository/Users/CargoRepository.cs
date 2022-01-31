@@ -17,15 +17,15 @@ namespace Repository.Users
 
         }
 
-        public void CreateCargoForOrder(Cargo cargo, int OrderId)
+        public void CreateCargoForOrder(Cargo cargo, int orderId)
         {
-            cargo.OrderId = OrderId;
+            cargo.OrderId = orderId;
             Create(cargo);
         }
 
         public void DeleteCargo(Cargo cargo)
             => Delete(cargo);
-        
+
 
         public async Task<PagedList<Cargo>> GetAllCargoesAsync(CargoParameters parameters, bool trackChanges)
         {
@@ -81,7 +81,7 @@ namespace Repository.Users
         {
             var cargoes = await FindAll(trackChanges)
                 .Include(cargo => cargo.Category)
-                .Where(cargo=>cargo.RouteId == null)
+                .Where(cargo => cargo.RouteId == null)
                 .ApplyFilters(parameters)
                 .Search(parameters.Search)
                 .Sort(parameters)

@@ -22,7 +22,7 @@ namespace Entities.Configuration
                 }
             );
 
-            builder.OwnsOne(Customer => Customer.ContactPerson).HasData
+            builder.OwnsOne(customer => customer.ContactPerson).HasData
             (
                 new
                 {

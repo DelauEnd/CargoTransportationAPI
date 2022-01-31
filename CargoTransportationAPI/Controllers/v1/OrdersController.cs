@@ -2,6 +2,7 @@
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
+using Entities.Enums;
 using Entities.Models;
 using Entities.RequestFeautures;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CargoTransportationAPI.Controllers
+namespace CargoTransportationAPI.Controllers.v1
 {
     [Route("api/Orders"), Authorize]
     [ApiController]
@@ -71,7 +72,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="401">If user unauthenticated</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpPost, Authorize(Roles = "Manager")]
+        [HttpPost, Authorize(Roles = nameof(UserRole.Manager))]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> AddOrder([FromBody] OrderForCreationDto order)
         {
@@ -118,7 +119,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="404">If requested order not found</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpPost("{orderId}/Cargoes"), Authorize(Roles = "Manager")]
+        [HttpPost("{orderId}/Cargoes"), Authorize(Roles = nameof(UserRole.Manager))]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
         public async Task<IActionResult> AddCargoesAsync([FromBody] IEnumerable<CargoForCreationDto> cargoes, [FromRoute]int orderId)
@@ -142,7 +143,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="404">If requested order not found</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpDelete("{orderId}"), Authorize(Roles = "Manager")]
+        [HttpDelete("{orderId}"), Authorize(Roles = nameof(UserRole.Manager))]
         [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
         public async Task<IActionResult> DeleteOrderById(int orderId)
         {
@@ -165,7 +166,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="404">If requested order not found</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpPatch("{orderId}"), Authorize(Roles = "Manager")]
+        [HttpPatch("{orderId}"), Authorize(Roles = nameof(UserRole.Manager))]
         [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
         public async Task<IActionResult> PartiallyUpdateOrderById(int orderId, [FromBody]JsonPatchDocument<OrderForUpdateDto> patchDoc)
         {

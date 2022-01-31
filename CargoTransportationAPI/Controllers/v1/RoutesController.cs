@@ -3,6 +3,7 @@ using CargoTransportationAPI.ModelBinders;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
+using Entities.Enums;
 using Entities.Models;
 using Entities.RequestFeautures;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CargoTransportationAPI.Controllers
+namespace CargoTransportationAPI.Controllers.v1
 {
     [Route("api/Routes"), Authorize]
     [ApiController]
@@ -71,7 +72,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="401">If user unauthenticated</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpPost, Authorize(Roles = "Manager")]
+        [HttpPost, Authorize(Roles = nameof(UserRole.Manager))]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> AddRoute([FromBody]RouteForCreationDto route)
         {
@@ -92,7 +93,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="404">If requested route not found</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpDelete("{routeId}"), Authorize(Roles = "Manager")]
+        [HttpDelete("{routeId}"), Authorize(Roles = nameof(UserRole.Manager))]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
         public async Task<IActionResult> DeleteRouteById(int routeId)
         {
@@ -115,7 +116,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="404">If requested route not found</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpPut("{routeId}"), Authorize(Roles = "Manager")]
+        [HttpPut("{routeId}"), Authorize(Roles = nameof(UserRole.Manager))]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
         public async Task<IActionResult> UpdateRouteById(int routeId, RouteForUpdateDto route)
@@ -164,7 +165,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="401">If user unauthenticated</response>
         /// <response code="404">If requested route not found</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpPost("{routeId}/Cargoes"), Authorize(Roles = "Manager")]
+        [HttpPost("{routeId}/Cargoes"), Authorize(Roles = nameof(UserRole.Manager))]
         [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
         public async Task<IActionResult> MarkCargoesToRoute([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<int> ids, int routeId)
         {
@@ -178,7 +179,7 @@ namespace CargoTransportationAPI.Controllers
         private async Task AssignCargoes(IEnumerable<int> ids, Route route)
         {
             foreach (var id in ids)
-               await AssignIfExist(id, route);
+                await AssignIfExist(id, route);
         }
 
         private async Task AssignIfExist(int id, Route route)
@@ -187,7 +188,7 @@ namespace CargoTransportationAPI.Controllers
             {
                 logger.LogWarn($"Cargo with Id={id} not exists");
                 return;
-            }    
+            }
             await repository.Cargoes.AssignCargoToRoute(id, route.Id);
         }
 

@@ -1,6 +1,7 @@
 ﻿using CargoTransportationAPI.ActionFilters;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
+using Entities.Enums;
 using Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -9,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CargoTransportationAPI.Controllers
+namespace CargoTransportationAPI.Controllers.v1
 {
     [Route("api/Transport"), Authorize]
     [ApiController]
@@ -61,7 +62,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="401">If user unauthenticated</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpPost, Authorize(Roles = "Administrator")]
+        [HttpPost, Authorize(Roles = nameof(UserRole.Administrator))]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> AddTransportAsync([FromBody]TransportForCreationDto transport)
         {
@@ -82,7 +83,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="404">If requested transport not found</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpDelete("{transportId}"), Authorize(Roles = "Administrator")]
+        [HttpDelete("{transportId}"), Authorize(Roles = nameof(UserRole.Administrator))]
         [ServiceFilter(typeof(ValidateTransportExistsAttribute))]
         public async Task<IActionResult> DeleteTransportById(int transportId)
         {
@@ -105,7 +106,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="404">If requested transport not found</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpPatch("{transportId}"), Authorize(Roles = "Administrator")]
+        [HttpPatch("{transportId}"), Authorize(Roles = nameof(UserRole.Administrator))]
         [ServiceFilter(typeof(ValidateTransportExistsAttribute))]
         public async Task<IActionResult> PartiallyUpdateTransportById(int transportId, [FromBody]JsonPatchDocument<TransportForUpdateDto> patchDoc)
         {

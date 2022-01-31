@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities.Models
 {
-    public class Route : Entity
+    public class Route : IEntity
     {
         [Key]
         [Column("RouteId")]

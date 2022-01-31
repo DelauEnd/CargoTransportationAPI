@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
-using CargoTransportationAPI.Controllers;
+using CargoTransportationAPI.Controllers.v1;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Entities.RequestFeautures;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
 using Xunit;
-using FluentAssertions;
 
 namespace CargoTransportationAPI.Tests
 {

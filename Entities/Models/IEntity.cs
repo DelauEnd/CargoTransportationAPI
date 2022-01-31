@@ -1,6 +1,6 @@
 ﻿namespace Entities.Models
 {
-    public interface Entity
+    public interface IEntity
     {
     }
 }

@@ -2,6 +2,7 @@
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.ObjectsForUpdate;
+using Entities.Enums;
 using Entities.Models;
 using Entities.RequestFeautures;
 using Microsoft.AspNetCore.Authorization;
@@ -10,10 +11,9 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace CargoTransportationAPI.Controllers
+namespace CargoTransportationAPI.Controllers.v1
 {
     [Route("api/Cargoes"), Authorize]
     [ApiController]
@@ -107,7 +107,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="404">If requested cargo not found</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpDelete("{cargoId}"), Authorize(Roles = "Manager")]
+        [HttpDelete("{cargoId}"), Authorize(Roles = nameof(UserRole.Manager))]
         [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
         public async Task<IActionResult> DeleteCargoById(int cargoId)
         {
@@ -130,7 +130,7 @@ namespace CargoTransportationAPI.Controllers
         /// <response code="404">If requested cargo not found</response>
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
-        [HttpPatch("{cargoId}"), Authorize(Roles = "Manager")]
+        [HttpPatch("{cargoId}"), Authorize(Roles = nameof(UserRole.Manager))]
         [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
         public async Task<IActionResult> PartiallyUpdateCargoById(int cargoId, [FromBody]JsonPatchDocument<CargoForUpdateDto> patchDoc)
         {

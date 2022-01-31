@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Entities.DataTransferObjects
+﻿namespace Entities.DataTransferObjects
 {
     public class CargoCategoryDto : IModelFormatter
     {
@@ -10,7 +8,14 @@ namespace Entities.DataTransferObjects
 
         public string FormatToCsv()
         {
-            throw new NotImplementedException();
+            var separator = ",\"";
+
+            return string.Join
+            (
+                separator,
+                Id,
+                Title
+            );
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Entities.Models;
-using System;
 
 namespace Entities.DataTransferObjects
 {
@@ -13,7 +12,15 @@ namespace Entities.DataTransferObjects
 
         public string FormatToCsv()
         {
-            throw new NotImplementedException();
+            var separator = ",\"";
+
+            return string.Join
+            (
+                separator,
+                Id,
+                Address,
+                ContactPerson.FormatToCsv()
+            );
         }
     }
 }

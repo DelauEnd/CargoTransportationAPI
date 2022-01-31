@@ -6,7 +6,7 @@ namespace Contracts
 {
     public interface IRouteRepository
     {
-        Task<Route> GetRouteByIdAsync(int Id, bool trackChanges);
+        Task<Route> GetRouteByIdAsync(int id, bool trackChanges);
         Task<IEnumerable<Route>> GetAllRoutesAsync(bool trackChanges);
         void CreateRoute(Route route);
         void DeleteRoute(Route route);
