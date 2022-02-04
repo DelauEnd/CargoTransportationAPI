@@ -8,18 +8,18 @@ namespace Repository.Extensions
 {
     public class OrderByQueryBuilder<T> where T : IEntity
     {
-        public IQueryable<T> source { get; set; }
-        public string orderByStrFromRequest { get; set; }
+        public IQueryable<T> Source { get; set; }
+        public string OrderByStrFromRequest { get; set; }
 
         public OrderByQueryBuilder(IQueryable<T> source, string orderByStrFromRequest)
         {
-            this.source = source;
-            this.orderByStrFromRequest = orderByStrFromRequest;
+            this.Source = source;
+            this.OrderByStrFromRequest = orderByStrFromRequest;
         }
 
         public string BuildOrderByQuery()
         {
-            if (string.IsNullOrWhiteSpace(orderByStrFromRequest))
+            if (string.IsNullOrWhiteSpace(OrderByStrFromRequest))
                 return null;
 
             StringBuilder orderByBuilder = BuildQueryWithAllParams();
@@ -32,7 +32,7 @@ namespace Repository.Extensions
         private StringBuilder BuildQueryWithAllParams()
         {
             var propertiInfos = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            var orderParams = orderByStrFromRequest.Trim().Split(',');
+            var orderParams = OrderByStrFromRequest.Trim().Split(',');
             var orderByBuilder = new StringBuilder();
 
             foreach (var param in orderParams)
