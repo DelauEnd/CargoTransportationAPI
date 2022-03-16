@@ -4,16 +4,14 @@ using Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace CargoTransportationAPI.Migrations
+namespace Entities.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20220103103348_CargoImages")]
-    partial class CargoImages
+    partial class RepositoryContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,6 +37,7 @@ namespace CargoTransportationAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Image")
+                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<int>("OrderId")
@@ -69,9 +68,10 @@ namespace CargoTransportationAPI.Migrations
                         new
                         {
                             Id = 1,
-                            ArrivalDate = new DateTime(2022, 1, 13, 13, 33, 47, 970, DateTimeKind.Local).AddTicks(8842),
+                            ArrivalDate = new DateTime(2022, 3, 26, 12, 33, 7, 626, DateTimeKind.Local).AddTicks(2099),
                             CategoryId = 1,
-                            DepartureDate = new DateTime(2022, 1, 3, 13, 33, 47, 970, DateTimeKind.Local).AddTicks(8602),
+                            DepartureDate = new DateTime(2022, 3, 16, 12, 33, 7, 626, DateTimeKind.Local).AddTicks(1846),
+                            Image = new byte[0],
                             OrderId = 1,
                             RouteId = 1,
                             Title = "Initial Cargo",
@@ -320,15 +320,15 @@ namespace CargoTransportationAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6cea63d5-83ee-4751-9ec3-e973b46d60cf",
-                            ConcurrencyStamp = "50c22e9a-44c6-4e88-a820-36d692c45c50",
+                            Id = "723127d3-f712-41f4-ab38-3fc653052d62",
+                            ConcurrencyStamp = "7699b5d5-c078-496c-9d28-d9dacddba823",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
-                            Id = "8bf62bc7-134b-4c2c-8b75-b4b34c6cc5f7",
-                            ConcurrencyStamp = "44f8ec6f-b57c-4a08-a892-55ed37dff634",
+                            Id = "10e4f599-a7d6-4d2f-b795-2a0699e8b8fb",
+                            ConcurrencyStamp = "70100ace-ecb7-4d02-b3c7-bd7d3ae06b0c",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });

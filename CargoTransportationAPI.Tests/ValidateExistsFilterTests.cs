@@ -1,4 +1,5 @@
 ﻿using CargoTransportationAPI.ActionFilters;
+using CargoTransportationAPI.Controllers.v1;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
