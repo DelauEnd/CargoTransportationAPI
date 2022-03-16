@@ -1,8 +1,8 @@
-﻿using Entities.DataTransferObjects;
+﻿using DTO.ResponseDTO;
 using Entities.Models;
 using System.Threading.Tasks;
 
-namespace Contracts
+namespace Interfaces
 {
     public interface IAuthenticationManager
     {

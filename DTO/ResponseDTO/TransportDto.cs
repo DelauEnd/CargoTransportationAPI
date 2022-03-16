@@ -1,7 +1,7 @@
-﻿using Entities.Models;
+﻿using DTO.OwnedModels;
 
-namespace Entities.DataTransferObjects
-{
+namespace DTO.ResponseDTO
+{ 
     public class TransportDto
     {
         public int Id { get; set; }

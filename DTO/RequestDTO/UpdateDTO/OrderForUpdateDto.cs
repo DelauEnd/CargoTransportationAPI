@@ -1,7 +1,7 @@
-﻿using Entities.Enums;
+﻿using DTO.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace Entities.DataTransferObjects.ObjectsForUpdate
+namespace DTO.RequestDTO.UpdateDTO
 {
     public class OrderForUpdateDto
     {

@@ -1,7 +1,6 @@
 ﻿using CargoTransportationAPI.ActionFilters;
-using Contracts;
+using Interfaces;
 using Entities;
-using Entities.DataTransferObjects;
 using Entities.Models;
 using LoggerService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,6 +20,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using DTO.ResponseDTO;
 
 namespace CargoTransportationAPI.Extensions
 {

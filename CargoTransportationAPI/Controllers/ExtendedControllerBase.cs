@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Contracts;
+using Interfaces;
 using Entities.RequestFeautures;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;

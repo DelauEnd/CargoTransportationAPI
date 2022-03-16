@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Entities.DataTransferObjects
+namespace DTO.RequestDTO.CreateDTO
 {
     public class OrderForCreationDto
     {

@@ -1,4 +1,4 @@
-﻿using Contracts;
+﻿using Interfaces;
 using Entities.ErrorModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;

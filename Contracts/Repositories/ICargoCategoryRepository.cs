@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Contracts
+namespace Interfaces
 {
     public interface ICargoCategoryRepository
     {

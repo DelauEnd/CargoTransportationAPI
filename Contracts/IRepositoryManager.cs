@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Contracts
+namespace Interfaces
 {
     public interface IRepositoryManager
     {

@@ -1,7 +1,6 @@
 ﻿using CargoTransportationAPI.ActionFilters;
 using CargoTransportationAPI.Controllers.v1;
-using Contracts;
-using Entities.DataTransferObjects;
+using Interfaces;
 using Entities.Models;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
@@ -12,6 +11,7 @@ using Microsoft.AspNetCore.Routing;
 using Moq;
 using System.Collections.Generic;
 using Xunit;
+using DTO.ResponseDTO;
 
 namespace CargoTransportationAPI.Tests
 {

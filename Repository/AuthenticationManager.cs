@@ -1,5 +1,4 @@
-﻿using Contracts;
-using Entities.DataTransferObjects;
+﻿using Interfaces;
 using Entities.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using DTO.ResponseDTO;
 
 namespace Repository
 {

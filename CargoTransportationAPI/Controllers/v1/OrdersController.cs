@@ -1,7 +1,5 @@
 ﻿using CargoTransportationAPI.ActionFilters;
-using Contracts;
-using Entities.DataTransferObjects;
-using Entities.DataTransferObjects.ObjectsForUpdate;
+using Interfaces;
 using Entities.Enums;
 using Entities.Models;
 using Entities.RequestFeautures;
@@ -12,6 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DTO.RequestDTO.UpdateDTO;
+using DTO.RequestDTO.CreateDTO;
+using DTO.ResponseDTO;
 
 namespace CargoTransportationAPI.Controllers.v1
 {

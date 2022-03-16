@@ -1,6 +1,6 @@
-﻿using Entities.Models;
+﻿using DTO.OwnedModels;
 
-namespace Entities.DataTransferObjects
+namespace DTO.ResponseDTO
 {
     public class CustomerDto
     {

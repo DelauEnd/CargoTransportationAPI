@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CargoTransportationAPI.Controllers.v1;
-using Contracts;
-using Entities.DataTransferObjects;
+using Interfaces;
 using Entities.Models;
 using Entities.RequestFeautures;
 using FluentAssertions;
@@ -11,6 +10,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using Xunit;
+using DTO.ResponseDTO;
 
 namespace CargoTransportationAPI.Tests
 {

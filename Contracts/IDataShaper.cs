@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
 
-namespace Contracts
+namespace Interfaces
 {
     public interface IDataShaper<T>
     {

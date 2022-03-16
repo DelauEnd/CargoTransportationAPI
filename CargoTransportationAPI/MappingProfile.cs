@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using Entities.DataTransferObjects;
-using Entities.DataTransferObjects.ObjectsForUpdate;
+using DTO.RequestDTO.CreateDTO;
+using DTO.RequestDTO.UpdateDTO;
+using DTO.ResponseDTO;
 using Entities.Enums;
 using Entities.Models;
 using System;

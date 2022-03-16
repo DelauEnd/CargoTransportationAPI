@@ -1,4 +1,4 @@
-﻿namespace Contracts
+﻿namespace Interfaces
 {
     public interface ILoggerManager
     {

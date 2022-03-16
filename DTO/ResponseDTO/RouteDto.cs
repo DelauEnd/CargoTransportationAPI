@@ -1,4 +1,4 @@
-﻿namespace Entities.DataTransferObjects
+﻿namespace DTO.ResponseDTO
 {
     public class RouteDto
     {

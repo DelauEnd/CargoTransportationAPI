@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Entities.DataTransferObjects
-{
+namespace DTO.RequestDTO.CreateDTO
+{ 
     public class UserForCreationDto
     {
         public string FirstName { get; set; }

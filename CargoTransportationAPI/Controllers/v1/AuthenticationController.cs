@@ -1,12 +1,13 @@
 ﻿using CargoTransportationAPI.ActionFilters;
-using Contracts;
-using Entities.DataTransferObjects;
+using Interfaces;
 using Entities.Enums;
 using Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using DTO.RequestDTO.CreateDTO;
+using DTO.ResponseDTO;
 
 namespace CargoTransportationAPI.Controllers.v1
 {

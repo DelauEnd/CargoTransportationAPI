@@ -1,6 +1,7 @@
-﻿using Entities.Models;
+﻿using DTO.OwnedModels;
 using System;
-namespace Entities.DataTransferObjects
+
+namespace DTO.ResponseDTO
 {
     public class CargoDto
     {

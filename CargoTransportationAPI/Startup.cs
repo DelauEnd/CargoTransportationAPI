@@ -1,5 +1,5 @@
 using CargoTransportationAPI.Extensions;
-using Contracts;
+using Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;

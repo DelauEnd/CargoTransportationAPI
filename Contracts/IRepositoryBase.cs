@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Contracts
+namespace Interfaces
 {
     public interface IRepositoryBase<T>
     {

@@ -1,4 +1,4 @@
-﻿namespace Entities.DataTransferObjects.ObjectsForUpdate
+﻿namespace DTO.RequestDTO.UpdateDTO
 {
     public class RouteForUpdateDto
     {
