@@ -1,5 +1,4 @@
 ﻿using CargoTransportationAPI.ActionFilters;
-using CargoTransportationAPI.Formatters;
 using Contracts;
 using Entities;
 using Entities.DataTransferObjects;
@@ -128,8 +127,7 @@ namespace CargoTransportationAPI.Extensions
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             })
-            .AddXmlDataContractSerializerFormatters()
-            .AddMvcOptions(config => config.OutputFormatters.Add(new CsvOutputFormatter()));
+            .AddXmlDataContractSerializerFormatters();
 
         public static void ConfigureApiBehaviorOptions(this IServiceCollection services)
             => services.Configure<ApiBehaviorOptions>(options =>

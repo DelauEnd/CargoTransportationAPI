@@ -2,7 +2,7 @@
 using System;
 namespace Entities.DataTransferObjects
 {
-    public class CargoDto : IModelFormatter
+    public class CargoDto
     {
         public int Id { get; set; }
 
@@ -19,24 +19,5 @@ namespace Entities.DataTransferObjects
         public Dimensions Dimensions { get; set; }
 
         public byte[] Image { get; set; }
-
-        public string FormatToCsv()
-        {
-            var separator = ",\"";
-
-            return string.Join
-            (
-                separator,
-                Id,
-                Title,
-                Category,
-                DepartureDate,
-                ArrivalDate,
-                Weight,
-                Dimensions.Height,
-                Dimensions.Length,
-                Dimensions.Width
-            );
-        }
     }
 }
