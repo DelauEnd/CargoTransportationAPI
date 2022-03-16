@@ -1,29 +1,32 @@
-﻿using CargoTransportationAPI.ActionFilters;
-using Interfaces;
+﻿using AutoMapper;
+using DTO.RequestDTO.UpdateDTO;
+using DTO.ResponseDTO;
 using Entities.Enums;
 using Entities.Models;
 using Entities.RequestFeautures;
+using Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DTO.ResponseDTO;
-using DTO.RequestDTO.UpdateDTO;
 
-namespace CargoTransportationAPI.Controllers.v1
+namespace Logistics.Controllers.v1
 {
     [Route("api/Cargoes"), Authorize]
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class CargoesController : ExtendedControllerBase
+    public class CargoesController : ControllerBase
     {
-        private readonly IDataShaper<CargoDto> cargoDataShaper;
+        public readonly IDataShaper<CargoDto> cargoDataShaper;
+        public readonly IRepositoryManager repository;
+        public readonly IMapper mapper;
 
-        public CargoesController(IDataShaper<CargoDto> cargoDataShaper)
+        public CargoesController(IDataShaper<CargoDto> cargoDataShaper, IRepositoryManager repository, IMapper mapper)
         {
+            this.mapper = mapper;
+            this.repository = repository;
             this.cargoDataShaper = cargoDataShaper;
         }
 
@@ -37,14 +40,12 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="500">Unhandled exception</response>
         [HttpGet]
         [HttpHead]
-        public async Task<IActionResult> GetAllCargoes([FromQuery]CargoParameters parameters)
+        public async Task<IActionResult> GetAllCargoes([FromQuery] CargoParameters parameters)
         {
             if (!parameters.IsValidDateFilter())
                 return BadRequest("Date from cannot be later than date to");
 
             var cargoes = await repository.Cargoes.GetAllCargoesAsync(parameters, false);
-
-            AddPaginationHeader(cargoes);
 
             var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
 
@@ -62,14 +63,12 @@ namespace CargoTransportationAPI.Controllers.v1
         [HttpGet]
         [HttpHead]
         [Route("Unassigned")]
-        public async Task<IActionResult> GetUnassignedCargoes([FromQuery]CargoParameters parameters)
+        public async Task<IActionResult> GetUnassignedCargoes([FromQuery] CargoParameters parameters)
         {
             if (!parameters.IsValidDateFilter())
                 return BadRequest("Date from cannot be later than date to");
 
             var cargoes = await repository.Cargoes.GetUnassignedCargoesAsync(parameters, false);
-
-            AddPaginationHeader(cargoes);
 
             var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
 
@@ -87,10 +86,9 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="500">Unhandled exception</response>
         [HttpGet("{cargoId}")]
         [HttpHead("{cargoId}")]
-        [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
-        public IActionResult GetCargoById(int cargoId, [FromQuery]CargoParameters parameters)
+        public IActionResult GetCargoById(int cargoId, [FromQuery] CargoParameters parameters)
         {
-            var cargo = HttpContext.Items["cargo"] as Cargo;
+            var cargo = repository.Cargoes.GetCargoByIdAsync(cargoId, false);
 
             var cargoDto = mapper.Map<CargoDto>(cargo);
 
@@ -108,10 +106,9 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpDelete("{cargoId}"), Authorize(Roles = nameof(UserRole.Manager))]
-        [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
         public async Task<IActionResult> DeleteCargoById(int cargoId)
         {
-            var cargo = HttpContext.Items["cargo"] as Cargo;
+            var cargo = await repository.Cargoes.GetCargoByIdAsync(cargoId, false);
 
             await DeleteCargoAsync(cargo);
 
@@ -131,15 +128,19 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPatch("{cargoId}"), Authorize(Roles = nameof(UserRole.Manager))]
-        [ServiceFilter(typeof(ValidateCargoExistsAttribute))]
-        public async Task<IActionResult> PartiallyUpdateCargoById(int cargoId, [FromBody]JsonPatchDocument<CargoForUpdateDto> patchDoc)
+        public async Task<IActionResult> PartiallyUpdateCargoById(int cargoId, [FromBody] JsonPatchDocument<CargoForUpdateDto> patchDoc)
         {
-            if (patchDoc == null)
-                return SendedIsNull(true, nameof(patchDoc));
+            var cargo = await repository.Cargoes.GetCargoByIdAsync(cargoId, false);
 
-            var cargo = HttpContext.Items["cargo"] as Cargo;
+            var cargoToPatch = mapper.Map<CargoForUpdateDto>(cargo);
+            patchDoc.ApplyTo(cargoToPatch, ModelState);
 
-            PatchCargo(patchDoc, cargo);
+            TryValidateModel(cargoToPatch);
+            if (!ModelState.IsValid)
+                throw new Exception("InvalidModelState");
+
+            mapper.Map(cargoToPatch, cargo);
+
             await repository.SaveAsync();
 
             return NoContent();
@@ -172,16 +173,11 @@ namespace CargoTransportationAPI.Controllers.v1
             var cargoToPatch = mapper.Map<CargoForUpdateDto>(cargo);
             patchDoc.ApplyTo(cargoToPatch, ModelState);
 
-            TryToValidate(cargoToPatch);
-
-            mapper.Map(cargoToPatch, cargo);
-        }
-
-        private void TryToValidate(CargoForUpdateDto cargoToPatch)
-        {
             TryValidateModel(cargoToPatch);
             if (!ModelState.IsValid)
                 throw new Exception("InvalidModelState");
+
+            mapper.Map(cargoToPatch, cargo);
         }
 
 

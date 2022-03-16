@@ -1,9 +1,10 @@
-﻿using CargoTransportationAPI.ActionFilters;
+﻿using AutoMapper;
 using DTO.RequestDTO.CreateDTO;
 using DTO.RequestDTO.UpdateDTO;
 using DTO.ResponseDTO;
 using Entities.Enums;
 using Entities.Models;
+using Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -11,12 +12,21 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CargoTransportationAPI.Controllers.v1
+namespace Logistics.Controllers.v1
 {
     [Route("api/Transport"), Authorize]
     [ApiController]
-    public class TransportController : ExtendedControllerBase
+    public class TransportController : ControllerBase
     {
+        public readonly IRepositoryManager repository;
+        public readonly IMapper mapper;
+
+        public TransportController(IRepositoryManager repository, IMapper mapper)
+        {
+            this.mapper = mapper;
+            this.repository = repository;
+        }
+
         /// <summary>
         /// Get list of transport
         /// </summary>
@@ -44,10 +54,9 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="500">Unhandled exception</response>
         [HttpGet("{transportId}", Name = "GetTransportById")]
         [HttpHead("{transportId}")]
-        [ServiceFilter(typeof(ValidateTransportExistsAttribute))]
-        public IActionResult GetTransportById(int transportId)
+        public async Task<IActionResult> GetTransportById(int transportId)
         {
-            var transport = HttpContext.Items["transport"] as Transport;
+            var transport = await repository.Transport.GetTransportByIdAsync(transportId, false);
 
             var transportDto = mapper.Map<TransportDto>(transport);
             return Ok(transportDto);
@@ -64,14 +73,14 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPost, Authorize(Roles = nameof(UserRole.Administrator))]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> AddTransportAsync([FromBody]TransportForCreationDto transport)
+        public async Task<IActionResult> AddTransportAsync([FromBody] TransportForCreationDto transport)
         {
             var addableTransport = mapper.Map<Transport>(transport);
             await CreateTransportAsync(addableTransport);
 
             var transportToReturn = mapper.Map<TransportDto>(addableTransport);
-            return TransportAdded(transportToReturn);
+
+            return CreatedAtRoute("GetTransportById", new { transportId = transportToReturn.Id }, transport); ;
         }
 
         /// <summary>
@@ -85,10 +94,9 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpDelete("{transportId}"), Authorize(Roles = nameof(UserRole.Administrator))]
-        [ServiceFilter(typeof(ValidateTransportExistsAttribute))]
         public async Task<IActionResult> DeleteTransportById(int transportId)
         {
-            var transport = HttpContext.Items["transport"] as Transport;
+            var transport = await repository.Transport.GetTransportByIdAsync(transportId, false);
 
             await DeleteTransportAsync(transport);
 
@@ -108,15 +116,20 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPatch("{transportId}"), Authorize(Roles = nameof(UserRole.Administrator))]
-        [ServiceFilter(typeof(ValidateTransportExistsAttribute))]
-        public async Task<IActionResult> PartiallyUpdateTransportById(int transportId, [FromBody]JsonPatchDocument<TransportForUpdateDto> patchDoc)
+        public async Task<IActionResult> PartiallyUpdateTransportById(int transportId, [FromBody] JsonPatchDocument<TransportForUpdateDto> patchDoc)
         {
-            if (patchDoc == null)
-                return SendedIsNull(true, nameof(patchDoc));
+            var transport = await repository.Transport.GetTransportByIdAsync(transportId, false);
 
-            var transport = HttpContext.Items["transport"] as Transport;
+            var transporToPatch = mapper.Map<TransportForUpdateDto>(transport);
 
-            PatchTransport(patchDoc, transport);
+            patchDoc.ApplyTo(transporToPatch, ModelState);
+
+            TryValidateModel(transporToPatch);
+            if (!ModelState.IsValid)
+                throw new Exception("InvalidModelState");
+
+            mapper.Map(transporToPatch, transport);
+
             await repository.SaveAsync();
 
             return NoContent();
@@ -144,23 +157,6 @@ namespace CargoTransportationAPI.Controllers.v1
             return Ok();
         }
 
-        private void PatchTransport(JsonPatchDocument<TransportForUpdateDto> patchDoc, Transport transport)
-        {
-            var orderToPatch = mapper.Map<TransportForUpdateDto>(transport);
-            patchDoc.ApplyTo(orderToPatch, ModelState);
-
-            TryToValidate(orderToPatch);
-
-            mapper.Map(orderToPatch, transport);
-        }
-
-        private void TryToValidate(TransportForUpdateDto transportToPatch)
-        {
-            TryValidateModel(transportToPatch);
-            if (!ModelState.IsValid)
-                throw new Exception("InvalidModelState");
-        }
-
         private async Task DeleteTransportAsync(Transport route)
         {
             repository.Transport.DeleteTransport(route);
@@ -171,11 +167,6 @@ namespace CargoTransportationAPI.Controllers.v1
         {
             repository.Transport.CreateTransport(transport);
             await repository.SaveAsync();
-        }
-
-        private IActionResult TransportAdded(TransportDto transport)
-        {
-            return CreatedAtRoute("GetTransportById", new { transportId = transport.Id }, transport);
         }
     }
 }

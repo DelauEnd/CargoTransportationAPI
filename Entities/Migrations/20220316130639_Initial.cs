@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Entities.Migrations
+namespace Logistics.Entities.Migrations
 {
     public partial class Initial : Migration
     {
@@ -292,8 +292,8 @@ namespace Entities.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "723127d3-f712-41f4-ab38-3fc653052d62", "7699b5d5-c078-496c-9d28-d9dacddba823", "Manager", "MANAGER" },
-                    { "10e4f599-a7d6-4d2f-b795-2a0699e8b8fb", "70100ace-ecb7-4d02-b3c7-bd7d3ae06b0c", "Administrator", "ADMINISTRATOR" }
+                    { "555f65de-91a8-45a0-bb0b-e029eab18f2c", "b029dcb2-609c-4242-ac17-66c28073d87b", "Manager", "MANAGER" },
+                    { "674fa364-c96a-47e2-b14c-238887d247ac", "777adf84-861e-4894-928a-6526ff97672d", "Administrator", "ADMINISTRATOR" }
                 });
 
             migrationBuilder.InsertData(
@@ -324,7 +324,7 @@ namespace Entities.Migrations
             migrationBuilder.InsertData(
                 table: "Cargoes",
                 columns: new[] { "CargoId", "ArrivalDate", "CategoryId", "DepartureDate", "Image", "OrderId", "RouteId", "Title", "Weight", "Dimensions_Height", "Dimensions_Length", "Dimensions_Width" },
-                values: new object[] { 1, new DateTime(2022, 3, 26, 12, 33, 7, 626, DateTimeKind.Local).AddTicks(2099), 1, new DateTime(2022, 3, 16, 12, 33, 7, 626, DateTimeKind.Local).AddTicks(1846), new byte[0], 1, 1, "Initial Cargo", 200.0, 50.0, 50.0, 50.0 });
+                values: new object[] { 1, new DateTime(2022, 3, 26, 16, 6, 39, 205, DateTimeKind.Local).AddTicks(7470), 1, new DateTime(2022, 3, 16, 16, 6, 39, 205, DateTimeKind.Local).AddTicks(7223), new byte[0], 1, 1, "Initial Cargo", 200.0, 50.0, 50.0, 50.0 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

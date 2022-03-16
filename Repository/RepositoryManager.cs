@@ -1,5 +1,5 @@
-﻿using Interfaces;
-using Entities;
+﻿using Entities;
+using Interfaces;
 using Repository.Users;
 using System.Threading.Tasks;
 
@@ -76,9 +76,6 @@ namespace Repository
                 return transportRepository;
             }
         }
-
-        public void ClearTrackers()
-            => repositoryContext.ChangeTracker.Clear();
 
         public async Task SaveAsync()
             => await repositoryContext.SaveChangesAsync();

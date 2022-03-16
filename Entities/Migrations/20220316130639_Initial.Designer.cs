@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Entities.Migrations
+namespace Logistics.Entities.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20220316093308_Initial")]
+    [Migration("20220316130639_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -18,7 +18,7 @@ namespace Entities.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.11")
+                .HasAnnotation("ProductVersion", "5.0.15")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Entities.Models.Cargo", b =>
@@ -70,9 +70,9 @@ namespace Entities.Migrations
                         new
                         {
                             Id = 1,
-                            ArrivalDate = new DateTime(2022, 3, 26, 12, 33, 7, 626, DateTimeKind.Local).AddTicks(2099),
+                            ArrivalDate = new DateTime(2022, 3, 26, 16, 6, 39, 205, DateTimeKind.Local).AddTicks(7470),
                             CategoryId = 1,
-                            DepartureDate = new DateTime(2022, 3, 16, 12, 33, 7, 626, DateTimeKind.Local).AddTicks(1846),
+                            DepartureDate = new DateTime(2022, 3, 16, 16, 6, 39, 205, DateTimeKind.Local).AddTicks(7223),
                             Image = new byte[0],
                             OrderId = 1,
                             RouteId = 1,
@@ -322,15 +322,15 @@ namespace Entities.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "723127d3-f712-41f4-ab38-3fc653052d62",
-                            ConcurrencyStamp = "7699b5d5-c078-496c-9d28-d9dacddba823",
+                            Id = "555f65de-91a8-45a0-bb0b-e029eab18f2c",
+                            ConcurrencyStamp = "b029dcb2-609c-4242-ac17-66c28073d87b",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
-                            Id = "10e4f599-a7d6-4d2f-b795-2a0699e8b8fb",
-                            ConcurrencyStamp = "70100ace-ecb7-4d02-b3c7-bd7d3ae06b0c",
+                            Id = "674fa364-c96a-47e2-b14c-238887d247ac",
+                            ConcurrencyStamp = "777adf84-861e-4894-928a-6526ff97672d",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });

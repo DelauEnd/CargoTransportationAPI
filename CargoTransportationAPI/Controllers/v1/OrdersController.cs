@@ -1,30 +1,33 @@
-﻿using CargoTransportationAPI.ActionFilters;
-using Interfaces;
+﻿using AutoMapper;
+using DTO.RequestDTO.CreateDTO;
+using DTO.RequestDTO.UpdateDTO;
+using DTO.ResponseDTO;
 using Entities.Enums;
 using Entities.Models;
 using Entities.RequestFeautures;
+using Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DTO.RequestDTO.UpdateDTO;
-using DTO.RequestDTO.CreateDTO;
-using DTO.ResponseDTO;
 
-namespace CargoTransportationAPI.Controllers.v1
+namespace Logistics.Controllers.v1
 {
     [Route("api/Orders"), Authorize]
     [ApiController]
-    public class OrdersController : ExtendedControllerBase
+    public class OrdersController : ControllerBase
     {
-        private readonly IDataShaper<CargoDto> cargoDataShaper;
+        public readonly IDataShaper<CargoDto> cargoDataShaper;
+        public readonly IRepositoryManager repository;
+        public readonly IMapper mapper;
 
-        public OrdersController(IDataShaper<CargoDto> cargoDataShaper)
+        public OrdersController(IDataShaper<CargoDto> cargoDataShaper, IRepositoryManager repository, IMapper mapper)
         {
             this.cargoDataShaper = cargoDataShaper;
+            this.mapper = mapper;
+            this.repository = repository;
         }
 
         /// <summary>
@@ -54,10 +57,9 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="500">Unhandled exception</response>
         [HttpGet("{orderId}", Name = "GetOrderById")]
         [HttpHead("{orderId}")]
-        [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
-        public IActionResult GetOrderById(int orderId)
+        public async Task<IActionResult> GetOrderById(int orderId)
         {
-            var order = HttpContext.Items["order"] as Order;
+            var order = await repository.Orders.GetOrderByIdAsync(orderId, false);
 
             var orderDto = mapper.Map<OrderDto>(order);
             return Ok(orderDto);
@@ -74,7 +76,6 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPost, Authorize(Roles = nameof(UserRole.Manager))]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> AddOrder([FromBody] OrderForCreationDto order)
         {
             var addableOrder = mapper.Map<Order>(order);
@@ -95,14 +96,10 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="500">Unhandled exception</response>
         [HttpGet("{orderId}/Cargoes")]
         [HttpHead("{orderId}/Cargoes")]
-        [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
-        public async Task<IActionResult> GetCargoesByOrderId([FromRoute]int orderId, [FromQuery]CargoParameters parameters)
+        public async Task<IActionResult> GetCargoesByOrderId([FromRoute] int orderId, [FromQuery] CargoParameters parameters)
         {
-            var order = HttpContext.Items["order"] as Order;
-
+            var order = await repository.Orders.GetOrderByIdAsync(orderId, false);
             var cargoes = await repository.Cargoes.GetCargoesByOrderIdAsync(order.Id, parameters, false);
-
-            AddPaginationHeader(cargoes);
 
             var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
             return Ok(cargoDataShaper.ShapeData(cargoesDto, parameters.Fields));
@@ -121,11 +118,9 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPost("{orderId}/Cargoes"), Authorize(Roles = nameof(UserRole.Manager))]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
-        [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
-        public async Task<IActionResult> AddCargoesAsync([FromBody] IEnumerable<CargoForCreationDto> cargoes, [FromRoute]int orderId)
+        public async Task<IActionResult> AddCargoesAsync([FromBody] IEnumerable<CargoForCreationDto> cargoes, [FromRoute] int orderId)
         {
-            var order = HttpContext.Items["order"] as Order;
+            var order = await repository.Orders.GetOrderByIdAsync(orderId, false);
 
             var addableCargoes = mapper.Map<IEnumerable<Cargo>>(cargoes);
             await CreateCargoesAsync(addableCargoes, order.Id);
@@ -145,10 +140,9 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpDelete("{orderId}"), Authorize(Roles = nameof(UserRole.Manager))]
-        [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
         public async Task<IActionResult> DeleteOrderById(int orderId)
         {
-            var order = HttpContext.Items["order"] as Order;
+            var order = await repository.Orders.GetOrderByIdAsync(orderId, false);
 
             await DeleteOrderAsync(order);
 
@@ -168,15 +162,19 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPatch("{orderId}"), Authorize(Roles = nameof(UserRole.Manager))]
-        [ServiceFilter(typeof(ValidateOrderExistsAttribute))]
-        public async Task<IActionResult> PartiallyUpdateOrderById(int orderId, [FromBody]JsonPatchDocument<OrderForUpdateDto> patchDoc)
+        public async Task<IActionResult> PartiallyUpdateOrderById(int orderId, [FromBody] JsonPatchDocument<OrderForUpdateDto> patchDoc)
         {
-            if (patchDoc == null)
-                return SendedIsNull(true, nameof(patchDoc));
+            var order = await repository.Orders.GetOrderByIdAsync(orderId, false);
 
-            var order = HttpContext.Items["order"] as Order;
+            var orderToPatch = mapper.Map<OrderForUpdateDto>(order);
+            patchDoc.ApplyTo(orderToPatch, ModelState);
 
-            PatchOrder(patchDoc, order);
+            TryValidateModel(orderToPatch);
+            if (!ModelState.IsValid)
+                throw new Exception("InvalidModelState");
+
+            mapper.Map(orderToPatch, order);
+
             await repository.SaveAsync();
 
             return NoContent();
@@ -213,23 +211,6 @@ namespace CargoTransportationAPI.Controllers.v1
         {
             Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
             return Ok();
-        }
-
-        private void PatchOrder(JsonPatchDocument<OrderForUpdateDto> patchDoc, Order order)
-        {
-            var orderToPatch = mapper.Map<OrderForUpdateDto>(order);
-            patchDoc.ApplyTo(orderToPatch, ModelState);
-
-            TryToValidate(orderToPatch);
-
-            mapper.Map(orderToPatch, order);
-        }
-
-        private void TryToValidate(OrderForUpdateDto orderToPatch)
-        {
-            TryValidateModel(orderToPatch);
-            if (!ModelState.IsValid)
-                throw new Exception("InvalidModelState");
         }
 
         private async Task DeleteOrderAsync(Order order)

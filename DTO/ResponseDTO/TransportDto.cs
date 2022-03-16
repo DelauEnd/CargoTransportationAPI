@@ -1,7 +1,7 @@
 ﻿using DTO.OwnedModels;
 
 namespace DTO.ResponseDTO
-{ 
+{
     public class TransportDto
     {
         public int Id { get; set; }

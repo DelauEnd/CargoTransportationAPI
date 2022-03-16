@@ -1,38 +1,35 @@
-﻿using Interfaces;
-using Entities.ErrorModel;
+﻿using Entities.ErrorModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace CargoTransportationAPI.Extensions
+namespace Logistics.Extensions
 {
     public static class ExceptionMiddlewareExtensions
     {
-        public static void ConfigureExceptionHandler(this IApplicationBuilder app, ILoggerManager logger)
+        public static void ConfigureExceptionHandler(this IApplicationBuilder app)
         {
             app.UseExceptionHandler(appError => appError.Run
             (
-                async context => await context.ContextConfigureAsync(logger)
+                async context => await context.ContextConfigureAsync()
             ));
         }
 
-        public static async Task ContextConfigureAsync(this HttpContext context, ILoggerManager logger)
+        public static async Task ContextConfigureAsync(this HttpContext context)
         {
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             context.Response.ContentType = "application/json";
 
-            await context.HandleException(logger);
+            await context.HandleException();
         }
 
-        public static async Task HandleException(this HttpContext context, ILoggerManager logger)
+        public static async Task HandleException(this HttpContext context)
         {
             var contextFeauture = context.Features.Get<IExceptionHandlerFeature>();
             if (contextFeauture != null)
             {
-                logger.LogError($"Something went wrong: {contextFeauture.Error}");
-
                 await context.Response.WriteAsync(new ErrorDetails()
                 {
                     StatusCode = context.Response.StatusCode,

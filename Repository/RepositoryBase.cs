@@ -1,5 +1,5 @@
-﻿using Interfaces;
-using Entities;
+﻿using Entities;
+using Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;

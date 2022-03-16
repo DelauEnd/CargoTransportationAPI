@@ -1,16 +1,24 @@
 ﻿using Entities.Models;
 using Entities.RequestFeautures;
+using Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace CargoTransportationAPI.Controllers.v2
+namespace Logistics.Controllers.v2
 {
     [ApiVersion("2")]
     [Route("api/{v:apiversion}/Cargoes")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "v2")]
-    public class CargoesController : ExtendedControllerBase
+    public class CargoesController : ControllerBase
     {
+        public readonly IRepositoryManager repository;
+
+        public CargoesController(IRepositoryManager repository)
+        {
+            this.repository = repository;
+        }
+
         /// <summary>
         /// Get list of cargoes
         /// </summary>
@@ -24,8 +32,6 @@ namespace CargoTransportationAPI.Controllers.v2
                 return BadRequest("Date from cannot be later than date to");
 
             var cargoes = await repository.Cargoes.GetAllCargoesAsync(parameters, false);
-
-            AddPaginationHeader(cargoes);
 
             return Ok(cargoes);
         }

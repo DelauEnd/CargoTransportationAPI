@@ -1,21 +1,30 @@
-﻿using CargoTransportationAPI.ActionFilters;
+﻿using AutoMapper;
 using DTO.RequestDTO.CreateDTO;
 using DTO.RequestDTO.UpdateDTO;
 using DTO.ResponseDTO;
 using Entities.Enums;
 using Entities.Models;
+using Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CargoTransportationAPI.Controllers.v1
+namespace Logistics.Controllers.v1
 {
     [Route("api/Categories"), Authorize]
     [ApiController]
-    public class CargoCategoriesController : ExtendedControllerBase
+    public class CargoCategoriesController : ControllerBase
     {
+        public readonly IRepositoryManager repository;
+        public readonly IMapper mapper;
+
+        public CargoCategoriesController(IRepositoryManager repository, IMapper mapper)
+        {
+            this.mapper = mapper;
+            this.repository = repository;
+        }
+
         /// <summary>
         /// Get list of categories
         /// </summary>
@@ -44,8 +53,7 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPost, Authorize(Roles = nameof(UserRole.Administrator))]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> AddCategory([FromBody]CategoryForCreationDto category)
+        public async Task<IActionResult> AddCategory([FromBody] CategoryForCreationDto category)
         {
             CargoCategory addableCategory = mapper.Map<CargoCategory>(category);
             await CreateCategoryAsync(addableCategory);
@@ -66,10 +74,9 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpDelete("{categoryId}"), Authorize(Roles = nameof(UserRole.Administrator))]
-        [ServiceFilter(typeof(ValidateCargoCategoryExistsAttribute))]
         public async Task<IActionResult> DeleteCategoryById(int categoryId)
         {
-            var category = HttpContext.Items["category"] as CargoCategory;
+            var category = await repository.CargoCategories.GetCategoryByIdAsync(categoryId, false);
 
             await DeleteCategoryAsync(category);
 
@@ -88,11 +95,9 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPut("{categoryId}"), Authorize(Roles = nameof(UserRole.Administrator))]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
-        [ServiceFilter(typeof(ValidateCargoCategoryExistsAttribute))]
         public async Task<IActionResult> UpdateCargoCategoryById(int categoryId, CargoCategoryForUpdateDto category)
         {
-            var categoryToUpdate = HttpContext.Items["category"] as CargoCategory;
+            var categoryToUpdate = await repository.CargoCategories.GetCategoryByIdAsync(categoryId, false);
 
             mapper.Map(category, categoryToUpdate);
             await repository.SaveAsync();

@@ -1,29 +1,31 @@
-﻿using CargoTransportationAPI.ActionFilters;
-using Interfaces;
+﻿using AutoMapper;
+using DTO.RequestDTO.CreateDTO;
+using DTO.ResponseDTO;
 using Entities.Enums;
 using Entities.Models;
+using Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using DTO.RequestDTO.CreateDTO;
-using DTO.ResponseDTO;
 
-namespace CargoTransportationAPI.Controllers.v1
+namespace Logistics.Controllers.v1
 {
     [Route("api/Authentication")]
     [ApiController]
-    public class AuthenticationController : ExtendedControllerBase
+    public class AuthenticationController : ControllerBase
     {
-        private readonly UserManager<User> userManager;
-        private readonly RoleManager<IdentityRole> roleManager;
-        private readonly IAuthenticationManager authManager;
+        public readonly UserManager<User> userManager;
+        public readonly RoleManager<IdentityRole> roleManager;
+        public readonly IAuthenticationManager authManager;
+        public readonly IMapper mapper;
 
-        public AuthenticationController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IAuthenticationManager authManager)
+        public AuthenticationController(UserManager<User> userManager, IMapper mapper, RoleManager<IdentityRole> roleManager, IAuthenticationManager authManager)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.authManager = authManager;
+            this.mapper = mapper;
         }
 
         /// <summary>
@@ -34,7 +36,6 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="400">If created user is incorrect</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPost]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> RegisterUser([FromBody] UserForCreationDto userForCreation)
         {
             var user = mapper.Map<User>(userForCreation);
@@ -62,7 +63,7 @@ namespace CargoTransportationAPI.Controllers.v1
         [HttpPost]
         [Route("AddRole")]
         [Authorize(Roles = nameof(UserRole.Administrator))]
-        public async Task<IActionResult> AddRoleToUser([FromQuery]string login, [FromQuery]string role)
+        public async Task<IActionResult> AddRoleToUser([FromQuery] string login, [FromQuery] string role)
         {
             var user = await userManager.FindByNameAsync(login);
 
@@ -86,14 +87,12 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="401">If incorrect username or password</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPost("login")]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto user)
         {
             var validUser = await authManager.ReturnUserIfValid(user);
 
             if (validUser == null)
             {
-                logger.LogWarn($"{nameof(Authenticate)}: wrong login or password");
                 return Unauthorized();
             }
 

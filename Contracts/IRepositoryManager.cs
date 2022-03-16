@@ -11,6 +11,5 @@ namespace Interfaces
         IRouteRepository Routes { get; }
         ITransportRepository Transport { get; }
         Task SaveAsync();
-        void ClearTrackers();
     }
 }

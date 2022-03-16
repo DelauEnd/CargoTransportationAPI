@@ -1,23 +1,32 @@
-﻿using CargoTransportationAPI.ActionFilters;
+﻿using AutoMapper;
 using DTO.RequestDTO.CreateDTO;
 using DTO.RequestDTO.UpdateDTO;
 using DTO.ResponseDTO;
 using Entities.Enums;
 using Entities.Models;
+using Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CargoTransportationAPI.Controllers.v1
+namespace Logistics.Controllers.v1
 {
     [Route("api/Customers"), Authorize]
     [ApiController]
-    public class CustomersController : ExtendedControllerBase
+    public class CustomersController : ControllerBase
     {
+        public readonly IRepositoryManager repository;
+        public readonly IMapper mapper;
+
+        public CustomersController(IRepositoryManager repository, IMapper mapper)
+        {
+            this.mapper = mapper;
+            this.repository = repository;
+        }
+
         /// <summary>
         /// Get list of customers
         /// </summary>
@@ -45,10 +54,9 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="500">Unhandled exception</response>
         [HttpGet("{customerId}", Name = "GetCustomerById")]
         [HttpHead("{customerId}")]
-        [ServiceFilter(typeof(ValidateCustomerExistsAttribute))]
-        public IActionResult GetCustomerById(int customerId)
+        public async Task<IActionResult> GetCustomerById(int customerId)
         {
-            var customer = HttpContext.Items["customer"] as Customer;
+            var customer = await repository.Customers.GetCustomerByIdAsync(customerId, false);
 
             var customerDto = mapper.Map<CustomerDto>(customer);
             return Ok(customerDto);
@@ -64,14 +72,13 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPost, Authorize(Roles = nameof(UserRole.Manager))]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> AddCustomer([FromBody]CustomerForCreationDto customer)
+        public async Task<IActionResult> AddCustomer([FromBody] CustomerForCreationDto customer)
         {
             var addableCustomer = mapper.Map<Customer>(customer);
             await CreateCustomerAsync(addableCustomer);
 
             var customerToReturn = mapper.Map<CustomerDto>(addableCustomer);
-            return CustomerAdded(customerToReturn);
+            return CreatedAtRoute("GetCustomerById", new { customerId = customerToReturn.Id }, customer);
         }
 
         /// <summary>
@@ -85,10 +92,9 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpDelete("{customerId}"), Authorize(Roles = nameof(UserRole.Manager))]
-        [ServiceFilter(typeof(ValidateCustomerExistsAttribute))]
         public async Task<IActionResult> DeleteCustomerById(int customerId)
         {
-            var customer = HttpContext.Items["customer"] as Customer;
+            var customer = await repository.Customers.GetCustomerByIdAsync(customerId, false);
 
             await DeleteCustomerAsync(customer);
 
@@ -108,15 +114,19 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPatch("{customerId}"), Authorize(Roles = nameof(UserRole.Manager))]
-        [ServiceFilter(typeof(ValidateCustomerExistsAttribute))]
-        public async Task<IActionResult> PartiallyUpdateCustomerById(int customerId, [FromBody]JsonPatchDocument<CustomerForUpdateDto> patchDoc)
+        public async Task<IActionResult> PartiallyUpdateCustomerById(int customerId, [FromBody] JsonPatchDocument<CustomerForUpdateDto> patchDoc)
         {
-            if (patchDoc == null)
-                return SendedIsNull(true, nameof(patchDoc));
+            var customer = await repository.Customers.GetCustomerByIdAsync(customerId, false);
 
-            var customer = HttpContext.Items["customer"] as Customer;
+            var customerToPatch = mapper.Map<CustomerForUpdateDto>(customer);
+            patchDoc.ApplyTo(customerToPatch, ModelState);
 
-            PatchCustomer(patchDoc, customer);
+            TryValidateModel(customer);
+            if (!ModelState.IsValid)
+                throw new Exception("InvalidModelState");
+
+            mapper.Map(customerToPatch, customer);
+
             await repository.SaveAsync();
 
             return NoContent();
@@ -144,32 +154,10 @@ namespace CargoTransportationAPI.Controllers.v1
             return Ok();
         }
 
-        private void PatchCustomer(JsonPatchDocument<CustomerForUpdateDto> patchDoc, Customer customer)
-        {
-            var customerToPatch = mapper.Map<CustomerForUpdateDto>(customer);
-            patchDoc.ApplyTo(customerToPatch, ModelState);
-
-            TryToValidate(customerToPatch);
-
-            mapper.Map(customerToPatch, customer);
-        }
-
-        private void TryToValidate(CustomerForUpdateDto orderToPatch)
-        {
-            TryValidateModel(orderToPatch);
-            if (!ModelState.IsValid)
-                throw new Exception("InvalidModelState");
-        }
-
         private async Task CreateCustomerAsync(Customer customer)
         {
             repository.Customers.CreateCustomer(customer);
             await repository.SaveAsync();
-        }
-
-        private IActionResult CustomerAdded(CustomerDto customer)
-        {
-            return CreatedAtRoute("GetCustomerById", new { customerId = customer.Id }, customer);
         }
 
         private async Task DeleteCustomerAsync(Customer customer)

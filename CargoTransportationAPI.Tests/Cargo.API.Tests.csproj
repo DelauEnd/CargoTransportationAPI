@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CargoTransportationAPI\CargoTransportationAPI.csproj" />
-    <ProjectReference Include="..\DTO\DTO.csproj" />
+    <ProjectReference Include="..\CargoTransportationAPI\Cargo.API.csproj" />
+    <ProjectReference Include="..\DTO\Cargo.Models.csproj" />
   </ItemGroup>
 
 </Project>

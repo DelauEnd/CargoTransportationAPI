@@ -1,29 +1,32 @@
-﻿using CargoTransportationAPI.ActionFilters;
-using CargoTransportationAPI.ModelBinders;
-using Interfaces;
+﻿using AutoMapper;
+using DTO.RequestDTO.CreateDTO;
+using DTO.RequestDTO.UpdateDTO;
+using DTO.ResponseDTO;
 using Entities.Enums;
 using Entities.Models;
 using Entities.RequestFeautures;
+using Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DTO.RequestDTO.UpdateDTO;
-using DTO.RequestDTO.CreateDTO;
-using DTO.ResponseDTO;
 
-namespace CargoTransportationAPI.Controllers.v1
+namespace Logistics.Controllers.v1
 {
     [Route("api/Routes"), Authorize]
     [ApiController]
-    public class RoutesController : ExtendedControllerBase
+    public class RoutesController : ControllerBase
     {
-        private readonly IDataShaper<CargoDto> cargoDataShaper;
+        public readonly IDataShaper<CargoDto> cargoDataShaper;
+        public readonly IRepositoryManager repository;
+        public readonly IMapper mapper;
 
-        public RoutesController(IDataShaper<CargoDto> cargoDataShaper)
+        public RoutesController(IDataShaper<CargoDto> cargoDataShaper, IRepositoryManager repository, IMapper mapper)
         {
             this.cargoDataShaper = cargoDataShaper;
+            this.mapper = mapper;
+            this.repository = repository;
         }
 
         /// <summary>
@@ -53,10 +56,9 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="500">Unhandled exception</response>
         [HttpGet("{routeId}", Name = "GetRouteById")]
         [HttpHead("{routeId}")]
-        [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
-        public IActionResult GetRouteById(int routeId)
+        public async Task<IActionResult> GetRouteById(int routeId)
         {
-            var route = HttpContext.Items["route"] as Route;
+            var route = await repository.Routes.GetRouteByIdAsync(routeId, false);
 
             var routeDto = mapper.Map<RouteDto>(route);
 
@@ -74,8 +76,7 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPost, Authorize(Roles = nameof(UserRole.Manager))]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> AddRoute([FromBody]RouteForCreationDto route)
+        public async Task<IActionResult> AddRoute([FromBody] RouteForCreationDto route)
         {
             Route addableRoute = await RouteForCreationToRoute(route);
             await CreateRouteAsync(addableRoute);
@@ -95,10 +96,9 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpDelete("{routeId}"), Authorize(Roles = nameof(UserRole.Manager))]
-        [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
         public async Task<IActionResult> DeleteRouteById(int routeId)
         {
-            var route = HttpContext.Items["route"] as Route;
+            var route = await repository.Routes.GetRouteByIdAsync(routeId, false);
 
             await DeleteRouteAsync(route);
 
@@ -118,11 +118,9 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPut("{routeId}"), Authorize(Roles = nameof(UserRole.Manager))]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
-        [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
         public async Task<IActionResult> UpdateRouteById(int routeId, RouteForUpdateDto route)
         {
-            var routeToUpdate = HttpContext.Items["route"] as Route;
+            var routeToUpdate = await repository.Routes.GetRouteByIdAsync(routeId, false);
 
             await UpdateRouteAsync(route, routeToUpdate);
             await repository.SaveAsync();
@@ -142,14 +140,11 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="500">Unhandled exception</response>
         [HttpGet("{routeId}/Cargoes")]
         [HttpHead("{routeId}/Cargoes")]
-        [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
-        public async Task<IActionResult> GetCargoesByRouteId(int routeId, [FromQuery]CargoParameters parameters)
+        public async Task<IActionResult> GetCargoesByRouteId(int routeId, [FromQuery] CargoParameters parameters)
         {
-            var route = HttpContext.Items["route"] as Route;
+            var route = await repository.Routes.GetRouteByIdAsync(routeId, false);
 
             var cargoes = await repository.Cargoes.GetCargoesByRouteIdAsync(route.Id, parameters, false);
-
-            AddPaginationHeader(cargoes);
 
             var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
 
@@ -167,10 +162,9 @@ namespace CargoTransportationAPI.Controllers.v1
         /// <response code="404">If requested route not found</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPost("{routeId}/Cargoes"), Authorize(Roles = nameof(UserRole.Manager))]
-        [ServiceFilter(typeof(ValidateRouteExistsAttribute))]
-        public async Task<IActionResult> MarkCargoesToRoute([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<int> ids, int routeId)
+        public async Task<IActionResult> MarkCargoesToRoute([FromBody] List<int> ids, int routeId)
         {
-            var route = HttpContext.Items["route"] as Route;
+            var route = await repository.Routes.GetRouteByIdAsync(routeId, false);
 
             await AssignCargoes(ids, route);
 
@@ -187,7 +181,6 @@ namespace CargoTransportationAPI.Controllers.v1
         {
             if (await repository.Cargoes.GetCargoByIdAsync(id, false) == null)
             {
-                logger.LogWarn($"Cargo with Id={id} not exists");
                 return;
             }
             await repository.Cargoes.AssignCargoToRoute(id, route.Id);

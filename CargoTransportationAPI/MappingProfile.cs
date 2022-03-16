@@ -6,7 +6,7 @@ using Entities.Enums;
 using Entities.Models;
 using System;
 
-namespace CargoTransportationAPI
+namespace Logistics
 {
     public class MappingProfile : Profile
     {

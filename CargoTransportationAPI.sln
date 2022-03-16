@@ -3,26 +3,22 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CargoTransportationAPI", "CargoTransportationAPI\CargoTransportationAPI.csproj", "{761B1C78-DB83-4F43-8E4E-F2928E3D52B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.API", "CargoTransportationAPI\Logistics.API.csproj", "{761B1C78-DB83-4F43-8E4E-F2928E3D52B8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interfaces", "Contracts\Interfaces.csproj", "{90080F08-D1E0-421C-BDB7-74011DCC287F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Interfaces", "Contracts\Logistics.Interfaces.csproj", "{90080F08-D1E0-421C-BDB7-74011DCC287F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{FF56FCD0-8867-4B11-8A9B-686D97218400}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Entities", "Entities\Logistics.Entities.csproj", "{FF56FCD0-8867-4B11-8A9B-686D97218400}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoggerService", "LoggerService\LoggerService.csproj", "{DFC4D0D4-37A5-4588-BEFE-CB7B9C727B88}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Repository\Repository.csproj", "{8C64F44A-6DE6-47FC-9D07-0C95D8E51CED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Repository", "Repository\Logistics.Repository.csproj", "{8C64F44A-6DE6-47FC-9D07-0C95D8E51CED}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7EF122FB-7FD0-4F97-A1E8-E69F08939606}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CargoTransportationAPI.Tests", "CargoTransportationAPI.Tests\CargoTransportationAPI.Tests.csproj", "{5AACCA8B-C6ED-4D27-89D8-CCD4F7EF50E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Services", "Services\Logistics.Services.csproj", "{4EECA15B-1507-43FB-B6AE-4DAD376AACA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CargoTransportation", "Services\CargoTransportation.csproj", "{4EECA15B-1507-43FB-B6AE-4DAD376AACA6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTO", "DTO\DTO.csproj", "{0E438E7C-5E24-4325-BD8D-B0DFCF8F8514}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Models", "DTO\Logistics.Models.csproj", "{0E438E7C-5E24-4325-BD8D-B0DFCF8F8514}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,18 +38,10 @@ Global
 		{FF56FCD0-8867-4B11-8A9B-686D97218400}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF56FCD0-8867-4B11-8A9B-686D97218400}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF56FCD0-8867-4B11-8A9B-686D97218400}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DFC4D0D4-37A5-4588-BEFE-CB7B9C727B88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DFC4D0D4-37A5-4588-BEFE-CB7B9C727B88}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DFC4D0D4-37A5-4588-BEFE-CB7B9C727B88}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DFC4D0D4-37A5-4588-BEFE-CB7B9C727B88}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8C64F44A-6DE6-47FC-9D07-0C95D8E51CED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8C64F44A-6DE6-47FC-9D07-0C95D8E51CED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C64F44A-6DE6-47FC-9D07-0C95D8E51CED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C64F44A-6DE6-47FC-9D07-0C95D8E51CED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5AACCA8B-C6ED-4D27-89D8-CCD4F7EF50E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5AACCA8B-C6ED-4D27-89D8-CCD4F7EF50E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5AACCA8B-C6ED-4D27-89D8-CCD4F7EF50E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5AACCA8B-C6ED-4D27-89D8-CCD4F7EF50E2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4EECA15B-1507-43FB-B6AE-4DAD376AACA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4EECA15B-1507-43FB-B6AE-4DAD376AACA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EECA15B-1507-43FB-B6AE-4DAD376AACA6}.Release|Any CPU.ActiveCfg = Release|Any CPU

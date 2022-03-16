@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DTO\DTO.csproj" />
-    <ProjectReference Include="..\Repository\Repository.csproj" />
+    <ProjectReference Include="..\DTO\Logistics.Models.csproj" />
+    <ProjectReference Include="..\Repository\Logistics.Repository.csproj" />
   </ItemGroup>
 
 </Project>

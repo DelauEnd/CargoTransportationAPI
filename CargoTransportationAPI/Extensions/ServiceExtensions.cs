@@ -1,8 +1,7 @@
-﻿using CargoTransportationAPI.ActionFilters;
-using Interfaces;
+﻿using DTO.ResponseDTO;
 using Entities;
 using Entities.Models;
-using LoggerService;
+using Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -20,9 +19,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using DTO.ResponseDTO;
 
-namespace CargoTransportationAPI.Extensions
+namespace Logistics.Extensions
 {
     public static class ServiceExtensions
     {
@@ -40,8 +38,6 @@ namespace CargoTransportationAPI.Extensions
             {
             });
 
-        public static void ConfigureLoggerService(this IServiceCollection services)
-            => services.AddScoped<ILoggerManager, LoggerManager>();
 
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
             => services.AddDbContext<RepositoryContext>(options =>
@@ -52,18 +48,6 @@ namespace CargoTransportationAPI.Extensions
 
         public static void ConfigureDataShaper(this IServiceCollection services)
             => services.AddScoped<IDataShaper<CargoDto>, DataShaper<CargoDto>>();
-
-        public static void ConfigureFilterAttributes(this IServiceCollection services)
-        {
-            services.AddScoped<ValidationFilterAttribute>();
-
-            services.AddScoped<ValidateCargoCategoryExistsAttribute>();
-            services.AddScoped<ValidateCargoExistsAttribute>();
-            services.AddScoped<ValidateRouteExistsAttribute>();
-            services.AddScoped<ValidateTransportExistsAttribute>();
-            services.AddScoped<ValidateCustomerExistsAttribute>();
-            services.AddScoped<ValidateOrderExistsAttribute>();
-        }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
