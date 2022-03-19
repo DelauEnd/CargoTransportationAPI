@@ -1,4 +1,4 @@
-﻿namespace Entities.Configuration
+﻿namespace Logistics.Entities.Configuration
 {
     public class StoredProcedures
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DTO.OwnedModels
+namespace Logistics.Models.OwnedModels
 {
     public class Person
     {

@@ -1,4 +1,4 @@
-﻿namespace DTO.ResponseDTO
+﻿namespace Logistics.Models.ResponseDTO
 {
     public class OrderDto
     {

@@ -1,9 +1,9 @@
-﻿using Entities.Configuration;
-using Entities.Models;
+﻿using Logistics.Entities.Configuration;
+using Logistics.Entities.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Entities
+namespace Logistics.Entities
 {
     public class RepositoryContext : IdentityDbContext<User>
     {

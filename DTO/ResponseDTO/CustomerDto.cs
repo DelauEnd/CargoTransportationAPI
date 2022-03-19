@@ -1,6 +1,6 @@
-﻿using DTO.OwnedModels;
+﻿using Logistics.Models.OwnedModels;
 
-namespace DTO.ResponseDTO
+namespace Logistics.Models.ResponseDTO
 {
     public class CustomerDto
     {

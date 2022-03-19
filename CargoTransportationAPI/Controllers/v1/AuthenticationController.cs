@@ -1,31 +1,22 @@
-﻿using AutoMapper;
-using DTO.RequestDTO.CreateDTO;
-using DTO.ResponseDTO;
-using Entities.Enums;
-using Entities.Models;
-using Interfaces;
+﻿using Logistics.Models.Enums;
+using Logistics.Models.RequestDTO.CreateDTO;
+using Logistics.Models.ResponseDTO;
+using Logistics.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace Logistics.Controllers.v1
+namespace Logistics.API.Controllers.v1
 {
     [Route("api/Authentication")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        public readonly UserManager<User> userManager;
-        public readonly RoleManager<IdentityRole> roleManager;
-        public readonly IAuthenticationManager authManager;
-        public readonly IMapper mapper;
+        private readonly IAuthenticationService _authenticationService;
 
-        public AuthenticationController(UserManager<User> userManager, IMapper mapper, RoleManager<IdentityRole> roleManager, IAuthenticationManager authManager)
+        public AuthenticationController(IAuthenticationService authenticationService)
         {
-            this.userManager = userManager;
-            this.roleManager = roleManager;
-            this.authManager = authManager;
-            this.mapper = mapper;
+            _authenticationService = authenticationService;
         }
 
         /// <summary>
@@ -38,13 +29,7 @@ namespace Logistics.Controllers.v1
         [HttpPost]
         public async Task<IActionResult> RegisterUser([FromBody] UserForCreationDto userForCreation)
         {
-            var user = mapper.Map<User>(userForCreation);
-
-            var result = await userManager.CreateAsync(user, userForCreation.Password);
-
-            if (!result.Succeeded)
-                return BuildUnregistratedResult(result);
-
+            await _authenticationService.CreateUser(userForCreation);
             return Ok(userForCreation);
         }
 
@@ -65,17 +50,8 @@ namespace Logistics.Controllers.v1
         [Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> AddRoleToUser([FromQuery] string login, [FromQuery] string role)
         {
-            var user = await userManager.FindByNameAsync(login);
-
-            if (user == null)
-                return NotFound();
-
-            if (!await roleManager.RoleExistsAsync(role))
-                return BadRequest();
-
-            await userManager.AddToRoleAsync(user, role);
-
-            return Ok(user);
+            await _authenticationService.AddRoleToUser(login, role);
+            return Ok();
         }
 
         /// <summary>
@@ -89,23 +65,8 @@ namespace Logistics.Controllers.v1
         [HttpPost("login")]
         public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto user)
         {
-            var validUser = await authManager.ReturnUserIfValid(user);
-
-            if (validUser == null)
-            {
-                return Unauthorized();
-            }
-
-            return Ok(new { Token = await authManager.CreateToken(validUser), Roles = await userManager.GetRolesAsync(validUser) });
-        }
-
-        private IActionResult BuildUnregistratedResult(IdentityResult result)
-        {
-            foreach (var error in result.Errors)
-            {
-                ModelState.TryAddModelError(error.Code, error.Description);
-            }
-            return BadRequest(ModelState);
+            var userInfo = await _authenticationService.AuthenticateUser(user);
+            return Ok(userInfo);
         }
     }
 }

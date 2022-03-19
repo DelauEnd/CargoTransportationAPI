@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using DTO.RequestDTO.CreateDTO;
-using DTO.RequestDTO.UpdateDTO;
-using DTO.ResponseDTO;
-using Entities.Enums;
-using Entities.Models;
+using Logistics.Entities.Enums;
+using Logistics.Entities.Models;
+using Logistics.Models.RequestDTO.CreateDTO;
+using Logistics.Models.RequestDTO.UpdateDTO;
+using Logistics.Models.ResponseDTO;
 using System;
 
-namespace Logistics
+namespace Logistics.Services
 {
     public class MappingProfile : Profile
     {

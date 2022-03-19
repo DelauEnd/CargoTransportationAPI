@@ -1,9 +1,9 @@
-﻿using Entities.Models;
+﻿using Logistics.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
-namespace Entities.Configuration
+namespace Logistics.Entities.Configuration
 {
     public class CargoConfiguration : IEntityTypeConfiguration<Cargo>
     {

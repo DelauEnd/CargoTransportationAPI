@@ -1,9 +1,9 @@
-﻿using Entities;
-using Interfaces;
-using Repository.Users;
+﻿using Logistics.Entities;
+using Logistics.Repository.Interfaces;
+using Logistics.Repository.Repositories;
 using System.Threading.Tasks;
 
-namespace Repository
+namespace Logistics.Repository
 {
     public class RepositoryManager : IRepositoryManager
     {

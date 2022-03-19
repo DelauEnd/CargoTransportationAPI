@@ -1,61 +1,43 @@
-﻿using AutoMapper;
-using DTO.RequestDTO.UpdateDTO;
-using DTO.ResponseDTO;
-using Entities.Enums;
-using Entities.Models;
-using Entities.RequestFeautures;
-using Interfaces;
+﻿using Logistics.Models.Enums;
+using Logistics.Models.RequestDTO.UpdateDTO;
+using Logistics.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Logistics.Controllers.v1
+namespace Logistics.API.Controllers.v1
 {
     [Route("api/Cargoes"), Authorize]
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
     public class CargoesController : ControllerBase
     {
-        public readonly IDataShaper<CargoDto> cargoDataShaper;
-        public readonly IRepositoryManager repository;
-        public readonly IMapper mapper;
+        private readonly ICargoService _cargoService;
 
-        public CargoesController(IDataShaper<CargoDto> cargoDataShaper, IRepositoryManager repository, IMapper mapper)
+        public CargoesController(ICargoService cargoService)
         {
-            this.mapper = mapper;
-            this.repository = repository;
-            this.cargoDataShaper = cargoDataShaper;
+            _cargoService = cargoService;
         }
 
         /// <summary>
         /// Get list of cargo categories
         /// </summary>
-        /// <param name="parameters"></param>
         /// <returns>Returns cargo categories list</returns>
         /// <response code="400">If incorrect date filter</response>
         /// <response code="401">If user unauthenticated</response>
         /// <response code="500">Unhandled exception</response>
         [HttpGet]
         [HttpHead]
-        public async Task<IActionResult> GetAllCargoes([FromQuery] CargoParameters parameters)
+        public async Task<IActionResult> GetAllCargoes()
         {
-            if (!parameters.IsValidDateFilter())
-                return BadRequest("Date from cannot be later than date to");
-
-            var cargoes = await repository.Cargoes.GetAllCargoesAsync(parameters, false);
-
-            var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
-
-            return Ok(cargoDataShaper.ShapeData(cargoesDto, parameters.Fields));
+            var cargoes = await _cargoService.GetAllCargoes();
+            return Ok(cargoes);
         }
 
         /// <summary>
         /// Get list of cargo categories
         /// </summary>
-        /// <param name="parameters"></param>
         /// <returns>Returns cargo categories list</returns>
         /// <response code="400">If incorrect date filter</response>
         /// <response code="401">If user unauthenticated</response>
@@ -63,36 +45,26 @@ namespace Logistics.Controllers.v1
         [HttpGet]
         [HttpHead]
         [Route("Unassigned")]
-        public async Task<IActionResult> GetUnassignedCargoes([FromQuery] CargoParameters parameters)
+        public async Task<IActionResult> GetUnassignedCargoes()
         {
-            if (!parameters.IsValidDateFilter())
-                return BadRequest("Date from cannot be later than date to");
-
-            var cargoes = await repository.Cargoes.GetUnassignedCargoesAsync(parameters, false);
-
-            var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
-
-            return Ok(cargoDataShaper.ShapeData(cargoesDto, parameters.Fields));
+            var cargoes = await _cargoService.GetUnassignedCargoes();
+            return Ok(cargoes);
         }
 
         /// <summary>
         /// Get cargo by id
         /// </summary>
         /// <param name="cargoId"></param>
-        /// <param name="parameters"></param>
         /// <returns>Returns requested cargo</returns>
         /// <response code="401">If user unauthenticated</response>
         /// <response code="404">If requested cargo not found</response>
         /// <response code="500">Unhandled exception</response>
         [HttpGet("{cargoId}")]
         [HttpHead("{cargoId}")]
-        public IActionResult GetCargoById(int cargoId, [FromQuery] CargoParameters parameters)
+        public async Task<IActionResult> GetCargoById(int cargoId)
         {
-            var cargo = repository.Cargoes.GetCargoByIdAsync(cargoId, false);
-
-            var cargoDto = mapper.Map<CargoDto>(cargo);
-
-            return Ok(cargoDataShaper.ShapeData(cargoDto, parameters.Fields));
+            var cargo = await _cargoService.GetCargoById(cargoId);
+            return Ok(cargo);
         }
 
         /// <summary>
@@ -108,10 +80,7 @@ namespace Logistics.Controllers.v1
         [HttpDelete("{cargoId}"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> DeleteCargoById(int cargoId)
         {
-            var cargo = await repository.Cargoes.GetCargoByIdAsync(cargoId, false);
-
-            await DeleteCargoAsync(cargo);
-
+            await _cargoService.DeleteCargoById(cargoId);
             return NoContent();
         }
 
@@ -130,20 +99,8 @@ namespace Logistics.Controllers.v1
         [HttpPatch("{cargoId}"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> PartiallyUpdateCargoById(int cargoId, [FromBody] JsonPatchDocument<CargoForUpdateDto> patchDoc)
         {
-            var cargo = await repository.Cargoes.GetCargoByIdAsync(cargoId, false);
-
-            var cargoToPatch = mapper.Map<CargoForUpdateDto>(cargo);
-            patchDoc.ApplyTo(cargoToPatch, ModelState);
-
-            TryValidateModel(cargoToPatch);
-            if (!ModelState.IsValid)
-                throw new Exception("InvalidModelState");
-
-            mapper.Map(cargoToPatch, cargo);
-
-            await repository.SaveAsync();
-
-            return NoContent();
+            await _cargoService.PatchCargoById(cargoId, patchDoc);
+            return Ok();
         }
 
         /// <summary>
@@ -166,25 +123,6 @@ namespace Logistics.Controllers.v1
         {
             Response.Headers.Add("Allow", "GET, HEAD, PATCH, DELETE, OPTIONS");
             return Ok();
-        }
-
-        private void PatchCargo(JsonPatchDocument<CargoForUpdateDto> patchDoc, Cargo cargo)
-        {
-            var cargoToPatch = mapper.Map<CargoForUpdateDto>(cargo);
-            patchDoc.ApplyTo(cargoToPatch, ModelState);
-
-            TryValidateModel(cargoToPatch);
-            if (!ModelState.IsValid)
-                throw new Exception("InvalidModelState");
-
-            mapper.Map(cargoToPatch, cargo);
-        }
-
-
-        private async Task DeleteCargoAsync(Cargo cargo)
-        {
-            repository.Cargoes.DeleteCargo(cargo);
-            await repository.SaveAsync();
         }
     }
 }

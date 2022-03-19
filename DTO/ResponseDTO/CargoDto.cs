@@ -1,7 +1,7 @@
-﻿using DTO.OwnedModels;
+﻿using Logistics.Models.OwnedModels;
 using System;
 
-namespace DTO.ResponseDTO
+namespace Logistics.Models.ResponseDTO
 {
     public class CargoDto
     {
@@ -11,9 +11,9 @@ namespace DTO.ResponseDTO
 
         public string Category { get; set; }
 
-        public DateTime DepartureDate { get; set; } = DateTime.Now;
+        public DateTime DepartureDate { get; set; }
 
-        public DateTime ArrivalDate { get; set; } = DateTime.Now;
+        public DateTime ArrivalDate { get; set; }
 
         public double Weight { get; set; }
 

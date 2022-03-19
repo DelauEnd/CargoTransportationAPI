@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Interfaces
+namespace Logistics.Repository.Interfaces
 {
     public interface IRepositoryManager
     {

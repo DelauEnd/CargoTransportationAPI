@@ -1,11 +1,11 @@
-﻿using Entities;
-using Entities.Models;
-using Interfaces;
+﻿using Logistics.Entities;
+using Logistics.Entities.Models;
+using Logistics.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Repository.Users
+namespace Logistics.Repository.Repositories
 {
     public class TransportRepository : RepositoryBase<Transport>, ITransportRepository
     {

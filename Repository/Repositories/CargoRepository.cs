@@ -1,13 +1,12 @@
-﻿using Entities;
-using Entities.Models;
-using Entities.RequestFeautures;
-using Interfaces;
+﻿using Logistics.Entities;
+using Logistics.Entities.Models;
+using Logistics.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Repository.Extensions;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Repository.Users
+namespace Logistics.Repository.Repositories
 {
     public class CargoRepository : RepositoryBase<Cargo>, ICargoRepository
     {
@@ -27,17 +26,13 @@ namespace Repository.Users
             => Delete(cargo);
 
 
-        public async Task<PagedList<Cargo>> GetAllCargoesAsync(CargoParameters parameters, bool trackChanges)
+        public async Task<IEnumerable<Cargo>> GetAllCargoesAsync(bool trackChanges)
         {
             var cargoes = await FindAll(trackChanges)
                 .Include(cargo => cargo.Category)
-                .ApplyFilters(parameters)
-                .Search(parameters.Search)
-                .Sort(parameters)
                 .ToListAsync();
 
-            var cargoPagedList = cargoes.ToPagedList(parameters.Page, parameters.PageSize);
-            return cargoPagedList;
+            return cargoes;
         }
 
         public async Task<Cargo> GetCargoByIdAsync(int id, bool trackChanges)
@@ -46,49 +41,37 @@ namespace Repository.Users
                 .SingleOrDefaultAsync();
 
 
-        public async Task<PagedList<Cargo>> GetCargoesByOrderIdAsync(int id, CargoParameters parameters, bool trackChanges)
+        public async Task<IEnumerable<Cargo>> GetCargoesByOrderIdAsync(int id, bool trackChanges)
         {
             var cargoes = await FindByCondition(cargo =>
             cargo.OrderId == id, trackChanges)
                 .Include(cargo => cargo.Category)
-                .ApplyFilters(parameters)
-                .Search(parameters.Search)
-                .Sort(parameters)
                 .ToListAsync();
 
-            var cargoPagedList = cargoes.ToPagedList(parameters.Page, parameters.PageSize);
-            return cargoPagedList;
+            return cargoes;
         }
 
-        public async Task<PagedList<Cargo>> GetCargoesByRouteIdAsync(int id, CargoParameters parameters, bool trackChanges)
+        public async Task<IEnumerable<Cargo>> GetCargoesByRouteIdAsync(int id, bool trackChanges)
         {
             var cargoes = await FindByCondition(cargo =>
             cargo.RouteId == id, trackChanges)
                 .Include(cargo => cargo.Category)
-                .ApplyFilters(parameters)
-                .Search(parameters.Search)
-                .Sort(parameters)
                 .ToListAsync();
 
-            var cargoPagedList = cargoes.ToPagedList(parameters.Page, parameters.PageSize);
-            return cargoPagedList;
+            return cargoes;
         }
 
         public async Task AssignCargoToRoute(int cargoId, int routeId)
             => await ExecQuery($"exec AssignCargoToRoute @cargoId={cargoId}, @routeId={routeId}");
 
-        public async Task<PagedList<Cargo>> GetUnassignedCargoesAsync(CargoParameters parameters, bool trackChanges)
+        public async Task<IEnumerable<Cargo>> GetUnassignedCargoesAsync(bool trackChanges)
         {
             var cargoes = await FindAll(trackChanges)
                 .Include(cargo => cargo.Category)
                 .Where(cargo => cargo.RouteId == null)
-                .ApplyFilters(parameters)
-                .Search(parameters.Search)
-                .Sort(parameters)
                 .ToListAsync();
 
-            var cargoPagedList = cargoes.ToPagedList(parameters.Page, parameters.PageSize);
-            return cargoPagedList;
+            return cargoes;
         }
     }
 }

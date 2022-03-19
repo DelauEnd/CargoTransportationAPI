@@ -1,4 +1,4 @@
-﻿namespace DTO.RequestDTO.UpdateDTO
+﻿namespace Logistics.Models.RequestDTO.UpdateDTO
 {
     public class RouteForUpdateDto
     {

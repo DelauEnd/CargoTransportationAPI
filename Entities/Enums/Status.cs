@@ -1,4 +1,4 @@
-﻿namespace Entities.Enums
+﻿namespace Logistics.Entities.Enums
 {
     public enum Status
     {

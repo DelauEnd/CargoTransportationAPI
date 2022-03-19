@@ -1,4 +1,5 @@
-using Logistics.Extensions;
+using Logistics.API.Extensions;
+using Logistics.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -32,8 +33,7 @@ namespace Logistics
             services.ConfigureIISIntegration();
             services.ConfigureSqlContext(configuration);
             services.ConfigureRepositoryManager();
-            services.ConfigureApiBehaviorOptions();
-            services.ConfigureDataShaper();
+            services.ConfigureServices();
             services.ConfigureVersioning();
             services.ConfigureSwagger();
 
@@ -42,7 +42,7 @@ namespace Logistics
             services.ConfigureJWT(configuration);
             services.ConfigureAuthenticationManager();
 
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(typeof(MappingProfile));
             services.AddControllers(config =>
             {
                 config.RespectBrowserAcceptHeader = true;
@@ -61,8 +61,6 @@ namespace Logistics
             {
                 app.UseHsts();
             }
-
-            app.ConfigureExceptionHandler();
 
             app.UseSwagger();
             app.UseSwaggerUI(setup =>

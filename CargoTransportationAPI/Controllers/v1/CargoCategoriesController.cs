@@ -1,28 +1,21 @@
-﻿using AutoMapper;
-using DTO.RequestDTO.CreateDTO;
-using DTO.RequestDTO.UpdateDTO;
-using DTO.ResponseDTO;
-using Entities.Enums;
-using Entities.Models;
-using Interfaces;
+﻿using Logistics.Models.Enums;
+using Logistics.Models.RequestDTO.CreateDTO;
+using Logistics.Models.RequestDTO.UpdateDTO;
+using Logistics.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Logistics.Controllers.v1
+namespace Logistics.API.Controllers.v1
 {
     [Route("api/Categories"), Authorize]
     [ApiController]
     public class CargoCategoriesController : ControllerBase
     {
-        public readonly IRepositoryManager repository;
-        public readonly IMapper mapper;
-
-        public CargoCategoriesController(IRepositoryManager repository, IMapper mapper)
+        private readonly ICargoCategoryService _cargoCategoryService;
+        public CargoCategoriesController(ICargoCategoryService cargoCategoryService)
         {
-            this.mapper = mapper;
-            this.repository = repository;
+            _cargoCategoryService = cargoCategoryService;
         }
 
         /// <summary>
@@ -35,11 +28,8 @@ namespace Logistics.Controllers.v1
         [HttpHead]
         public async Task<IActionResult> GetAllCategories()
         {
-            var categories = await repository.CargoCategories.GetAllCategoriesAsync(false);
-
-            var categoriesDto = mapper.Map<IEnumerable<CargoCategoryDto>>(categories);
-
-            return Ok(categoriesDto);
+            var categories = await _cargoCategoryService.GetAllCategories();
+            return Ok(categories);
         }
 
         /// <summary>
@@ -55,12 +45,8 @@ namespace Logistics.Controllers.v1
         [HttpPost, Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> AddCategory([FromBody] CategoryForCreationDto category)
         {
-            CargoCategory addableCategory = mapper.Map<CargoCategory>(category);
-            await CreateCategoryAsync(addableCategory);
-
-            var categoryToReturn = mapper.Map<CargoCategoryDto>(addableCategory);
-
-            return Ok(categoryToReturn);
+            await _cargoCategoryService.AddCategory(category);
+            return Ok(category);
         }
 
         /// <summary>
@@ -76,10 +62,7 @@ namespace Logistics.Controllers.v1
         [HttpDelete("{categoryId}"), Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> DeleteCategoryById(int categoryId)
         {
-            var category = await repository.CargoCategories.GetCategoryByIdAsync(categoryId, false);
-
-            await DeleteCategoryAsync(category);
-
+            await _cargoCategoryService.DeleteCategoryById(categoryId);
             return NoContent();
         }
 
@@ -97,12 +80,8 @@ namespace Logistics.Controllers.v1
         [HttpPut("{categoryId}"), Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> UpdateCargoCategoryById(int categoryId, CargoCategoryForUpdateDto category)
         {
-            var categoryToUpdate = await repository.CargoCategories.GetCategoryByIdAsync(categoryId, false);
-
-            mapper.Map(category, categoryToUpdate);
-            await repository.SaveAsync();
-
-            return NoContent();
+            await _cargoCategoryService.UpdateCargoCategoryById(categoryId, category);
+            return Ok();
         }
 
         /// <summary>
@@ -125,18 +104,6 @@ namespace Logistics.Controllers.v1
         {
             Response.Headers.Add("Allow", "PUT, DELETE, OPTIONS");
             return Ok();
-        }
-
-        private async Task CreateCategoryAsync(CargoCategory category)
-        {
-            repository.CargoCategories.CreateCategory(category);
-            await repository.SaveAsync();
-        }
-
-        private async Task DeleteCategoryAsync(CargoCategory category)
-        {
-            repository.CargoCategories.DeleteCategory(category);
-            await repository.SaveAsync();
         }
     }
 }

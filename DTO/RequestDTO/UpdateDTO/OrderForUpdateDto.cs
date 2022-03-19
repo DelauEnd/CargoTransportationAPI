@@ -1,7 +1,7 @@
-﻿using DTO.Enums;
+﻿using Logistics.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace DTO.RequestDTO.UpdateDTO
+namespace Logistics.Models.RequestDTO.UpdateDTO
 {
     public class OrderForUpdateDto
     {

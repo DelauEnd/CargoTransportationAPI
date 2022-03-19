@@ -1,8 +1,8 @@
-﻿using DTO.OwnedModels;
+﻿using Logistics.Models.OwnedModels;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace DTO.RequestDTO.CreateDTO
+namespace Logistics.Models.RequestDTO.CreateDTO
 {
     public class TransportForCreationDto
     {

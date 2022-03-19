@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DTO.ResponseDTO
+namespace Logistics.Models.ResponseDTO
 {
     public class UserForAuthenticationDto
     {

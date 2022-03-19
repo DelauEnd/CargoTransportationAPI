@@ -1,30 +1,23 @@
-﻿using AutoMapper;
-using DTO.RequestDTO.CreateDTO;
-using DTO.RequestDTO.UpdateDTO;
-using DTO.ResponseDTO;
-using Entities.Enums;
-using Entities.Models;
-using Interfaces;
+﻿using Logistics.Models.Enums;
+using Logistics.Models.RequestDTO.CreateDTO;
+using Logistics.Models.RequestDTO.UpdateDTO;
+using Logistics.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Logistics.Controllers.v1
+namespace Logistics.API.Controllers.v1
 {
     [Route("api/Transport"), Authorize]
     [ApiController]
     public class TransportController : ControllerBase
     {
-        public readonly IRepositoryManager repository;
-        public readonly IMapper mapper;
+        private readonly ITransportService _transportService;
 
-        public TransportController(IRepositoryManager repository, IMapper mapper)
+        public TransportController(ITransportService transportService)
         {
-            this.mapper = mapper;
-            this.repository = repository;
+            _transportService = transportService;
         }
 
         /// <summary>
@@ -37,11 +30,8 @@ namespace Logistics.Controllers.v1
         [HttpHead]
         public async Task<IActionResult> GetAllTransport()
         {
-            var transpor = await repository.Transport.GetAllTransportAsync(false);
-
-            var transportDto = mapper.Map<IEnumerable<TransportDto>>(transpor);
-
-            return Ok(transportDto);
+            var transport = await _transportService.GetAllTransport();
+            return Ok(transport);
         }
 
         /// <summary>
@@ -56,10 +46,8 @@ namespace Logistics.Controllers.v1
         [HttpHead("{transportId}")]
         public async Task<IActionResult> GetTransportById(int transportId)
         {
-            var transport = await repository.Transport.GetTransportByIdAsync(transportId, false);
-
-            var transportDto = mapper.Map<TransportDto>(transport);
-            return Ok(transportDto);
+            var transport = await _transportService.GetTransportById(transportId);
+            return Ok(transport);
         }
 
         /// <summary>
@@ -73,14 +61,10 @@ namespace Logistics.Controllers.v1
         /// <response code="403">If user authenticated but has incorrect role</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPost, Authorize(Roles = nameof(UserRole.Administrator))]
-        public async Task<IActionResult> AddTransportAsync([FromBody] TransportForCreationDto transport)
+        public async Task<IActionResult> AddTransport([FromBody] TransportForCreationDto transport)
         {
-            var addableTransport = mapper.Map<Transport>(transport);
-            await CreateTransportAsync(addableTransport);
-
-            var transportToReturn = mapper.Map<TransportDto>(addableTransport);
-
-            return CreatedAtRoute("GetTransportById", new { transportId = transportToReturn.Id }, transport); ;
+            await _transportService.AddTransport(transport);
+            return Ok();
         }
 
         /// <summary>
@@ -96,10 +80,7 @@ namespace Logistics.Controllers.v1
         [HttpDelete("{transportId}"), Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> DeleteTransportById(int transportId)
         {
-            var transport = await repository.Transport.GetTransportByIdAsync(transportId, false);
-
-            await DeleteTransportAsync(transport);
-
+            await _transportService.DeleteTransportById(transportId);
             return NoContent();
         }
 
@@ -118,20 +99,7 @@ namespace Logistics.Controllers.v1
         [HttpPatch("{transportId}"), Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> PartiallyUpdateTransportById(int transportId, [FromBody] JsonPatchDocument<TransportForUpdateDto> patchDoc)
         {
-            var transport = await repository.Transport.GetTransportByIdAsync(transportId, false);
-
-            var transporToPatch = mapper.Map<TransportForUpdateDto>(transport);
-
-            patchDoc.ApplyTo(transporToPatch, ModelState);
-
-            TryValidateModel(transporToPatch);
-            if (!ModelState.IsValid)
-                throw new Exception("InvalidModelState");
-
-            mapper.Map(transporToPatch, transport);
-
-            await repository.SaveAsync();
-
+            await _transportService.PatchTransportById(transportId, patchDoc);
             return NoContent();
         }
 
@@ -155,18 +123,6 @@ namespace Logistics.Controllers.v1
         {
             Response.Headers.Add("Allow", "GET, HEAD, PATCH, DELETE, OPTIONS");
             return Ok();
-        }
-
-        private async Task DeleteTransportAsync(Transport route)
-        {
-            repository.Transport.DeleteTransport(route);
-            await repository.SaveAsync();
-        }
-
-        private async Task CreateTransportAsync(Transport transport)
-        {
-            repository.Transport.CreateTransport(transport);
-            await repository.SaveAsync();
         }
     }
 }

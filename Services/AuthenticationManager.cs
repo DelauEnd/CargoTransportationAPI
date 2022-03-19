@@ -1,6 +1,6 @@
-﻿using DTO.ResponseDTO;
-using Entities.Models;
-using Interfaces;
+﻿using Logistics.Models;
+using Logistics.Models.ResponseDTO;
+using Logistics.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -11,24 +11,24 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repository
+namespace Logistics.Services
 {
     public class AuthenticationManager : IAuthenticationManager
     {
-        private readonly UserManager<User> userManager;
-        private readonly IConfiguration configuration;
+        private readonly UserManager<User> _userManager;
+        private readonly IConfiguration _configuration;
 
         public AuthenticationManager(UserManager<User> userManager, IConfiguration configuration)
         {
-            this.userManager = userManager;
-            this.configuration = configuration;
+            this._userManager = userManager;
+            this._configuration = configuration;
         }
 
         public async Task<User> ReturnUserIfValid(UserForAuthenticationDto userForAuth)
         {
-            var user = await userManager.FindByNameAsync(userForAuth.UserName);
+            var user = await _userManager.FindByNameAsync(userForAuth.UserName);
 
-            if (user != null && await userManager.CheckPasswordAsync(user, userForAuth.Password))
+            if (user != null && await _userManager.CheckPasswordAsync(user, userForAuth.Password))
                 return user;
 
             return null;
@@ -45,7 +45,7 @@ namespace Repository
 
         private SigningCredentials GetSigningCredentials()
         {
-            var keyString = configuration.GetSection("JwtSettings").GetSection("secretKey").Value;
+            var keyString = _configuration.GetSection("JwtSettings").GetSection("secretKey").Value;
             var key = Encoding.UTF8.GetBytes(keyString);
             var secret = new SymmetricSecurityKey(key);
 
@@ -59,7 +59,7 @@ namespace Repository
                 new Claim(ClaimTypes.Name, user.UserName)
             };
 
-            var roles = await userManager.GetRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
@@ -69,7 +69,7 @@ namespace Repository
 
         private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
         {
-            var jwtSettings = configuration.GetSection("JwtSettings");
+            var jwtSettings = _configuration.GetSection("JwtSettings");
             var tokenOptions = new JwtSecurityToken
             (
                 issuer: jwtSettings.GetSection("validIssuer").Value,

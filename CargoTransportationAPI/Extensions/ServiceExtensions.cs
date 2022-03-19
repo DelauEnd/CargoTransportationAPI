@@ -1,7 +1,10 @@
-﻿using DTO.ResponseDTO;
-using Entities;
-using Entities.Models;
-using Interfaces;
+﻿using Logistics.Entities;
+using Logistics.Entities.Models;
+using Logistics.Repository;
+using Logistics.Repository.Interfaces;
+using Logistics.Services;
+using Logistics.Services.Interfaces;
+using Logistics.Services.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -12,7 +15,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using Repository;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
@@ -20,7 +22,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
-namespace Logistics.Extensions
+namespace Logistics.API.Extensions
 {
     public static class ServiceExtensions
     {
@@ -45,9 +47,6 @@ namespace Logistics.Extensions
 
         public static void ConfigureRepositoryManager(this IServiceCollection services)
             => services.AddScoped<IRepositoryManager, RepositoryManager>();
-
-        public static void ConfigureDataShaper(this IServiceCollection services)
-            => services.AddScoped<IDataShaper<CargoDto>, DataShaper<CargoDto>>();
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
@@ -87,7 +86,6 @@ namespace Logistics.Extensions
                 options.DefaultApiVersion = new ApiVersion(1, 0);
             });
         }
-
         public static void ConfigureIdentity(this IServiceCollection services)
         {
             var builder = services.AddIdentityCore<User>(options =>
@@ -103,7 +101,6 @@ namespace Logistics.Extensions
             builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
             builder.AddEntityFrameworkStores<RepositoryContext>().AddDefaultTokenProviders();
         }
-
         public static void ConfigureFormatters(this IMvcBuilder builder)
             => builder
             .AddNewtonsoftJson(options =>
@@ -111,12 +108,6 @@ namespace Logistics.Extensions
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             })
             .AddXmlDataContractSerializerFormatters();
-
-        public static void ConfigureApiBehaviorOptions(this IServiceCollection services)
-            => services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.SuppressModelStateInvalidFilter = true;
-            });
 
         public static void ConfigureSwagger(this IServiceCollection services)
             => services.AddSwaggerGen(setup =>
@@ -133,7 +124,9 @@ namespace Logistics.Extensions
                     Version = "v2"
                 });
 
-                SetupXmlComments(setup);
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                setup.IncludeXmlComments(xmlPath);
 
                 setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -161,11 +154,15 @@ namespace Logistics.Extensions
                 });
             });
 
-        private static void SetupXmlComments(SwaggerGenOptions setup)
+        public static void ConfigureServices(this IServiceCollection services)
         {
-            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-            setup.IncludeXmlComments(xmlPath);
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<ICargoCategoryService, CargoCategoryService>();
+            services.AddScoped<ICargoService, CargoService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IRouteService, RouteService>();
+            services.AddScoped<ITransportService, TransportService>();
         }
     }
 }

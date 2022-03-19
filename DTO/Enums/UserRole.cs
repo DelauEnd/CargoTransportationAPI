@@ -1,4 +1,4 @@
-﻿namespace DTO.Enums
+﻿namespace Logistics.Models.Enums
 {
     public enum UserRole
     {

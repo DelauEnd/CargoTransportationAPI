@@ -1,10 +1,8 @@
-﻿using Entities.Models;
-using Entities.RequestFeautures;
-using Interfaces;
+﻿using Logistics.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace Logistics.Controllers.v2
+namespace Logistics.API.Controllers.v2
 {
     [ApiVersion("2")]
     [Route("api/{v:apiversion}/Cargoes")]
@@ -12,11 +10,11 @@ namespace Logistics.Controllers.v2
     [ApiExplorerSettings(GroupName = "v2")]
     public class CargoesController : ControllerBase
     {
-        public readonly IRepositoryManager repository;
+        public readonly ICargoService _cargoService;
 
-        public CargoesController(IRepositoryManager repository)
+        public CargoesController(ICargoService cargoService)
         {
-            this.repository = repository;
+            _cargoService = cargoService;
         }
 
         /// <summary>
@@ -26,13 +24,9 @@ namespace Logistics.Controllers.v2
         /// <response code="400">If incorrect date filter</response>
         [HttpGet]
         [HttpHead]
-        public async Task<IActionResult> GetAllCargoes(CargoParameters parameters)
+        public async Task<IActionResult> GetAllCargoes()
         {
-            if (!parameters.IsValidDateFilter())
-                return BadRequest("Date from cannot be later than date to");
-
-            var cargoes = await repository.Cargoes.GetAllCargoesAsync(parameters, false);
-
+            var cargoes = await _cargoService.GetAllCargoes();
             return Ok(cargoes);
         }
     }

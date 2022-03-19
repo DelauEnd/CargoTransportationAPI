@@ -1,32 +1,23 @@
-﻿using AutoMapper;
-using DTO.RequestDTO.CreateDTO;
-using DTO.RequestDTO.UpdateDTO;
-using DTO.ResponseDTO;
-using Entities.Enums;
-using Entities.Models;
-using Entities.RequestFeautures;
-using Interfaces;
+﻿using Logistics.Models.Enums;
+using Logistics.Models.RequestDTO.CreateDTO;
+using Logistics.Models.RequestDTO.UpdateDTO;
+using Logistics.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Logistics.Controllers.v1
+namespace Logistics.API.Controllers.v1
 {
     [Route("api/Routes"), Authorize]
     [ApiController]
     public class RoutesController : ControllerBase
     {
-        public readonly IDataShaper<CargoDto> cargoDataShaper;
-        public readonly IRepositoryManager repository;
-        public readonly IMapper mapper;
+        private readonly IRouteService _routeService;
 
-        public RoutesController(IDataShaper<CargoDto> cargoDataShaper, IRepositoryManager repository, IMapper mapper)
+        public RoutesController(IRouteService routeService)
         {
-            this.cargoDataShaper = cargoDataShaper;
-            this.mapper = mapper;
-            this.repository = repository;
+            _routeService = routeService;
         }
 
         /// <summary>
@@ -39,11 +30,8 @@ namespace Logistics.Controllers.v1
         [HttpHead]
         public async Task<IActionResult> GetAllRoutes()
         {
-            var route = await repository.Routes.GetAllRoutesAsync(false);
-
-            var routeDto = mapper.Map<IEnumerable<RouteDto>>(route);
-
-            return Ok(routeDto);
+            var routes = await _routeService.GetAllRoutes();
+            return Ok(routes);
         }
 
         /// <summary>
@@ -58,11 +46,8 @@ namespace Logistics.Controllers.v1
         [HttpHead("{routeId}")]
         public async Task<IActionResult> GetRouteById(int routeId)
         {
-            var route = await repository.Routes.GetRouteByIdAsync(routeId, false);
-
-            var routeDto = mapper.Map<RouteDto>(route);
-
-            return Ok(routeDto);
+            var route = await _routeService.GetRouteById(routeId);
+            return Ok(route);
         }
 
         /// <summary>
@@ -78,11 +63,8 @@ namespace Logistics.Controllers.v1
         [HttpPost, Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> AddRoute([FromBody] RouteForCreationDto route)
         {
-            Route addableRoute = await RouteForCreationToRoute(route);
-            await CreateRouteAsync(addableRoute);
-
-            var routeToReturn = await GetRouteToReturnAsync(addableRoute);
-            return RouteAdded(routeToReturn);
+            await _routeService.AddRoute(route);
+            return Ok();
         }
 
         /// <summary>
@@ -98,10 +80,7 @@ namespace Logistics.Controllers.v1
         [HttpDelete("{routeId}"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> DeleteRouteById(int routeId)
         {
-            var route = await repository.Routes.GetRouteByIdAsync(routeId, false);
-
-            await DeleteRouteAsync(route);
-
+            await _routeService.DeleteRouteById(routeId);
             return NoContent();
         }
 
@@ -120,11 +99,7 @@ namespace Logistics.Controllers.v1
         [HttpPut("{routeId}"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> UpdateRouteById(int routeId, RouteForUpdateDto route)
         {
-            var routeToUpdate = await repository.Routes.GetRouteByIdAsync(routeId, false);
-
-            await UpdateRouteAsync(route, routeToUpdate);
-            await repository.SaveAsync();
-
+            await _routeService.UpdateRouteById(routeId, route);
             return NoContent();
         }
 
@@ -132,7 +107,6 @@ namespace Logistics.Controllers.v1
         /// Get cargoes by requested route id
         /// </summary>
         /// <param name="routeId"></param>
-        /// <param name="parameters"></param>
         /// <returns>Returns cargoes by requested order id</returns>
         /// <response code="400">If sended patchDoc is null</response>
         /// <response code="401">If user unauthenticated</response>
@@ -140,15 +114,10 @@ namespace Logistics.Controllers.v1
         /// <response code="500">Unhandled exception</response>
         [HttpGet("{routeId}/Cargoes")]
         [HttpHead("{routeId}/Cargoes")]
-        public async Task<IActionResult> GetCargoesByRouteId(int routeId, [FromQuery] CargoParameters parameters)
+        public async Task<IActionResult> GetCargoesByRouteId(int routeId)
         {
-            var route = await repository.Routes.GetRouteByIdAsync(routeId, false);
-
-            var cargoes = await repository.Cargoes.GetCargoesByRouteIdAsync(route.Id, parameters, false);
-
-            var cargoesDto = mapper.Map<IEnumerable<CargoDto>>(cargoes);
-
-            return Ok(cargoDataShaper.ShapeData(cargoesDto, parameters.Fields));
+            var cargoes = await _routeService.GetCargoesByRouteId(routeId);
+            return Ok(cargoes);
         }
 
         /// <summary>
@@ -162,28 +131,10 @@ namespace Logistics.Controllers.v1
         /// <response code="404">If requested route not found</response>
         /// <response code="500">Unhandled exception</response>
         [HttpPost("{routeId}/Cargoes"), Authorize(Roles = nameof(UserRole.Manager))]
-        public async Task<IActionResult> MarkCargoesToRoute([FromBody] List<int> ids, int routeId)
+        public async Task<IActionResult> AssignCargoesToRoute([FromBody] List<int> ids, int routeId)
         {
-            var route = await repository.Routes.GetRouteByIdAsync(routeId, false);
-
-            await AssignCargoes(ids, route);
-
+            await _routeService.AssignCargoesToRoute(ids, routeId);
             return Ok();
-        }
-
-        private async Task AssignCargoes(IEnumerable<int> ids, Route route)
-        {
-            foreach (var id in ids)
-                await AssignIfExist(id, route);
-        }
-
-        private async Task AssignIfExist(int id, Route route)
-        {
-            if (await repository.Cargoes.GetCargoByIdAsync(id, false) == null)
-            {
-                return;
-            }
-            await repository.Cargoes.AssignCargoToRoute(id, route.Id);
         }
 
         /// <summary>
@@ -217,56 +168,6 @@ namespace Logistics.Controllers.v1
         {
             Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
             return Ok();
-        }
-
-        private async Task UpdateRouteAsync(RouteForUpdateDto route, Route routeToUpdate)
-        {
-            var transport = await GetTransportByRegNumberAsync(route.TransportRegistrationNumber);
-
-            routeToUpdate.TransportId = transport.Id;
-        }
-
-        private async Task<Route> RouteForCreationToRoute(RouteForCreationDto routeForCreation)
-        {
-            var transport = await GetTransportByRegNumberAsync(routeForCreation.TransportRegistrationNumber);
-
-            Route route = new Route
-            {
-                TransportId = transport.Id,
-            };
-            return route;
-        }
-
-        private async Task<Transport> GetTransportByRegNumberAsync(string number)
-        {
-            var transport = await repository.Transport.GetTransportByRegistrationNumberAsync(number, false);
-            if (transport == null)
-                throw new Exception($"Transport with registration number {number} not exist");
-            return transport;
-        }
-
-        private async Task CreateRouteAsync(Route route)
-        {
-            repository.Routes.CreateRoute(route);
-            await repository.SaveAsync();
-        }
-
-        private async Task<RouteDto> GetRouteToReturnAsync(Route addableRoute)
-        {
-            var transport = await repository.Transport.GetTransportByIdAsync(addableRoute.TransportId, false);
-            addableRoute.Transport = transport;
-            return mapper.Map<RouteDto>(addableRoute);
-        }
-
-        private IActionResult RouteAdded(RouteDto route)
-        {
-            return CreatedAtRoute("GetRouteById", new { routeId = route.Id }, route); ;
-        }
-
-        private async Task DeleteRouteAsync(Route route)
-        {
-            repository.Routes.DeleteRoute(route);
-            await repository.SaveAsync();
         }
     }
 }

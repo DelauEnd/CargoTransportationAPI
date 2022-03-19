@@ -5,12 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DTO\Logistics.Models.csproj" />
-    <ProjectReference Include="..\Entities\Logistics.Entities.csproj" />
+    <Compile Remove="CargoTransportationInterfaces\**" />
+    <EmbeddedResource Remove="CargoTransportationInterfaces\**" />
+    <None Remove="CargoTransportationInterfaces\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CargoTransportationInterfaces\" />
+    <ProjectReference Include="..\DTO\Logistics.Models.csproj" />
+    <ProjectReference Include="..\Entities\Logistics.Entities.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,9 +1,9 @@
-﻿using Entities.Enums;
+﻿using Logistics.Entities.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Entities.Configuration
+namespace Logistics.Entities.Configuration
 {
     public class RoleConfiguration : IEntityTypeConfiguration<IdentityRole>
     {

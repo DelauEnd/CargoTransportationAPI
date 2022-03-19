@@ -1,9 +1,9 @@
-﻿using Entities.Enums;
+﻿using Logistics.Entities.Enums;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Entities.Models
+namespace Logistics.Entities.Models
 {
     public class Order : IEntity
     {

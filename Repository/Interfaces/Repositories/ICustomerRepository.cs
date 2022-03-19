@@ -1,8 +1,8 @@
-﻿using Entities.Models;
+﻿using Logistics.Entities.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Interfaces
+namespace Logistics.Repository.Interfaces
 {
     public interface ICustomerRepository
     {

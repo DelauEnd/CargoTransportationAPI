@@ -1,8 +1,8 @@
-﻿using Entities.Models;
+﻿using Logistics.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Entities.Configuration
+namespace Logistics.Entities.Configuration
 {
     internal class TransportConfiguration : IEntityTypeConfiguration<Transport>
     {
@@ -30,7 +30,7 @@ namespace Entities.Configuration
                 }
             );
 
-            builder.OwnsOne(Transport => Transport.Driver).HasData
+            builder.OwnsOne(transport => transport.Driver).HasData
             (
                 new
                 {

@@ -1,30 +1,23 @@
-﻿using AutoMapper;
-using DTO.RequestDTO.CreateDTO;
-using DTO.RequestDTO.UpdateDTO;
-using DTO.ResponseDTO;
-using Entities.Enums;
-using Entities.Models;
-using Interfaces;
+﻿using Logistics.Models.Enums;
+using Logistics.Models.RequestDTO.CreateDTO;
+using Logistics.Models.RequestDTO.UpdateDTO;
+using Logistics.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Logistics.Controllers.v1
+namespace Logistics.API.Controllers.v1
 {
     [Route("api/Customers"), Authorize]
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        public readonly IRepositoryManager repository;
-        public readonly IMapper mapper;
+        private readonly ICustomerService _customerService;
 
-        public CustomersController(IRepositoryManager repository, IMapper mapper)
+        public CustomersController(ICustomerService customerService)
         {
-            this.mapper = mapper;
-            this.repository = repository;
+            _customerService = customerService;
         }
 
         /// <summary>
@@ -37,11 +30,8 @@ namespace Logistics.Controllers.v1
         [HttpHead]
         public async Task<IActionResult> GetAllCustomers()
         {
-            var customers = await repository.Customers.GetAllCustomersAsync(false);
-
-            var customersDto = mapper.Map<IEnumerable<CustomerDto>>(customers);
-
-            return Ok(customersDto);
+            var customers = await _customerService.GetAllCustomers();
+            return Ok(customers);
         }
 
         /// <summary>
@@ -56,10 +46,8 @@ namespace Logistics.Controllers.v1
         [HttpHead("{customerId}")]
         public async Task<IActionResult> GetCustomerById(int customerId)
         {
-            var customer = await repository.Customers.GetCustomerByIdAsync(customerId, false);
-
-            var customerDto = mapper.Map<CustomerDto>(customer);
-            return Ok(customerDto);
+            var customer = await _customerService.GetCustomerById(customerId);
+            return Ok(customer);
         }
 
         /// <summary>
@@ -74,11 +62,8 @@ namespace Logistics.Controllers.v1
         [HttpPost, Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> AddCustomer([FromBody] CustomerForCreationDto customer)
         {
-            var addableCustomer = mapper.Map<Customer>(customer);
-            await CreateCustomerAsync(addableCustomer);
-
-            var customerToReturn = mapper.Map<CustomerDto>(addableCustomer);
-            return CreatedAtRoute("GetCustomerById", new { customerId = customerToReturn.Id }, customer);
+            await _customerService.AddCustomer(customer);
+            return Ok(customer);
         }
 
         /// <summary>
@@ -94,10 +79,7 @@ namespace Logistics.Controllers.v1
         [HttpDelete("{customerId}"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> DeleteCustomerById(int customerId)
         {
-            var customer = await repository.Customers.GetCustomerByIdAsync(customerId, false);
-
-            await DeleteCustomerAsync(customer);
-
+            await _customerService.DeleteCustomerById(customerId);
             return NoContent();
         }
 
@@ -116,19 +98,7 @@ namespace Logistics.Controllers.v1
         [HttpPatch("{customerId}"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> PartiallyUpdateCustomerById(int customerId, [FromBody] JsonPatchDocument<CustomerForUpdateDto> patchDoc)
         {
-            var customer = await repository.Customers.GetCustomerByIdAsync(customerId, false);
-
-            var customerToPatch = mapper.Map<CustomerForUpdateDto>(customer);
-            patchDoc.ApplyTo(customerToPatch, ModelState);
-
-            TryValidateModel(customer);
-            if (!ModelState.IsValid)
-                throw new Exception("InvalidModelState");
-
-            mapper.Map(customerToPatch, customer);
-
-            await repository.SaveAsync();
-
+            await _customerService.PatchCustomerById(customerId, patchDoc);
             return NoContent();
         }
 
@@ -152,18 +122,6 @@ namespace Logistics.Controllers.v1
         {
             Response.Headers.Add("Allow", "GET, HEAD, DELETE, PATCH, OPTIONS");
             return Ok();
-        }
-
-        private async Task CreateCustomerAsync(Customer customer)
-        {
-            repository.Customers.CreateCustomer(customer);
-            await repository.SaveAsync();
-        }
-
-        private async Task DeleteCustomerAsync(Customer customer)
-        {
-            repository.Customers.DeleteCustomer(customer);
-            await repository.SaveAsync();
         }
     }
 }

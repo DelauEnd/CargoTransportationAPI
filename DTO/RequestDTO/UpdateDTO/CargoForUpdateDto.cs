@@ -1,8 +1,8 @@
-﻿using DTO.OwnedModels;
+﻿using Logistics.Models.OwnedModels;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace DTO.RequestDTO.UpdateDTO
+namespace Logistics.Models.RequestDTO.UpdateDTO
 {
     public class CargoForUpdateDto
     {
