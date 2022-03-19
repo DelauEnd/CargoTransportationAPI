@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Logistics.API.Controllers.v1
 {
-    [Route("api/Categories")/*, Authorize*/]
+    [Route("api/Categories"), Authorize]
     [ApiController]
     public class CargoCategoriesController : ControllerBase
     {

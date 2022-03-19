@@ -341,3 +341,6 @@ healthchecksdb
 
 # Xml documentation
 CargoTransportationAPI.xml
+
+# Dev appsettings
+appsettings.Development.json
