@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Logistics.Models;
+using Logistics.Entities.Models;
 using Logistics.Models.RequestDTO.CreateDTO;
 using Logistics.Models.ResponseDTO;
 using Logistics.Services.Interfaces;

@@ -1,4 +1,5 @@
-﻿using Logistics.Models;
+﻿using Logistics.Entities.Models;
+using Logistics.Models;
 using Logistics.Models.ResponseDTO;
 using Logistics.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;

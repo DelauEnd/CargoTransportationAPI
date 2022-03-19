@@ -1,4 +1,4 @@
-﻿using Logistics.Models;
+﻿using Logistics.Entities.Models;
 using Logistics.Models.ResponseDTO;
 using System.Threading.Tasks;
 

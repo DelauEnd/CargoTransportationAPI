@@ -14,10 +14,4 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     <PackageReference Include="coverlet.collector" Version="1.2.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\CargoTransportationAPI\Cargo.API.csproj" />
-    <ProjectReference Include="..\DTO\Cargo.Models.csproj" />
-  </ItemGroup>
-
 </Project>
