@@ -24,8 +24,6 @@ namespace Logistics.API.Controllers.v1
         /// Get list of transport
         /// </summary>
         /// <returns>Returns transport list</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpGet]
         [HttpHead]
         public async Task<IActionResult> GetAllTransport()
@@ -39,9 +37,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="transportId"></param>
         /// <returns>Returns transport by requested id</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested transport not found</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpGet("{transportId}", Name = "GetTransportById")]
         [HttpHead("{transportId}")]
         public async Task<IActionResult> GetTransportById(int transportId)
@@ -55,11 +50,6 @@ namespace Logistics.API.Controllers.v1
         /// | Required role: Administrator
         /// </summary>
         /// <param name="transport"></param>
-        /// <returns>Returns created transport</returns>
-        /// <response code="400">If sended transport object is null</response>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpPost, Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> AddTransport([FromBody] TransportForCreationDto transport)
         {
@@ -72,11 +62,6 @@ namespace Logistics.API.Controllers.v1
         /// | Required role: Administrator
         /// </summary>
         /// <param name="transportId"></param>
-        /// <returns>Returns if deleted successfully</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested transport not found</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpDelete("{transportId}"), Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> DeleteTransportById(int transportId)
         {
@@ -90,12 +75,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="transportId"></param>
         /// <param name="patchDoc"></param>
-        /// <returns>Returns if updated successfully</returns>
-        /// <response code="400">If sended pathDoc is null</response>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested transport not found</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpPatch("{transportId}"), Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> PartiallyUpdateTransportById(int transportId, [FromBody] JsonPatchDocument<TransportForUpdateDto> patchDoc)
         {

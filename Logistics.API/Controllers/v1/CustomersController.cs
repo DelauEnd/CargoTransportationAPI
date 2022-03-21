@@ -24,8 +24,6 @@ namespace Logistics.API.Controllers.v1
         /// Get list of customers
         /// </summary>
         /// <returns>Returns customers list</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpGet]
         [HttpHead]
         public async Task<IActionResult> GetAllCustomers()
@@ -39,9 +37,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns>Returns requested customer</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested customer not found</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpGet("{customerId}", Name = "GetCustomerById")]
         [HttpHead("{customerId}")]
         public async Task<IActionResult> GetCustomerById(int customerId)
@@ -56,14 +51,11 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="customer"></param>
         /// <returns>Returns created customer</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpPost, Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> AddCustomer([FromBody] CustomerForCreationDto customer)
         {
             await _customerService.AddCustomer(customer);
-            return Ok(customer);
+            return Ok();
         }
 
         /// <summary>
@@ -71,11 +63,6 @@ namespace Logistics.API.Controllers.v1
         /// | Required role: Manager
         /// </summary>
         /// <param name="customerId"></param>
-        /// <returns>Returns if deleted successfully</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested customer not found</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpDelete("{customerId}"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> DeleteCustomerById(int customerId)
         {
@@ -89,12 +76,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="patchDoc"></param>
-        /// <returns>Returns if updated successfully</returns>
-        /// <response code="400">If sended pathDoc is null</response>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested customer not found</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpPatch("{customerId}"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> PartiallyUpdateCustomerById(int customerId, [FromBody] JsonPatchDocument<CustomerForUpdateDto> patchDoc)
         {

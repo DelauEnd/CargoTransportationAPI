@@ -24,8 +24,6 @@ namespace Logistics.API.Controllers.v1
         /// Get list of orders
         /// </summary>
         /// <returns>Returns orders list</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpGet]
         [HttpHead]
         public async Task<IActionResult> GetAllOrders()
@@ -39,9 +37,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns>Returns order by requested id</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested order not found</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpGet("{orderId}", Name = "GetOrderById")]
         [HttpHead("{orderId}")]
         public async Task<IActionResult> GetOrderById(int orderId)
@@ -54,12 +49,7 @@ namespace Logistics.API.Controllers.v1
         /// Create new order
         /// | Required role: Manager
         /// </summary>
-        /// <param name="order"></param>
-        /// <returns>Returns created order</returns>
-        /// <response code="400">If sended order object is null</response>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
+        /// <param name="orderToAdd"></param>
         [HttpPost, Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> AddOrder([FromBody] OrderForCreationDto orderToAdd)
         {
@@ -72,9 +62,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns>Returns cargoes by requested order id</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested order not found</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpGet("{orderId}/Cargoes")]
         [HttpHead("{orderId}/Cargoes")]
         public async Task<IActionResult> GetCargoesByOrderId([FromRoute] int orderId)
@@ -89,12 +76,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="orderId"></param>
         /// <param name="cargoes"></param>
-        /// <returns>Returns updated order</returns>
-        /// <response code="400">If sended cargoes object is null</response>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested order not found</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpPost("{orderId}/Cargoes"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> AddCargoes([FromBody] IEnumerable<CargoForCreationDto> cargoes, [FromRoute] int orderId)
         {
@@ -107,11 +88,6 @@ namespace Logistics.API.Controllers.v1
         /// | Required role: Manager
         /// </summary>
         /// <param name="orderId"></param>
-        /// <returns>Returns if deleted successfully</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested order not found</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpDelete("{orderId}"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> DeleteOrderById(int orderId)
         {
@@ -125,12 +101,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="orderId"></param>
         /// <param name="patchDoc"></param>
-        /// <returns>Returns if updated successfully</returns>
-        /// <response code="400">If sended pathDoc is null</response>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested order not found</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpPatch("{orderId}"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> PartiallyUpdateOrderById(int orderId, [FromBody] JsonPatchDocument<OrderForUpdateDto> patchDoc)
         {

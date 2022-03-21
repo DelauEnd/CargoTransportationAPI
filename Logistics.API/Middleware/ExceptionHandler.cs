@@ -33,7 +33,7 @@ namespace Logistics.API.Middleware
             response.ContentType = "application/json";
             await response.WriteAsync(JsonConvert.SerializeObject(new ErrorDetails
             {
-                Message = exception.Message
+                Message = exception.Message,
                 Exception = exception.GetType().Name,
                 StackTrace = exception.StackTrace
             })).ConfigureAwait(false);

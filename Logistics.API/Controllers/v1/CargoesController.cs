@@ -23,10 +23,7 @@ namespace Logistics.API.Controllers.v1
         /// <summary>
         /// Get list of cargo categories
         /// </summary>
-        /// <returns>Returns cargo categories list</returns>
-        /// <response code="400">If incorrect date filter</response>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="500">Unhandled exception</response>
+        /// <returns>Returns cargo list</returns>
         [HttpGet]
         [HttpHead]
         public async Task<IActionResult> GetAllCargoes()
@@ -37,10 +34,7 @@ namespace Logistics.API.Controllers.v1
         /// <summary>
         /// Get list of cargo categories
         /// </summary>
-        /// <returns>Returns cargo categories list</returns>
-        /// <response code="400">If incorrect date filter</response>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="500">Unhandled exception</response>
+        /// <returns>Returns unassigned cargoes</returns>
         [HttpGet]
         [HttpHead]
         [Route("Unassigned")]
@@ -55,9 +49,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="cargoId"></param>
         /// <returns>Returns requested cargo</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested cargo not found</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpGet("{cargoId}")]
         [HttpHead("{cargoId}")]
         public async Task<IActionResult> GetCargoById(int cargoId)
@@ -71,11 +62,6 @@ namespace Logistics.API.Controllers.v1
         /// | Required role: Manager
         /// </summary>
         /// <param name="cargoId"></param>
-        /// <returns>Returns if deleted successfully</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested cargo not found</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpDelete("{cargoId}"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> DeleteCargoById(int cargoId)
         {
@@ -89,12 +75,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="cargoId"></param>
         /// <param name="patchDoc"></param>
-        /// <returns>Returns if updated successfully</returns>
-        /// <response code="400">If sended pathDoc is null</response>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested cargo not found</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpPatch("{cargoId}"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> PartiallyUpdateCargoById(int cargoId, [FromBody] JsonPatchDocument<CargoForUpdateDto> patchDoc)
         {

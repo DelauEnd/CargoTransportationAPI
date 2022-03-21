@@ -22,8 +22,6 @@ namespace Logistics.API.Controllers.v1
         /// Get list of categories
         /// </summary>
         /// <returns>Returns cargoes list</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpGet]
         [HttpHead]
         public async Task<IActionResult> GetAllCategories()
@@ -38,10 +36,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="category"></param>
         /// <returns>Returns requested category</returns>
-        /// <response code="400">If sended category object is null</response>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpPost, Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> AddCategory([FromBody] CategoryForCreationDto category)
         {
@@ -54,11 +48,6 @@ namespace Logistics.API.Controllers.v1
         /// | Required role: Administrator
         /// </summary>
         /// <param name="categoryId"></param>
-        /// <returns>Returns if deleted successfully</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested category not found</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpDelete("{categoryId}"), Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> DeleteCategoryById(int categoryId)
         {
@@ -72,11 +61,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="categoryId"></param>
         /// <param name="category"></param>
-        /// <returns>Returns if updated successfully</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested category not found</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpPut("{categoryId}"), Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> UpdateCargoCategoryById(int categoryId, CargoCategoryForUpdateDto category)
         {

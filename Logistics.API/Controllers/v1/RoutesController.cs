@@ -24,8 +24,6 @@ namespace Logistics.API.Controllers.v1
         /// Get list of routes
         /// </summary>
         /// <returns>Returns routes list</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpGet]
         [HttpHead]
         public async Task<IActionResult> GetAllRoutes()
@@ -39,9 +37,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="routeId"></param>
         /// <returns>Returns route by requested id</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested route not found</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpGet("{routeId}", Name = "GetRouteById")]
         [HttpHead("{routeId}")]
         public async Task<IActionResult> GetRouteById(int routeId)
@@ -55,11 +50,6 @@ namespace Logistics.API.Controllers.v1
         /// | Required role: Manager
         /// </summary>
         /// <param name="route"></param>
-        /// <returns>Returns created route</returns>
-        /// <response code="400">If sended route object is null</response>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpPost, Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> AddRoute([FromBody] RouteForCreationDto route)
         {
@@ -72,11 +62,6 @@ namespace Logistics.API.Controllers.v1
         /// | Required role: Manager
         /// </summary>
         /// <param name="routeId"></param>
-        /// <returns>Returns if deleted successfully</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested route not found</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpDelete("{routeId}"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> DeleteRouteById(int routeId)
         {
@@ -90,12 +75,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="routeId"></param>
         /// <param name="route"></param>
-        /// <returns>Returns if updated successfully</returns>
-        /// <response code="400">If sended route object is null</response>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested route not found</response>
-        /// <response code="403">If user authenticated but has incorrect role</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpPut("{routeId}"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> UpdateRouteById(int routeId, RouteForUpdateDto route)
         {
@@ -108,10 +87,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="routeId"></param>
         /// <returns>Returns cargoes by requested order id</returns>
-        /// <response code="400">If sended patchDoc is null</response>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested route not found</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpGet("{routeId}/Cargoes")]
         [HttpHead("{routeId}/Cargoes")]
         public async Task<IActionResult> GetCargoesByRouteId(int routeId)
@@ -126,10 +101,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <param name="ids"></param>
         /// <param name="routeId"></param>
-        /// <returns>Returns if marked successfully</returns>
-        /// <response code="401">If user unauthenticated</response>
-        /// <response code="404">If requested route not found</response>
-        /// <response code="500">Unhandled exception</response>
         [HttpPost("{routeId}/Cargoes"), Authorize(Roles = nameof(UserRole.Manager))]
         public async Task<IActionResult> AssignCargoesToRoute([FromBody] List<int> ids, int routeId)
         {
