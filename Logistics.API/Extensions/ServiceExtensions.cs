@@ -86,6 +86,7 @@ namespace Logistics.API.Extensions
                 options.DefaultApiVersion = new ApiVersion(1, 0);
             });
         }
+
         public static void ConfigureIdentity(this IServiceCollection services)
         {
             var builder = services.AddIdentityCore<User>(options =>
@@ -101,6 +102,7 @@ namespace Logistics.API.Extensions
             builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
             builder.AddEntityFrameworkStores<RepositoryContext>().AddDefaultTokenProviders();
         }
+
         public static void ConfigureFormatters(this IMvcBuilder builder)
             => builder
             .AddNewtonsoftJson(options =>

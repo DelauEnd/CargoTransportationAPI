@@ -1,4 +1,5 @@
 using Logistics.API.Extensions;
+using Logistics.API.Middleware;
 using Logistics.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -56,6 +57,7 @@ namespace Logistics
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseMiddleware<ExceptionHandler>();
             }
             else
             {

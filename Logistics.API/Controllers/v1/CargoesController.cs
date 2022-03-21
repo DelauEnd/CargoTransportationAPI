@@ -31,8 +31,7 @@ namespace Logistics.API.Controllers.v1
         [HttpHead]
         public async Task<IActionResult> GetAllCargoes()
         {
-            var cargoes = await _cargoService.GetAllCargoes();
-            return Ok(cargoes);
+            return Ok(await _cargoService.GetAllCargoes());
         }
 
         /// <summary>

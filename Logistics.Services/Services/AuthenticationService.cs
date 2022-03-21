@@ -35,7 +35,6 @@ namespace Logistics.Services.Services
                 throw new Exception("Role not exists");
 
             await userManager.AddToRoleAsync(user, role);
-
         }
 
         public async Task<AuthenticatedUserInfo> AuthenticateUser(UserForAuthenticationDto user)
