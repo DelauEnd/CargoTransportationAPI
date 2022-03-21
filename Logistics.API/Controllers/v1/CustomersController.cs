@@ -28,8 +28,7 @@ namespace Logistics.API.Controllers.v1
         [HttpHead]
         public async Task<IActionResult> GetAllCustomers()
         {
-            var customers = await _customerService.GetAllCustomers();
-            return Ok(customers);
+            return Ok(await _customerService.GetAllCustomers());
         }
 
         /// <summary>
@@ -41,8 +40,7 @@ namespace Logistics.API.Controllers.v1
         [HttpHead("{customerId}")]
         public async Task<IActionResult> GetCustomerById(int customerId)
         {
-            var customer = await _customerService.GetCustomerById(customerId);
-            return Ok(customer);
+            return Ok(await _customerService.GetCustomerById(customerId));
         }
 
         /// <summary>
@@ -67,7 +65,7 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> DeleteCustomerById(int customerId)
         {
             await _customerService.DeleteCustomerById(customerId);
-            return NoContent();
+            return Ok();
         }
 
         /// <summary>
@@ -80,7 +78,7 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> PartiallyUpdateCustomerById(int customerId, [FromBody] JsonPatchDocument<CustomerForUpdateDto> patchDoc)
         {
             await _customerService.PatchCustomerById(customerId, patchDoc);
-            return NoContent();
+            return Ok();
         }
 
         /// <summary>

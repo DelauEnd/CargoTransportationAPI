@@ -26,8 +26,7 @@ namespace Logistics.API.Controllers.v1
         [HttpHead]
         public async Task<IActionResult> GetAllCategories()
         {
-            var categories = await _cargoCategoryService.GetAllCategories();
-            return Ok(categories);
+            return Ok(await _cargoCategoryService.GetAllCategories());
         }
 
         /// <summary>
@@ -40,7 +39,7 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> AddCategory([FromBody] CategoryForCreationDto category)
         {
             await _cargoCategoryService.AddCategory(category);
-            return Ok(category);
+            return Ok();
         }
 
         /// <summary>
@@ -52,7 +51,7 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> DeleteCategoryById(int categoryId)
         {
             await _cargoCategoryService.DeleteCategoryById(categoryId);
-            return NoContent();
+            return Ok();
         }
 
         /// <summary>

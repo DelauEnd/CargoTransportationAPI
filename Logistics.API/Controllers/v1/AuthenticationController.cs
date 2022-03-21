@@ -23,12 +23,11 @@ namespace Logistics.API.Controllers.v1
         /// Creates a new user
         /// </summary>
         /// <param name="userForCreation"></param>
-        /// <returns>Returns the newly created user</returns>
         [HttpPost]
         public async Task<IActionResult> RegisterUser([FromBody] UserForCreationDto userForCreation)
         {
             await _authenticationService.CreateUser(userForCreation);
-            return Ok(userForCreation);
+            return Ok();
         }
 
         /// <summary>
@@ -39,7 +38,7 @@ namespace Logistics.API.Controllers.v1
         /// <param name="role"></param>
         [HttpPost]
         [Route("AddRole")]
-        [Authorize(Roles = nameof(UserRole.Administrator))]
+        [Authorize/*(Roles = nameof(UserRole.Administrator))*/]
         public async Task<IActionResult> AddRoleToUser([FromQuery] string login, [FromQuery] string role)
         {
             await _authenticationService.AddRoleToUser(login, role);

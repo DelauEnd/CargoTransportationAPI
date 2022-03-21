@@ -43,6 +43,7 @@ namespace Logistics.Services.Services
                     return;
                 await _repository.Cargoes.AssignCargoToRoute(id, route.Id);
             }
+            await _repository.SaveAsync();
         }
 
         public async Task DeleteRouteById(int routeId)

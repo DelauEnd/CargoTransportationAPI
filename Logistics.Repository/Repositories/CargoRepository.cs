@@ -62,7 +62,13 @@ namespace Logistics.Repository.Repositories
         }
 
         public async Task AssignCargoToRoute(int cargoId, int routeId)
-            => await ExecQuery($"exec AssignCargoToRoute @cargoId={cargoId}, @routeId={routeId}");
+        {
+            var cargo = await FindByCondition(cargo =>
+            cargo.Id == cargoId, true)
+                .FirstOrDefaultAsync();
+
+            cargo.RouteId = routeId;        
+        }
 
         public async Task<IEnumerable<Cargo>> GetUnassignedCargoesAsync(bool trackChanges)
         {

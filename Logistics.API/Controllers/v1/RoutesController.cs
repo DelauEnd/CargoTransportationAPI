@@ -28,8 +28,7 @@ namespace Logistics.API.Controllers.v1
         [HttpHead]
         public async Task<IActionResult> GetAllRoutes()
         {
-            var routes = await _routeService.GetAllRoutes();
-            return Ok(routes);
+            return Ok(await _routeService.GetAllRoutes());
         }
 
         /// <summary>
@@ -41,8 +40,7 @@ namespace Logistics.API.Controllers.v1
         [HttpHead("{routeId}")]
         public async Task<IActionResult> GetRouteById(int routeId)
         {
-            var route = await _routeService.GetRouteById(routeId);
-            return Ok(route);
+            return Ok(await _routeService.GetRouteById(routeId));
         }
 
         /// <summary>
@@ -66,7 +64,7 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> DeleteRouteById(int routeId)
         {
             await _routeService.DeleteRouteById(routeId);
-            return NoContent();
+            return Ok();
         }
 
         /// <summary>
@@ -79,7 +77,7 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> UpdateRouteById(int routeId, RouteForUpdateDto route)
         {
             await _routeService.UpdateRouteById(routeId, route);
-            return NoContent();
+            return Ok();
         }
 
         /// <summary>
@@ -91,8 +89,7 @@ namespace Logistics.API.Controllers.v1
         [HttpHead("{routeId}/Cargoes")]
         public async Task<IActionResult> GetCargoesByRouteId(int routeId)
         {
-            var cargoes = await _routeService.GetCargoesByRouteId(routeId);
-            return Ok(cargoes);
+            return Ok(await _routeService.GetCargoesByRouteId(routeId));
         }
 
         /// <summary>

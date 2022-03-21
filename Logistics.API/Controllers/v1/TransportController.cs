@@ -28,8 +28,7 @@ namespace Logistics.API.Controllers.v1
         [HttpHead]
         public async Task<IActionResult> GetAllTransport()
         {
-            var transport = await _transportService.GetAllTransport();
-            return Ok(transport);
+            return Ok(await _transportService.GetAllTransport());
         }
 
         /// <summary>
@@ -41,8 +40,7 @@ namespace Logistics.API.Controllers.v1
         [HttpHead("{transportId}")]
         public async Task<IActionResult> GetTransportById(int transportId)
         {
-            var transport = await _transportService.GetTransportById(transportId);
-            return Ok(transport);
+            return Ok(await _transportService.GetTransportById(transportId));
         }
 
         /// <summary>
@@ -66,7 +64,7 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> DeleteTransportById(int transportId)
         {
             await _transportService.DeleteTransportById(transportId);
-            return NoContent();
+            return Ok();
         }
 
         /// <summary>
@@ -79,7 +77,7 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> PartiallyUpdateTransportById(int transportId, [FromBody] JsonPatchDocument<TransportForUpdateDto> patchDoc)
         {
             await _transportService.PatchTransportById(transportId, patchDoc);
-            return NoContent();
+            return Ok();
         }
 
         /// <summary>

@@ -19,6 +19,13 @@ namespace Logistics.Services
             CreateCustomerMaps();
             CreateCargoCategoryMaps();
             CreateUserMaps();
+            CreateOwnedModelsMaps();
+        }
+
+        private void CreateOwnedModelsMaps()
+        {
+            CreateMap<Models.OwnedModels.Person, Person>().ReverseMap();
+            CreateMap<Models.OwnedModels.Dimensions, Dimensions>().ReverseMap();
         }
 
         private void CreateUserMaps()

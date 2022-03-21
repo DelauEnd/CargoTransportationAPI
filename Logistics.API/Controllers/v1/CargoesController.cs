@@ -40,8 +40,7 @@ namespace Logistics.API.Controllers.v1
         [Route("Unassigned")]
         public async Task<IActionResult> GetUnassignedCargoes()
         {
-            var cargoes = await _cargoService.GetUnassignedCargoes();
-            return Ok(cargoes);
+            return Ok(await _cargoService.GetUnassignedCargoes());
         }
 
         /// <summary>
@@ -53,8 +52,7 @@ namespace Logistics.API.Controllers.v1
         [HttpHead("{cargoId}")]
         public async Task<IActionResult> GetCargoById(int cargoId)
         {
-            var cargo = await _cargoService.GetCargoById(cargoId);
-            return Ok(cargo);
+            return Ok(await _cargoService.GetCargoById(cargoId));
         }
 
         /// <summary>
@@ -66,7 +64,7 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> DeleteCargoById(int cargoId)
         {
             await _cargoService.DeleteCargoById(cargoId);
-            return NoContent();
+            return Ok();
         }
 
         /// <summary>

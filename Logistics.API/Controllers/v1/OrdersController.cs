@@ -28,8 +28,7 @@ namespace Logistics.API.Controllers.v1
         [HttpHead]
         public async Task<IActionResult> GetAllOrders()
         {
-            var orders = await _orderService.GetAllOrders();
-            return Ok(orders);
+            return Ok(await _orderService.GetAllOrders());
         }
 
         /// <summary>
@@ -41,8 +40,7 @@ namespace Logistics.API.Controllers.v1
         [HttpHead("{orderId}")]
         public async Task<IActionResult> GetOrderById(int orderId)
         {
-            var order = await _orderService.GetOrderById(orderId);
-            return Ok(order);
+            return Ok(await _orderService.GetOrderById(orderId));
         }
 
         /// <summary>
@@ -66,8 +64,7 @@ namespace Logistics.API.Controllers.v1
         [HttpHead("{orderId}/Cargoes")]
         public async Task<IActionResult> GetCargoesByOrderId([FromRoute] int orderId)
         {
-            var cargoes = await _orderService.GetCargoesByOrderId(orderId);
-            return Ok(cargoes);
+            return Ok(await _orderService.GetCargoesByOrderId(orderId));
         }
 
         /// <summary>
@@ -92,7 +89,7 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> DeleteOrderById(int orderId)
         {
             await _orderService.DeleteOrderById(orderId);
-            return NoContent();
+            return Ok();
         }
 
         /// <summary>
@@ -105,7 +102,7 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> PartiallyUpdateOrderById(int orderId, [FromBody] JsonPatchDocument<OrderForUpdateDto> patchDoc)
         {
             await _orderService.PatchOrderById(orderId, patchDoc);
-            return NoContent();
+            return Ok();
         }
 
         /// <summary>
