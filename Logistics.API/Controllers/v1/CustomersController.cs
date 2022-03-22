@@ -25,7 +25,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <returns>Returns customers list</returns>
         [HttpGet]
-        [HttpHead]
         public async Task<IActionResult> GetAllCustomers()
         {
             return Ok(await _customerService.GetAllCustomers());
@@ -37,7 +36,6 @@ namespace Logistics.API.Controllers.v1
         /// <param name="customerId"></param>
         /// <returns>Returns requested customer</returns>
         [HttpGet("{customerId}", Name = "GetCustomerById")]
-        [HttpHead("{customerId}")]
         public async Task<IActionResult> GetCustomerById(int customerId)
         {
             return Ok(await _customerService.GetCustomerById(customerId));
@@ -78,28 +76,6 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> PartiallyUpdateCustomerById(int customerId, [FromBody] JsonPatchDocument<CustomerForUpdateDto> patchDoc)
         {
             await _customerService.PatchCustomerById(customerId, patchDoc);
-            return Ok();
-        }
-
-        /// <summary>
-        /// Get allowed requests
-        /// </summary>
-        /// <returns>Returns allowed requests</returns>
-        [HttpOptions]
-        public IActionResult GetCustomerOptions()
-        {
-            Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
-            return Ok();
-        }
-
-        /// <summary>
-        /// Get allowed requests for id
-        /// </summary>
-        /// <returns>Returns allowed requests</returns>
-        [HttpOptions("{customerId}")]
-        public IActionResult GetCustomerByIdOptions()
-        {
-            Response.Headers.Add("Allow", "GET, HEAD, DELETE, PATCH, OPTIONS");
             return Ok();
         }
     }

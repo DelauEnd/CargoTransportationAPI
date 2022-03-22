@@ -23,7 +23,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <returns>Returns cargoes list</returns>
         [HttpGet]
-        [HttpHead]
         public async Task<IActionResult> GetAllCategories()
         {
             return Ok(await _cargoCategoryService.GetAllCategories());
@@ -64,28 +63,6 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> UpdateCargoCategoryById(int categoryId, CargoCategoryForUpdateDto category)
         {
             await _cargoCategoryService.UpdateCargoCategoryById(categoryId, category);
-            return Ok();
-        }
-
-        /// <summary>
-        /// Get allowed requests
-        /// </summary>
-        /// <returns>Returns allowed requests</returns>
-        [HttpOptions]
-        public IActionResult GetCargoCategoryOptions()
-        {
-            Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
-            return Ok();
-        }
-
-        /// <summary>
-        /// Get allowed requests for id
-        /// </summary>
-        /// <returns>Returns allowed requests</returns>
-        [HttpOptions("{categoryId}")]
-        public IActionResult GetCargoCategoryByIdOptions()
-        {
-            Response.Headers.Add("Allow", "PUT, DELETE, OPTIONS");
             return Ok();
         }
     }

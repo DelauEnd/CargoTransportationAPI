@@ -25,7 +25,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <returns>Returns orders list</returns>
         [HttpGet]
-        [HttpHead]
         public async Task<IActionResult> GetAllOrders()
         {
             return Ok(await _orderService.GetAllOrders());
@@ -37,7 +36,6 @@ namespace Logistics.API.Controllers.v1
         /// <param name="orderId"></param>
         /// <returns>Returns order by requested id</returns>
         [HttpGet("{orderId}", Name = "GetOrderById")]
-        [HttpHead("{orderId}")]
         public async Task<IActionResult> GetOrderById(int orderId)
         {
             return Ok(await _orderService.GetOrderById(orderId));
@@ -61,7 +59,6 @@ namespace Logistics.API.Controllers.v1
         /// <param name="orderId"></param>
         /// <returns>Returns cargoes by requested order id</returns>
         [HttpGet("{orderId}/Cargoes")]
-        [HttpHead("{orderId}/Cargoes")]
         public async Task<IActionResult> GetCargoesByOrderId([FromRoute] int orderId)
         {
             return Ok(await _orderService.GetCargoesByOrderId(orderId));
@@ -102,39 +99,6 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> PartiallyUpdateOrderById(int orderId, [FromBody] JsonPatchDocument<OrderForUpdateDto> patchDoc)
         {
             await _orderService.PatchOrderById(orderId, patchDoc);
-            return Ok();
-        }
-
-        /// <summary>
-        /// Get allowed requests
-        /// </summary>
-        /// <returns>Returns allowed requests</returns>
-        [HttpOptions]
-        public IActionResult GetOrderOptions()
-        {
-            Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
-            return Ok();
-        }
-
-        /// <summary>
-        /// Get allowed requests for id
-        /// </summary>
-        /// <returns>Returns allowed requests</returns>
-        [HttpOptions("{orderId}")]
-        public IActionResult GetOrderByIdOptions()
-        {
-            Response.Headers.Add("Allow", "GET, HEAD, PATCH, DELETE, OPTIONS");
-            return Ok();
-        }
-
-        /// <summary>
-        /// Get allowed requests for cargoes
-        /// </summary>
-        /// <returns>Returns allowed requests</returns>
-        [HttpOptions("{orderId}/Cargoes")]
-        public IActionResult GetOrderByIdWithCargoesOptions()
-        {
-            Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
             return Ok();
         }
     }

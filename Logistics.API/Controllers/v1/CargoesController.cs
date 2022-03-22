@@ -25,7 +25,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <returns>Returns cargo list</returns>
         [HttpGet]
-        [HttpHead]
         public async Task<IActionResult> GetAllCargoes()
         {
             return Ok(await _cargoService.GetAllCargoes());
@@ -36,7 +35,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <returns>Returns unassigned cargoes</returns>
         [HttpGet]
-        [HttpHead]
         [Route("Unassigned")]
         public async Task<IActionResult> GetUnassignedCargoes()
         {
@@ -49,7 +47,6 @@ namespace Logistics.API.Controllers.v1
         /// <param name="cargoId"></param>
         /// <returns>Returns requested cargo</returns>
         [HttpGet("{cargoId}")]
-        [HttpHead("{cargoId}")]
         public async Task<IActionResult> GetCargoById(int cargoId)
         {
             return Ok(await _cargoService.GetCargoById(cargoId));
@@ -77,28 +74,6 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> PartiallyUpdateCargoById(int cargoId, [FromBody] JsonPatchDocument<CargoForUpdateDto> patchDoc)
         {
             await _cargoService.PatchCargoById(cargoId, patchDoc);
-            return Ok();
-        }
-
-        /// <summary>
-        /// Get allowed requests
-        /// </summary>
-        /// <returns>Returns allowed requests</returns>
-        [HttpOptions]
-        public IActionResult GetCargoOptions()
-        {
-            Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
-            return Ok();
-        }
-
-        /// <summary>
-        /// Get allowed requests for id
-        /// </summary>
-        /// <returns>Returns allowed requests</returns>
-        [HttpOptions("{cargoId}")]
-        public IActionResult GetCargoByIdOptions()
-        {
-            Response.Headers.Add("Allow", "GET, HEAD, PATCH, DELETE, OPTIONS");
             return Ok();
         }
     }

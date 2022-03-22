@@ -25,7 +25,6 @@ namespace Logistics.API.Controllers.v1
         /// </summary>
         /// <returns>Returns routes list</returns>
         [HttpGet]
-        [HttpHead]
         public async Task<IActionResult> GetAllRoutes()
         {
             return Ok(await _routeService.GetAllRoutes());
@@ -37,7 +36,6 @@ namespace Logistics.API.Controllers.v1
         /// <param name="routeId"></param>
         /// <returns>Returns route by requested id</returns>
         [HttpGet("{routeId}", Name = "GetRouteById")]
-        [HttpHead("{routeId}")]
         public async Task<IActionResult> GetRouteById(int routeId)
         {
             return Ok(await _routeService.GetRouteById(routeId));
@@ -86,7 +84,6 @@ namespace Logistics.API.Controllers.v1
         /// <param name="routeId"></param>
         /// <returns>Returns cargoes by requested order id</returns>
         [HttpGet("{routeId}/Cargoes")]
-        [HttpHead("{routeId}/Cargoes")]
         public async Task<IActionResult> GetCargoesByRouteId(int routeId)
         {
             return Ok(await _routeService.GetCargoesByRouteId(routeId));
@@ -102,39 +99,6 @@ namespace Logistics.API.Controllers.v1
         public async Task<IActionResult> AssignCargoesToRoute([FromBody] List<int> ids, int routeId)
         {
             await _routeService.AssignCargoesToRoute(ids, routeId);
-            return Ok();
-        }
-
-        /// <summary>
-        /// Get allowed requests
-        /// </summary>
-        /// <returns>Returns allowed requests</returns>
-        [HttpOptions]
-        public IActionResult GetRouteOptions()
-        {
-            Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
-            return Ok();
-        }
-
-        /// <summary>
-        /// Get allowed requests for id
-        /// </summary>
-        /// <returns>Returns allowed requests</returns>
-        [HttpOptions("{routeId}")]
-        public IActionResult GetRouteByIdOptions()
-        {
-            Response.Headers.Add("Allow", "GET, HEAD, PUT, DELETE, OPTIONS");
-            return Ok();
-        }
-
-        /// <summary>
-        /// Get allowed requests for cargoes
-        /// </summary>
-        /// <returns>Returns allowed requests</returns>
-        [HttpOptions("{routeId}/Cargoes")]
-        public IActionResult GetRouteByIdWithCargoesOptions()
-        {
-            Response.Headers.Add("Allow", "GET, HEAD, POST, OPTIONS");
             return Ok();
         }
     }
