@@ -12,8 +12,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.API", "Logistics.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Services", "Logistics.Services\Logistics.Services.csproj", "{DCBF0383-8282-4754-936C-F96B54061382}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Models", "Logistics.Models\Logistics.Models.csproj", "{A2339346-7A5B-474E-8294-BDC86653D649}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Repository", "Logistics.Repository\Logistics.Repository.csproj", "{8BDCEEC4-9876-4A05-A9D3-5C502203D6BA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Entities", "Logistics.Entities\Logistics.Entities.csproj", "{D57CF13E-7C8C-4D9F-BCB8-6F2294842EE0}"
@@ -34,10 +32,6 @@ Global
 		{DCBF0383-8282-4754-936C-F96B54061382}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCBF0383-8282-4754-936C-F96B54061382}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCBF0383-8282-4754-936C-F96B54061382}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A2339346-7A5B-474E-8294-BDC86653D649}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A2339346-7A5B-474E-8294-BDC86653D649}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A2339346-7A5B-474E-8294-BDC86653D649}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A2339346-7A5B-474E-8294-BDC86653D649}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8BDCEEC4-9876-4A05-A9D3-5C502203D6BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8BDCEEC4-9876-4A05-A9D3-5C502203D6BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BDCEEC4-9876-4A05-A9D3-5C502203D6BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
